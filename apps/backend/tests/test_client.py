@@ -22,6 +22,8 @@ from cycleops.collection.outcome import Outcome, classify_attempt
 from cycleops.policy import ProviderConfig
 
 STATUS_URL = DEFAULT_URLS["station_status"]
+# A valid publication plus an extra field nested 10 800 levels deep.
+DEEP_EXTRA = json.dumps(status_body())[:-1] + ', "x": ' + "[" * 10_800 + "]" * 10_800 + "}"
 Handler = Callable[[httpx.Request], httpx.Response]
 
 
@@ -224,8 +226,17 @@ def test_status_classification(
         (200, status_body() | {"data": None}, ("invalid", "contract")),
         (200, status_body() | {"data": []}, ("invalid", "contract")),
         (200, "[" * 200_000, ("invalid", "contract")),  # RecursionError in json.loads
+        # loads copes with this depth but json.dumps in the recording would not
+        (200, DEEP_EXTRA, ("invalid", "contract")),
     ],
-    ids=["503-data-null", "404-data-string", "200-data-null", "200-data-list", "200-deep"],
+    ids=[
+        "503-data-null",
+        "404-data-string",
+        "200-data-null",
+        "200-data-list",
+        "200-deep",
+        "200-deep-extra",
+    ],
 )
 def test_malformed_bodies_are_classified_not_raised(
     provider: ProviderConfig, status: int, body: object, expected: tuple[str, str]
@@ -239,12 +250,22 @@ def test_malformed_bodies_are_classified_not_raised(
     assert (outcome.code, outcome.error_class) == expected
 
 
-@pytest.mark.parametrize("value", [b"99999999999999999999", b"300000000000", b"\xb2", b"soon"])
+@pytest.mark.parametrize("value", [b"\xb2", b"soon", b"-5"])
 def test_odd_retry_after_is_ignored(provider: ProviderConfig, value: bytes) -> None:
     headers = [(b"retry-after", value)]
     _, outcome = fetch(provider, lambda r: httpx.Response(429, headers=headers))
     assert (outcome.code, outcome.error_class) == ("http_error", "transport")
     assert outcome.retry_after_until is None
+
+
+@pytest.mark.parametrize(
+    "value",
+    [b"999999999", b"99999999999999999999", b"Fri, 31 Dec 9999 23:59:59 GMT"],
+)
+def test_huge_retry_after_is_capped(provider: ProviderConfig, value: bytes) -> None:
+    headers = [(b"retry-after", value)]
+    attempt, outcome = fetch(provider, lambda r: httpx.Response(429, headers=headers))
+    assert outcome.retry_after_until == attempt.received_at + timedelta(hours=1)
 
 
 def test_429_respects_retry_after(provider: ProviderConfig) -> None:

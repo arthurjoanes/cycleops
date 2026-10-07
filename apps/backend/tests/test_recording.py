@@ -204,8 +204,10 @@ def test_report_math_over_two_series(provider: ProviderConfig) -> None:
             "error": None,
         }
 
-    # REQUESTED is T0 + 3 s. Publications at +0, +15, +45 (slot +30 skipped), +60, then a
-    # second recording three hours later.
+    # Requests start at T0 + 3 s. Publications at +0, +15, +45 (slot +30 skipped), +60.
+    # A second recording three hours later, where the operator stalls for 1215 s while
+    # the requests go on every 15 s.
+    h3 = 3 * 3600
     lines = [
         line(7, 0),
         line(22, 15),
@@ -213,11 +215,13 @@ def test_report_math_over_two_series(provider: ProviderConfig) -> None:
         line(52, 45, bikes=4),
         line(67, 45, bikes=4),  # +60 already existed: one publication behind
         line(72, 60, bikes=4),
-        line(3 * 3600 + 7, 3 * 3600, bikes=9),
+        *(line(h3 + 7 + 15 * i, h3, bikes=9) for i in range(81)),
+        line(h3 + 7 + 1215, h3 + 1215, bikes=9),
     ]
     report = "\n".join(inspect_feed.report(lines, provider))
-    assert "- last_updated steps: 15: 2, 30: 1" in report
+    assert "- last_updated steps: 15: 2, 30: 1, 1215: 1" in report
     assert "upper bound min(requestedAt - last_updated): 10.0s" in report
     assert "still carrying the previous publication: 10.0s (1 responses)" in report
-    assert "- count changes: 1 station changes over 5 publications in 60s (60/h)" in report
-    assert "- local clock - server clock: between 0.00s and 1.50s (7 responses)" in report
+    changes = "- count changes: 1 station changes over 6 publications in 2 series, 1275s (3/h)"
+    assert changes in report
+    assert "- local clock - server clock: between 0.00s and 1.50s (88 responses)" in report

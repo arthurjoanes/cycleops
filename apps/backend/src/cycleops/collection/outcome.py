@@ -28,6 +28,8 @@ Publication = StatusPublication | InfoPublication | SystemInformation | dict[str
 # Failures that happen before a full body exists. too_large is ours, so it is a contract
 # error; the others count toward the breaker.
 TRANSPORT_ERRORS = frozenset({"timeout", "network_error", "truncated"})
+# ponytail: fixed ceiling on Retry-After; a policy field if the operator ever needs more.
+RETRY_AFTER_MAX = timedelta(hours=1)
 
 
 @dataclass(frozen=True)
@@ -126,11 +128,14 @@ def _retry_after(value: str | None, received_at: datetime) -> datetime | None:
     if not value:
         return None
     value = value.strip()
-    # A header must never crash the loop: huge or odd values are ignored.
+    # A header must never crash or park the loop: odd values are ignored, and the wait
+    # is capped at RETRY_AFTER_MAX.
     try:
         if value.isdigit():
-            return received_at + timedelta(seconds=int(value))
+            seconds = min(int(value), int(RETRY_AFTER_MAX.total_seconds()))
+            return received_at + timedelta(seconds=seconds)
         when = parsedate_to_datetime(value)
     except TypeError, ValueError, OverflowError:
         return None
-    return when if when.tzinfo else when.replace(tzinfo=UTC)
+    when = when if when.tzinfo else when.replace(tzinfo=UTC)
+    return min(when, received_at + RETRY_AFTER_MAX)

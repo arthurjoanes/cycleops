@@ -24,6 +24,9 @@ PATH_PREFIX = "/oslobysykkel.no/"
 FEEDS = ("gbfs", "system_information", "vehicle_types", "station_information", "station_status")
 DEFAULT_URLS = {feed: f"https://{HOST}{PATH_PREFIX}{feed}.json" for feed in FEEDS}
 MAX_BODY_BYTES = 2 * 1024 * 1024
+# GBFS nests about 9 levels (station_area). Deeper JSON is treated as not JSON: past a
+# few thousand levels json.dumps (in the recording) overflows the stack before loads does.
+MAX_JSON_DEPTH = 32
 RECORDED_HEADERS = (
     "date",
     "etag",
@@ -156,10 +159,12 @@ class FeedClient:
         body_json: Any = None
         if body is not None:
             try:
-                body_json = strip_station_area(json.loads(body))
+                parsed = json.loads(body)
             # JSONDecodeError, UnicodeDecodeError, and RecursionError on deep nesting.
             except ValueError, RecursionError:
-                body_json = None
+                parsed = None
+            if parsed is not None and _depth_within(parsed, MAX_JSON_DEPTH):
+                body_json = strip_station_area(parsed)
         return Attempt(
             feed=feed,
             url=url,
@@ -172,6 +177,18 @@ class FeedClient:
             body_json=body_json,
             error=error,
         )
+
+
+def _depth_within(value: Any, limit: int) -> bool:
+    stack = [(value, 0)]
+    while stack:
+        item, depth = stack.pop()
+        children = item.values() if isinstance(item, dict) else item
+        if isinstance(item, dict | list):
+            if depth >= limit:
+                return False
+            stack.extend((child, depth + 1) for child in children)
+    return True
 
 
 async def _read_capped(resp: httpx.Response) -> tuple[bytes | None, str | None]:
