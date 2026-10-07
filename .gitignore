@@ -1,0 +1,21 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+dist/
+
+# Ambiente local
+.env
+.env.*
+!.env.example
+!.env.live.example
+
+# Gravações completas e caches
+data/
+scripts/basemap/cache/

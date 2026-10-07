@@ -1,0 +1,26 @@
+{
+  "recordingSchema": 1,
+  "file": "sample-20261007T032452Z.ndjson.gz",
+  "sha256": "a8ac3bb5cea1f5f31f6c92b7fc4184b797f30e365187990dc512e3971bed19f1",
+  "startedAt": "2026-10-07T03:24:53.480Z",
+  "endedAt": "2026-10-07T03:34:41.168Z",
+  "urls": [
+    "https://gbfs.urbansharing.com/oslobysykkel.no/gbfs.json",
+    "https://gbfs.urbansharing.com/oslobysykkel.no/station_information.json",
+    "https://gbfs.urbansharing.com/oslobysykkel.no/station_status.json",
+    "https://gbfs.urbansharing.com/oslobysykkel.no/system_information.json",
+    "https://gbfs.urbansharing.com/oslobysykkel.no/vehicle_types.json"
+  ],
+  "gbfsVersion": [
+    "2.3"
+  ],
+  "license": "Norwegian Licence for Open Government Data (NLOD) 2.0, https://data.norge.no/nlod/en/2.0, data from Oslo Bysykkel",
+  "requests": 44,
+  "failures": 0,
+  "truncations": 0,
+  "outcomes": {
+    "ok": 44
+  },
+  "clientIdentifier": "arthurjoanes-cycleops",
+  "deadlineSeconds": 30.0
+}

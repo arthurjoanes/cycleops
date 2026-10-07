@@ -1,0 +1,6 @@
+Contém dados sob a Norwegian Licence for Open Government Data (NLOD) 2.0
+(https://data.norge.no/nlod/en/2.0), disponibilizados por Oslo Bysykkel
+(UIP Bauer Media Outdoor Norge AS), em https://oslobysykkel.no/en/open-data.
+
+Os arquivos .ndjson.gz desta pasta são respostas do feed GBFS gravadas pelo
+CycleOps, uma linha por requisição. O campo station_area foi removido na gravação.

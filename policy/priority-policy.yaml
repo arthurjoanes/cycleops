@@ -1,0 +1,12 @@
+version: "1.0.0"
+sourceLateAfterSeconds: 40
+sourceStaleAfterSeconds: 60
+freshAgainAfterPublications: 2
+clockSkewToleranceSeconds: 30
+confirmMinSpanSeconds: 30
+recoveryMinSpanSeconds: 60
+recoveryMinFraction: 0.10
+recoveryMinFloor: 1
+recoveryMinCap: 3
+stationStaleAfterSeconds: 120
+tickIntervalSeconds: 5
