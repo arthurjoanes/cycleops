@@ -66,6 +66,8 @@ def test_next_status_at_formula(provider: ProviderConfig) -> None:
     assert next_status_at(at(0), None, config) == at(15)
     # ttl 0: the floor still applies
     assert next_status_at(at(0), Envelope("2.3", published, 0), config) == at(15)
+    # last_updated an hour in the future does not push polling out
+    assert next_status_at(at(0), Envelope("2.3", at(3600), 15), config) == at(40)
 
 
 def test_status_loop_follows_the_publications(provider: ProviderConfig) -> None:

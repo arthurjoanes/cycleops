@@ -99,7 +99,8 @@ class Attempt:
 
 def strip_station_area(body: Any) -> Any:
     """station_area is most of station_information and is never used."""
-    stations = body.get("data", {}).get("stations") if isinstance(body, dict) else None
+    data = body.get("data") if isinstance(body, dict) else None
+    stations = data.get("stations") if isinstance(data, dict) else None
     if isinstance(stations, list):
         for station in stations:
             if isinstance(station, dict):
@@ -156,7 +157,8 @@ class FeedClient:
         if body is not None:
             try:
                 body_json = strip_station_area(json.loads(body))
-            except ValueError:  # JSONDecodeError and UnicodeDecodeError
+            # JSONDecodeError, UnicodeDecodeError, and RecursionError on deep nesting.
+            except ValueError, RecursionError:
                 body_json = None
         return Attempt(
             feed=feed,

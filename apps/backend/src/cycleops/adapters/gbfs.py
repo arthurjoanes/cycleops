@@ -59,9 +59,10 @@ INFO_FIELDS = frozenset(
 ReportSemantics = Literal["feed_generation", "per_station"]
 Quality = Literal["valid", "suspect", "unknown"]
 Count = Annotated[int, Field(ge=0)]
-# POSIX seconds from 1970 to 2100. Out of range is a schema failure, never a crash in
-# datetime and never 0 read as an instant.
-PosixTime = Annotated[int, Field(gt=0, lt=4_102_444_800)]
+# POSIX seconds from 1970 to 2100. Outside that, last_updated is a schema failure and
+# last_reported counts as missing or future: never a datetime crash, never 0 as 1970.
+POSIX_MAX = 4_102_444_800
+PosixTime = Annotated[int, Field(gt=0, lt=POSIX_MAX)]
 
 
 class ContractError(Exception):
@@ -77,7 +78,7 @@ class _In(BaseModel):
 class _Envelope(_In):
     version: str
     last_updated: PosixTime
-    ttl: Count
+    ttl: Annotated[int, Field(ge=0, le=86_400)]
     data: dict[str, Any]
 
 
@@ -100,7 +101,8 @@ class _StatusRecord(_In):
     num_bikes_disabled: Count | None = None
     num_docks_disabled: Count | None = None
     vehicle_types_available: list[_VehicleTypeCount] | None = None
-    last_reported: PosixTime | None = None
+    # Not range-checked here: a bad last_reported marks the station, it does not drop it.
+    last_reported: int | None = None
 
 
 class _InfoRecord(_In):
@@ -246,7 +248,7 @@ def parse_station_status(
         if rec.station_id in seen:
             invalid.append(rec.station_id)
             continue
-        if rec.last_reported is None and semantics == "per_station":
+        if (rec.last_reported or 0) <= 0 and semantics == "per_station":
             invalid.append(rec.station_id)
             continue
         seen.add(rec.station_id)
@@ -266,10 +268,11 @@ def parse_station_status(
 
 def _normalize_status(rec: _StatusRecord, future_after: datetime | None) -> StationStatus:
     flags: list[str] = []
-    reported_at = to_utc(rec.last_reported) if rec.last_reported is not None else None
-    if reported_at is None:
+    raw = rec.last_reported or 0
+    reported_at = to_utc(raw) if 0 < raw < POSIX_MAX else None
+    if raw <= 0:
         flags.append("last_reported_missing")
-    elif future_after is not None and reported_at > future_after:
+    elif reported_at is None or (future_after is not None and reported_at > future_after):
         flags.append("last_reported_in_future")
     types = tuple((v.vehicle_type_id, v.count) for v in rec.vehicle_types_available or ())
     if rec.vehicle_types_available is not None and sum(c for _, c in types) != (

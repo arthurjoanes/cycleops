@@ -9,7 +9,7 @@ import logging
 import sys
 from collections import Counter, defaultdict
 from collections.abc import Iterable
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from email.utils import parsedate_to_datetime
 from itertools import pairwise
 from math import floor
@@ -41,6 +41,9 @@ from cycleops.collection.recording import RecordingWriter, parse_iso, read_recor
 from cycleops.policy import ProviderConfig, load_provider
 
 Line = dict[str, Any]
+# A larger gap between publications splits a report over several recordings into
+# separate series. Gaps inside one run stay below it (breaker 60 s, quarantine probe 300 s).
+SERIES_GAP = timedelta(minutes=15)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -169,7 +172,8 @@ def report(lines: list[Line], provider: ProviderConfig) -> list[str]:
     out.append(f"- download: {_dist(durations, 's')}; timeouts {timeouts}/{len(durations)}")
     if pubs:
         updated = sorted({p.envelope.last_updated for p in pubs})
-        steps = [(b - a).total_seconds() for a, b in pairwise(updated)]
+        nxt = {a: b for a, b in pairwise(updated) if b - a <= SERIES_GAP}
+        steps = [(b - a).total_seconds() for a, b in nxt.items()]
         out.append(f"- last_updated steps: {_counts(int(s) for s in steps) or 'one publication'}")
         ages = [
             _seconds(x["receivedAt"], _iso_of(p)) for x, p in zip(status_lines, pubs, strict=True)
@@ -178,29 +182,45 @@ def report(lines: list[Line], provider: ProviderConfig) -> list[str]:
         upper = min(
             _seconds(x["requestedAt"], _iso_of(p)) for x, p in zip(status_lines, pubs, strict=True)
         )
+        # A response carried the previous publication when the next observed one
+        # (usually last_updated + ttl; +30 s where the feed skips a slot) already existed.
         late = [
-            _seconds(x["requestedAt"], _iso_of(p)) - p.envelope.ttl
+            (parse_iso(x["requestedAt"]) - nxt[p.envelope.last_updated]).total_seconds()
             for x, p in zip(status_lines, pubs, strict=True)
+            if p.envelope.last_updated in nxt
         ]
         late_pos = [v for v in late if v > 0]
         out.append(
             f"- availability delay, upper bound min(requestedAt - last_updated): {upper:.1f}s"
         )
         out.append(
-            "- availability delay, lower bound max(requestedAt - (last_updated + ttl)) over "
+            "- availability delay, lower bound max(requestedAt - next last_updated) over "
             f"responses still carrying the previous publication: "
             f"{f'{max(late_pos):.1f}s ({len(late_pos)} responses)' if late_pos else 'none seen'}"
         )
-    skews = []
-    for x in lines:
-        if date := x["headers"].get("date"):
-            skews.append((parsedate_to_datetime(date) - parse_iso(x["receivedAt"])).total_seconds())
-    out.append(f"- Date header - receivedAt (1 s resolution): {_dist(skews, 's')}")
+    out.append(f"- local clock - server clock: {_clock_offset(lines)}")
     out += _last_reported_section(pubs)
     out += _fields_section(by_feed, pubs, info)
     out += _etag_section(by_feed)
     out += _system_section(by_feed.get("system_information", []), provider)
     return out
+
+
+def _clock_offset(lines: list[Line]) -> str:
+    """The Date header is stamped somewhere between requestedAt and receivedAt, and is
+    truncated to the second: offset in (requestedAt - Date - 1, receivedAt - Date]."""
+    low: list[float] = []
+    high: list[float] = []
+    for x in lines:
+        try:
+            date = parsedate_to_datetime(x["headers"]["date"])
+        except KeyError, TypeError, ValueError:
+            continue
+        low.append(_seconds(x["requestedAt"], date.isoformat()) - 1)
+        high.append(_seconds(x["receivedAt"], date.isoformat()))
+    if not low:
+        return "no Date header"
+    return f"between {max(low):.2f}s and {min(high):.2f}s ({len(low)} responses)"
 
 
 def _counts(values: Iterable[Any]) -> str:
@@ -255,7 +275,12 @@ def _last_reported_section(pubs: list[StatusPublication]) -> list[str]:
     ordered = [distinct[k] for k in sorted(distinct)]
     pairs: Counter[str] = Counter()
     changes = 0
+    span = 0.0
     for prev, cur in pairwise(ordered):
+        gap = cur.envelope.last_updated - prev.envelope.last_updated
+        if gap > SERIES_GAP:
+            continue
+        span += gap.total_seconds()
         before = {s.station_id: s for s in prev.stations}
         for s in cur.stations:
             b = before.get(s.station_id)
@@ -273,11 +298,8 @@ def _last_reported_section(pubs: list[StatusPublication]) -> list[str]:
     out.append(
         f"- per station between consecutive publications: {_counts(pairs.elements()) or 'n/a'}"
     )
-    if len(ordered) > 1:
-        span = (
-            ordered[-1].envelope.last_updated - ordered[0].envelope.last_updated
-        ).total_seconds()
-        rate = changes / (span / 3600) if span else 0
+    if span:
+        rate = changes / (span / 3600)
         out.append(
             f"- count changes: {changes} station changes over {len(ordered)} publications "
             f"in {span:.0f}s ({rate:.0f}/h)"
@@ -305,7 +327,8 @@ def _fields_section(
         bodies = [x["body"] for x in by_feed.get(feed, []) if isinstance(x["body"], dict)]
         if not bodies:
             continue
-        records = bodies[-1].get("data", {}).get("stations", [])
+        data = bodies[-1].get("data")
+        records = data.get("stations", []) if isinstance(data, dict) else []
         present: Counter[str] = Counter(k for r in records if isinstance(r, dict) for k in r)
         if feed == "station_information":
             present.pop("station_area", None)  # removed before recording
@@ -332,10 +355,20 @@ def _fields_section(
             f"{sum(g > 0 for g in gaps)}, negative {sum(g < 0 for g in gaps)}; "
             f"{_dist([float(g) for g in gaps])}"
         )
+        # Valet comes and goes, so these look at every publication, not only the last.
+        seen = [s for p in pubs for s in p.stations]
+        no_docks = {s.station_id for s in seen if s.docks_available is None}
+        over = {
+            s.station_id
+            for s in seen
+            if (c := catalog.get(s.station_id))
+            and c.capacity is not None
+            and s.docks_available is not None
+            and s.bikes_available + s.docks_available > c.capacity
+        }
         out.append(
-            "- valet signals: docks missing "
-            f"{sum(s.docks_available is None for s in status.values())}, "
-            f"bikes + docks > capacity {sum(g < 0 for g in gaps)}, "
+            f"- valet signals over {len(pubs)} publications: stations with docks missing "
+            f"{len(no_docks)}, with bikes + docks > capacity {len(over)}, "
             f"is_valet_station present {sum(c.is_valet is not None for c in catalog.values())}, "
             f"true {sum(bool(c.is_valet) for c in catalog.values())}, "
             f"is_virtual true {sum(c.is_virtual for c in catalog.values())}, "

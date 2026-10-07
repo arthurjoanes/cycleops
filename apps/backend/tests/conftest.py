@@ -81,7 +81,7 @@ def station(**fields: Any) -> dict[str, Any]:
 
 
 def status_body(
-    stations: list[dict[str, Any]] | None = None,
+    stations: list[Any] | None = None,
     last_updated: int = T0,
     version: str = "2.3",
     ttl: int = 15,

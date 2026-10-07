@@ -12,7 +12,7 @@ A fase 0 coletou 49 respostas em 2026-10-07, das 05:24 às 05:34 em Oslo. Os nú
 
 - `ttl: 15` em todos os feeds e `last_updated` em degraus de 15 s, com um degrau de 30 s a cada 11 a 13 publicações;
 - `last_reported` tem um valor só por publicação, de 0 a 14 s depois do `last_updated`, e muda para todas as estações em toda publicação;
-- o arquivo é gerado a cada 16 s, mais ou menos, e fica disponível perto do `last_reported`;
+- o arquivo é gerado a cada 16 s, mais ou menos, e fica disponível praticamente no instante do `last_reported`;
 - idade no recebimento: p50 10,9 s, p95 25,9 s, p99 26,0 s;
 - download de `station_status`: p50 0,6 s, p99 0,9 s, sem timeout em 41 requisições, numa rede só;
 - nenhum sinal de valet na amostra;
@@ -27,11 +27,12 @@ Coleta (bloco `collection` de `policy/provider-oslo.yaml`, módulo `cycleops.col
 - `Client-Identifier` vem de `CYCLEOPS_CLIENT_IDENTIFIER`, sem default. Vazio ou com `<`/`>` (o placeholder do `.env.example`) impede o cliente de subir.
 - Timeouts do HTTPX: connect 5 s, read 10 s, write 5 s, pool 5 s. Prazo total de 12 s por requisição, abaixo do piso de 15 s do intervalo. As CLIs aceitam `--deadline-seconds`.
 - Corpo lido em streaming e cortado acima de 2 MiB decodificados.
-- Intervalo de `station_status`: `max(15, ttl)`. O próximo GET sai em `max(início anterior + intervalo, last_updated + ttl + 10)`. Uma requisição em voo por feed.
+- Intervalo de `station_status`: `max(15, ttl)`. O próximo GET sai em `max(início anterior + intervalo, last_updated + ttl + 10)`. Um `last_updated` no futuro entra na conta limitado ao instante devido pelo intervalo, para não adiar a coleta. Uma requisição em voo por feed.
 - `station_information` a cada 600 s; `gbfs.json`, `system_information` e `vehicle_types` na partida e a cada 3600 s.
 - Erro de transporte (timeout, rede, corpo truncado, 5xx, 429): 3 seguidos em `station_status` abrem o breaker por 60 s, depois uma tentativa. O 429 respeita `Retry-After`.
 - Erro de contrato (outros 4xx, redirect, corpo acima de 2 MiB, JSON inválido, versão diferente de 2.3, schema): quarentena do feed, com uma sonda a cada 300 s e log de erro com fingerprint. Uma resposta válida encerra a quarentena. O primeiro erro de contrato de um feed busca o `gbfs.json` de novo.
 - 404: busca o `gbfs.json` e tenta de novo uma vez; um segundo 404 seguido põe o feed em quarentena.
+- Entrada fora de faixa nunca derruba a coleta: `last_updated` fora de 1970 a 2100 e `ttl` acima de 86400 s são erro de contrato. Um `last_reported` 0 ou negativo conta como ausente, e acima de 2100 (por exemplo em milissegundos) conta como no futuro: a estação fica `unknown` ou `suspect` e não é descartada.
 
 Frescor e horário (`policy/priority-policy.yaml` e `policy/provider-oslo.yaml`):
 
@@ -44,7 +45,7 @@ Frescor e horário (`policy/priority-policy.yaml` e `policy/provider-oslo.yaml`)
 
 1. Manter `feed_generation`. A amostra confirma o comportamento e não há mudança de arquivo.
 2. Não adotar sinal de valet por enquanto. Repetir a checagem numa amostra de dia, em dia de valet.
-3. Margem de publicação: ficar com 10 s até a gravação longa. Alternativa medida: com 15 s, a coleta pediria o arquivo em `last_updated + 30`, quando a publicação seguinte já saiu (o atraso observado vai até 14 s). Pela amostra, a idade no recebimento ficaria perto de 15 s o tempo todo, em vez de alternar entre 10 s e 25 s, e o p95 cairia de 26 s para perto de 15 s. É estimativa; confirmar na gravação longa. Isso pede subir `sourceLateAfterSeconds` para 45, para seguir cobrindo um ciclo de coleta (15 + 15 + 12 = 42 s).
+3. Manter a margem de publicação em 10 s. Simulei a regra de agendamento sobre as publicações da amostra, com cada arquivo visível 1 s depois do `last_reported` pelo relógio local. Com 10 s a simulação reproduz o medido (p50 10,6 s e p95 25,6 s de idade no recebimento, contra 10,9 s e 25,9 s, e as mesmas 3 repetições). Com 15 s ela piora: p50 15,6 s, p95 30,6 s e as mesmas 3 repetições, que caem nos degraus de 30 s do `last_updated`. Repetir a conta com a gravação longa.
 4. Timeouts e prazo: ficam como estão. O p99 de 0,9 s não diz nada sobre a rede de dia nem sobre outras redes. Se as amostras pendentes mostrarem p99 acima de 15 s, decidir entre subir o piso e o prazo ou aceitar a taxa de timeout medida.
 
 ## Alternativas

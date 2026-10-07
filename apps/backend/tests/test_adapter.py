@@ -32,6 +32,7 @@ def test_unknown_version_rejects_the_publication() -> None:
         status_body(last_updated=0),
         status_body(last_updated=-1),
         status_body(last_updated=10**12),
+        status_body(ttl=10**12),
         [],
     ],
 )
@@ -66,8 +67,6 @@ def test_missing_docks_is_unknown_not_zero() -> None:
         {"is_renting": 1},
         {"is_installed": None},
         {"vehicle_types_available": [{"vehicle_type_id": "bike", "count": -1}]},
-        {"last_reported": 0},
-        {"last_reported": 10**12},
     ],
 )
 def test_bad_record_is_dropped_and_the_rest_goes_on(bad: dict[str, object]) -> None:
@@ -109,6 +108,32 @@ def test_missing_last_reported_depends_on_semantics() -> None:
     per_station = parse_station_status(body, "per_station")
     assert [s.station_id for s in per_station.stations] == ["101"]
     assert per_station.invalid_station_ids == ("100",)
+
+
+@pytest.mark.parametrize(
+    ("value", "quality", "flag"),
+    [
+        (0, "unknown", "last_reported_missing"),
+        (-5, "unknown", "last_reported_missing"),
+        ((T0 + 4) * 1000, "suspect", "last_reported_in_future"),  # milliseconds
+    ],
+)
+def test_odd_last_reported_marks_the_station_without_dropping_it(
+    value: int, quality: str, flag: str
+) -> None:
+    pub = parse_station_status(status_body([station(last_reported=value)]))
+    assert pub.stations[0].quality == quality
+    assert pub.stations[0].quality_flags == (flag,)
+    assert pub.stations[0].reported_at is None
+    with pytest.raises(ContractError):
+        parse_station_status(status_body([station(last_reported=0)]), "per_station")
+
+
+def test_records_that_are_not_objects_are_dropped() -> None:
+    pub = parse_station_status(status_body([5, None, [1], station(station_id=7), station()]))
+    assert [s.station_id for s in pub.stations] == ["100"]
+    assert pub.record_count == 5
+    assert pub.invalid_station_ids == ()
 
 
 def test_vehicle_type_counts_that_do_not_add_up_are_suspect() -> None:

@@ -91,8 +91,8 @@ def next_status_at(
     ttl = last.ttl if last is not None else None
     due = previous_start + timedelta(seconds=poll_interval_seconds(config, ttl))
     if last is not None:
-        published = last.last_updated + timedelta(
-            seconds=last.ttl + config.publication_margin_seconds
-        )
-        due = max(due, published)
+        # A last_updated in the future (operator clock ahead, bad file) must not push
+        # polling out: a real one is never later than the previous start + deadline.
+        updated = min(last.last_updated, due)
+        due = max(due, updated + timedelta(seconds=last.ttl + config.publication_margin_seconds))
     return due

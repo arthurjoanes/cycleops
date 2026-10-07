@@ -126,10 +126,11 @@ def _retry_after(value: str | None, received_at: datetime) -> datetime | None:
     if not value:
         return None
     value = value.strip()
-    if value.isdigit():
-        return received_at + timedelta(seconds=int(value))
+    # A header must never crash the loop: huge or odd values are ignored.
     try:
+        if value.isdigit():
+            return received_at + timedelta(seconds=int(value))
         when = parsedate_to_datetime(value)
-    except TypeError, ValueError:
+    except TypeError, ValueError, OverflowError:
         return None
     return when if when.tzinfo else when.replace(tzinfo=UTC)

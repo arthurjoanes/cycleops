@@ -2,12 +2,13 @@ import asyncio
 import gzip
 import hashlib
 import json
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
+from email.utils import format_datetime
 from pathlib import Path
 
 import httpx
 import pytest
-from conftest import REPO, discovery_body, info_body, status_body
+from conftest import REPO, T0, discovery_body, info_body, station, status_body
 
 from cycleops.cli import inspect_feed, record_feed
 from cycleops.collection.client import DEFAULT_URLS, Attempt
@@ -15,6 +16,7 @@ from cycleops.collection.outcome import Outcome
 from cycleops.collection.recording import (
     BODY_TEXT_LIMIT,
     RecordingWriter,
+    iso,
     read_recording,
     recording_line,
 )
@@ -138,6 +140,8 @@ def test_inspect_feed_makes_one_request_per_feed(provider: ProviderConfig, tmp_p
     )
     assert requests == [f"{feed}.json" for feed in DEFAULT_URLS]
     assert [line["error"] for line in lines] == [None] * 5
+    info = next(line for line in lines if line["feed"] == "station_information")
+    assert all("station_area" not in s for s in info["body"]["data"]["stations"])
     assert list(read_recording(out)) == lines
     report = "\n".join(inspect_feed.report(lines, provider))
     assert "Feed report, 5 requests" in report
@@ -178,3 +182,42 @@ def test_inspect_feed_reports_over_a_recording_without_network(
     monkeypatch.delenv("CYCLEOPS_CLIENT_IDENTIFIER", raising=False)
     assert inspect_feed.main(["--recording", str(recordings[0])]) == 0
     assert "## last_reported" in capsys.readouterr().out
+
+
+def test_report_math_over_two_series(provider: ProviderConfig) -> None:
+    def line(requested: float, updated: int, bikes: int = 3) -> dict[str, object]:
+        req = REQUESTED.replace(microsecond=0) + timedelta(seconds=requested)
+        stations = [station(num_bikes_available=bikes, last_reported=T0 + updated + 4)]
+        return {
+            "recordingSchema": 1,
+            "feed": "station_status",
+            "url": DEFAULT_URLS["station_status"],
+            "requestedAt": iso(req),
+            "receivedAt": iso(req + timedelta(seconds=0.5)),
+            "durationMs": 500,
+            "status": 200,
+            # server clock 1 s behind the local one
+            "headers": {"date": format_datetime(req - timedelta(seconds=1), usegmt=True)},
+            "bodySha256": "x",
+            "body": status_body(stations, last_updated=T0 + updated),
+            "bodyText": None,
+            "error": None,
+        }
+
+    # REQUESTED is T0 + 3 s. Publications at +0, +15, +45 (slot +30 skipped), +60, then a
+    # second recording three hours later.
+    lines = [
+        line(7, 0),
+        line(22, 15),
+        line(37, 15),  # +30 was never published: not behind
+        line(52, 45, bikes=4),
+        line(67, 45, bikes=4),  # +60 already existed: one publication behind
+        line(72, 60, bikes=4),
+        line(3 * 3600 + 7, 3 * 3600, bikes=9),
+    ]
+    report = "\n".join(inspect_feed.report(lines, provider))
+    assert "- last_updated steps: 15: 2, 30: 1" in report
+    assert "upper bound min(requestedAt - last_updated): 10.0s" in report
+    assert "still carrying the previous publication: 10.0s (1 responses)" in report
+    assert "- count changes: 1 station changes over 5 publications in 60s (60/h)" in report
+    assert "- local clock - server clock: between 0.00s and 1.50s (7 responses)" in report

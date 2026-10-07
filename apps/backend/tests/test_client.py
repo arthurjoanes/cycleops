@@ -216,6 +216,37 @@ def test_status_classification(
     assert (outcome.code, outcome.error_class, outcome.status) == (code, error_class, status)
 
 
+@pytest.mark.parametrize(
+    ("status", "body", "expected"),
+    [
+        (503, {"data": None, "error": "maintenance"}, ("http_error", "transport")),
+        (404, {"data": "not found"}, ("http_error", "contract")),
+        (200, status_body() | {"data": None}, ("invalid", "contract")),
+        (200, status_body() | {"data": []}, ("invalid", "contract")),
+        (200, "[" * 200_000, ("invalid", "contract")),  # RecursionError in json.loads
+    ],
+    ids=["503-data-null", "404-data-string", "200-data-null", "200-data-list", "200-deep"],
+)
+def test_malformed_bodies_are_classified_not_raised(
+    provider: ProviderConfig, status: int, body: object, expected: tuple[str, str]
+) -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        if isinstance(body, str):
+            return httpx.Response(status, text=body)
+        return httpx.Response(status, json=body)
+
+    _, outcome = fetch(provider, handler)
+    assert (outcome.code, outcome.error_class) == expected
+
+
+@pytest.mark.parametrize("value", [b"99999999999999999999", b"300000000000", b"\xb2", b"soon"])
+def test_odd_retry_after_is_ignored(provider: ProviderConfig, value: bytes) -> None:
+    headers = [(b"retry-after", value)]
+    _, outcome = fetch(provider, lambda r: httpx.Response(429, headers=headers))
+    assert (outcome.code, outcome.error_class) == ("http_error", "transport")
+    assert outcome.retry_after_until is None
+
+
 def test_429_respects_retry_after(provider: ProviderConfig) -> None:
     attempt, outcome = fetch(
         provider, lambda r: httpx.Response(429, headers={"retry-after": "120"})
