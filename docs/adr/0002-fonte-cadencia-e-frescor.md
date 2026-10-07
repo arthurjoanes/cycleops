@@ -45,7 +45,7 @@ Frescor e horário (`policy/priority-policy.yaml` e `policy/provider-oslo.yaml`)
 
 1. Manter `feed_generation`. A amostra confirma o comportamento e não há mudança de arquivo.
 2. Não adotar sinal de valet por enquanto. Repetir a checagem numa amostra de dia, em dia de valet.
-3. Manter a margem de publicação em 10 s. Simulei a regra de agendamento sobre as publicações da amostra, com cada arquivo visível 1 s depois do `last_reported` pelo relógio local. Com 10 s a simulação reproduz o medido (p50 10,6 s e p95 25,6 s de idade no recebimento, contra 10,9 s e 25,9 s, e as mesmas 3 repetições). Com 15 s ela piora: p50 15,6 s, p95 30,6 s e as mesmas 3 repetições, que caem nos degraus de 30 s do `last_updated`. Repetir a conta com a gravação longa.
+3. Manter a margem de publicação em 10 s. Simulei a regra de agendamento sobre as publicações da amostra, com cada arquivo visível de 1,0 s a 1,7 s depois do `last_reported` pelo relógio local; o resultado é o mesmo em toda essa faixa. Com 10 s a simulação reproduz o medido (p50 10,6 s e p95 25,6 s de idade no recebimento, contra 10,9 s e 25,9 s, e as mesmas 3 repetições). Com 15 s ela piora: p50 15,6 s, p95 30,6 s e as mesmas 3 repetições, que caem nos degraus de 30 s do `last_updated`. Repetir a conta com a gravação longa.
 4. Timeouts e prazo: ficam como estão. O p99 de 0,9 s não diz nada sobre a rede de dia nem sobre outras redes. Se as amostras pendentes mostrarem p99 acima de 15 s, decidir entre subir o piso e o prazo ou aceitar a taxa de timeout medida.
 
 ## Alternativas
