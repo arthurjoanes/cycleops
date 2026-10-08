@@ -2,7 +2,7 @@
 
 Passos para pôr o repositório e a demo no GitHub. Os workflows já estão em `.github/workflows/`:
 
-- `ci.yml`: backend (ruff, mypy, pytest, `generate-artifacts --check`), web (lint, typecheck, Vitest, build do Pages, `check:bundle`, Playwright sob `/cycleops/`), checagem de texto e gitleaks. Roda em PR e em push na `main`.
+- `ci.yml`: backend (ruff, mypy, `migrate` a partir do zero, pytest com integração num PostgreSQL de service container, `generate-artifacts --check`), web (lint, typecheck, Vitest, build do Pages, `check:bundle`, Playwright sob `/cycleops/`), Compose sintético sem internet (smoke, saída do worker bloqueada e o E2E do Compose), checagem de texto e gitleaks. Roda em PR e em push na `main`.
 - `pages.yml`: build e deploy do Pages. Roda depois de um `ci` verde em push na `main`, ou à mão.
 - `feed-check.yml`: `inspect-feed` com 5 requisições, só à mão e só em `arthurjoanes/cycleops`.
 

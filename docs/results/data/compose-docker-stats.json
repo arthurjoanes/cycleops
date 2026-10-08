@@ -1,0 +1,484 @@
+{
+  "environment": {
+    "cpu": "AMD Ryzen 7 5700X3D 8-Core Processor",
+    "cores": 16,
+    "os": "win32 10.0.26300",
+    "docker": "29.7.2 (linux/amd64)",
+    "commit": "01b4497",
+    "date": "2026-10-08T08:56:36.951165+00:00"
+  },
+  "method": "docker compose -p cycleops-e2e -f compose.yaml -f compose.offline.yaml up -d --build --wait on a fresh volume, then idle for 300 s with no browser or client connected (only the containers' own healthchecks). 10 samples of `docker stats --no-stream`, about 5 s apart. CPU % is relative to one core (Docker's convention); MemUsage as Docker reports it.",
+  "stackUpAt": "2026-10-08T08:50:09Z",
+  "summary": {
+    "cycleops-e2e-api-1": {
+      "samples": 10,
+      "cpuPercentMean": 5.23,
+      "cpuPercentMax": 25.29,
+      "memUsageFirst": "79.44MiB / 15.56GiB",
+      "memUsageLast": "80.7MiB / 15.56GiB"
+    },
+    "cycleops-e2e-edge-1": {
+      "samples": 10,
+      "cpuPercentMean": 0.26,
+      "cpuPercentMax": 2.56,
+      "memUsageFirst": "13.27MiB / 15.56GiB",
+      "memUsageLast": "12.55MiB / 15.56GiB"
+    },
+    "cycleops-e2e-postgres-1": {
+      "samples": 10,
+      "cpuPercentMean": 2.3,
+      "cpuPercentMax": 4.25,
+      "memUsageFirst": "58.63MiB / 15.56GiB",
+      "memUsageLast": "59.28MiB / 15.56GiB"
+    },
+    "cycleops-e2e-worker-1": {
+      "samples": 10,
+      "cpuPercentMean": 1.95,
+      "cpuPercentMax": 10.21,
+      "memUsageFirst": "86.39MiB / 15.56GiB",
+      "memUsageLast": "87.25MiB / 15.56GiB"
+    }
+  },
+  "samples": [
+    {
+      "sample": 1,
+      "at": "2026-10-08T08:55:25Z",
+      "container": "cycleops-e2e-edge-1",
+      "cpuPercent": 0.0,
+      "memUsage": "13.27MiB / 15.56GiB",
+      "memPercent": 0.08,
+      "netIO": "2.57kB / 252B",
+      "blockIO": "0B / 16.4kB",
+      "pids": 15
+    },
+    {
+      "sample": 1,
+      "at": "2026-10-08T08:55:25Z",
+      "container": "cycleops-e2e-api-1",
+      "cpuPercent": 0.26,
+      "memUsage": "79.44MiB / 15.56GiB",
+      "memPercent": 0.5,
+      "netIO": "867kB / 103kB",
+      "blockIO": "0B / 0B",
+      "pids": 2
+    },
+    {
+      "sample": 1,
+      "at": "2026-10-08T08:55:25Z",
+      "container": "cycleops-e2e-worker-1",
+      "cpuPercent": 0.01,
+      "memUsage": "86.39MiB / 15.56GiB",
+      "memPercent": 0.54,
+      "netIO": "507kB / 9.97MB",
+      "blockIO": "0B / 0B",
+      "pids": 3
+    },
+    {
+      "sample": 1,
+      "at": "2026-10-08T08:55:25Z",
+      "container": "cycleops-e2e-postgres-1",
+      "cpuPercent": 0.08,
+      "memUsage": "58.63MiB / 15.56GiB",
+      "memPercent": 0.37,
+      "netIO": "10.1MB / 1.38MB",
+      "blockIO": "0B / 93.1MB",
+      "pids": 13
+    },
+    {
+      "sample": 2,
+      "at": "2026-10-08T08:55:33Z",
+      "container": "cycleops-e2e-edge-1",
+      "cpuPercent": 0.0,
+      "memUsage": "12.41MiB / 15.56GiB",
+      "memPercent": 0.08,
+      "netIO": "2.57kB / 252B",
+      "blockIO": "0B / 16.4kB",
+      "pids": 15
+    },
+    {
+      "sample": 2,
+      "at": "2026-10-08T08:55:33Z",
+      "container": "cycleops-e2e-api-1",
+      "cpuPercent": 0.23,
+      "memUsage": "80.03MiB / 15.56GiB",
+      "memPercent": 0.5,
+      "netIO": "883kB / 105kB",
+      "blockIO": "0B / 0B",
+      "pids": 2
+    },
+    {
+      "sample": 2,
+      "at": "2026-10-08T08:55:33Z",
+      "container": "cycleops-e2e-worker-1",
+      "cpuPercent": 0.76,
+      "memUsage": "87.14MiB / 15.56GiB",
+      "memPercent": 0.55,
+      "netIO": "527kB / 10.4MB",
+      "blockIO": "0B / 0B",
+      "pids": 3
+    },
+    {
+      "sample": 2,
+      "at": "2026-10-08T08:55:33Z",
+      "container": "cycleops-e2e-postgres-1",
+      "cpuPercent": 3.16,
+      "memUsage": "58.2MiB / 15.56GiB",
+      "memPercent": 0.37,
+      "netIO": "10.5MB / 1.41MB",
+      "blockIO": "0B / 94.2MB",
+      "pids": 13
+    },
+    {
+      "sample": 3,
+      "at": "2026-10-08T08:55:40Z",
+      "container": "cycleops-e2e-edge-1",
+      "cpuPercent": 2.56,
+      "memUsage": "13.97MiB / 15.56GiB",
+      "memPercent": 0.09,
+      "netIO": "2.57kB / 252B",
+      "blockIO": "0B / 16.4kB",
+      "pids": 15
+    },
+    {
+      "sample": 3,
+      "at": "2026-10-08T08:55:40Z",
+      "container": "cycleops-e2e-api-1",
+      "cpuPercent": 24.78,
+      "memUsage": "80.36MiB / 15.56GiB",
+      "memPercent": 0.5,
+      "netIO": "890kB / 107kB",
+      "blockIO": "0B / 0B",
+      "pids": 2
+    },
+    {
+      "sample": 3,
+      "at": "2026-10-08T08:55:40Z",
+      "container": "cycleops-e2e-worker-1",
+      "cpuPercent": 0.01,
+      "memUsage": "86.76MiB / 15.56GiB",
+      "memPercent": 0.54,
+      "netIO": "527kB / 10.4MB",
+      "blockIO": "0B / 0B",
+      "pids": 3
+    },
+    {
+      "sample": 3,
+      "at": "2026-10-08T08:55:40Z",
+      "container": "cycleops-e2e-postgres-1",
+      "cpuPercent": 3.33,
+      "memUsage": "58.35MiB / 15.56GiB",
+      "memPercent": 0.37,
+      "netIO": "10.5MB / 1.42MB",
+      "blockIO": "0B / 94.7MB",
+      "pids": 13
+    },
+    {
+      "sample": 4,
+      "at": "2026-10-08T08:55:46Z",
+      "container": "cycleops-e2e-edge-1",
+      "cpuPercent": 0.0,
+      "memUsage": "12.85MiB / 15.56GiB",
+      "memPercent": 0.08,
+      "netIO": "2.57kB / 252B",
+      "blockIO": "0B / 16.4kB",
+      "pids": 15
+    },
+    {
+      "sample": 4,
+      "at": "2026-10-08T08:55:46Z",
+      "container": "cycleops-e2e-api-1",
+      "cpuPercent": 0.21,
+      "memUsage": "79.73MiB / 15.56GiB",
+      "memPercent": 0.5,
+      "netIO": "908kB / 109kB",
+      "blockIO": "0B / 0B",
+      "pids": 2
+    },
+    {
+      "sample": 4,
+      "at": "2026-10-08T08:55:46Z",
+      "container": "cycleops-e2e-worker-1",
+      "cpuPercent": 0.0,
+      "memUsage": "86.95MiB / 15.56GiB",
+      "memPercent": 0.55,
+      "netIO": "546kB / 10.8MB",
+      "blockIO": "0B / 0B",
+      "pids": 3
+    },
+    {
+      "sample": 4,
+      "at": "2026-10-08T08:55:46Z",
+      "container": "cycleops-e2e-postgres-1",
+      "cpuPercent": 3.24,
+      "memUsage": "64.17MiB / 15.56GiB",
+      "memPercent": 0.4,
+      "netIO": "10.9MB / 1.46MB",
+      "blockIO": "0B / 95.9MB",
+      "pids": 13
+    },
+    {
+      "sample": 5,
+      "at": "2026-10-08T08:55:53Z",
+      "container": "cycleops-e2e-edge-1",
+      "cpuPercent": 0.0,
+      "memUsage": "12.48MiB / 15.56GiB",
+      "memPercent": 0.08,
+      "netIO": "2.57kB / 252B",
+      "blockIO": "0B / 16.4kB",
+      "pids": 15
+    },
+    {
+      "sample": 5,
+      "at": "2026-10-08T08:55:53Z",
+      "container": "cycleops-e2e-api-1",
+      "cpuPercent": 0.27,
+      "memUsage": "79.79MiB / 15.56GiB",
+      "memPercent": 0.5,
+      "netIO": "916kB / 111kB",
+      "blockIO": "0B / 0B",
+      "pids": 2
+    },
+    {
+      "sample": 5,
+      "at": "2026-10-08T08:55:53Z",
+      "container": "cycleops-e2e-worker-1",
+      "cpuPercent": 0.01,
+      "memUsage": "86.8MiB / 15.56GiB",
+      "memPercent": 0.54,
+      "netIO": "547kB / 10.8MB",
+      "blockIO": "0B / 0B",
+      "pids": 3
+    },
+    {
+      "sample": 5,
+      "at": "2026-10-08T08:55:53Z",
+      "container": "cycleops-e2e-postgres-1",
+      "cpuPercent": 0.18,
+      "memUsage": "59MiB / 15.56GiB",
+      "memPercent": 0.37,
+      "netIO": "10.9MB / 1.47MB",
+      "blockIO": "0B / 96.6MB",
+      "pids": 13
+    },
+    {
+      "sample": 6,
+      "at": "2026-10-08T08:56:01Z",
+      "container": "cycleops-e2e-edge-1",
+      "cpuPercent": 0.0,
+      "memUsage": "13.41MiB / 15.56GiB",
+      "memPercent": 0.08,
+      "netIO": "2.57kB / 252B",
+      "blockIO": "0B / 16.4kB",
+      "pids": 15
+    },
+    {
+      "sample": 6,
+      "at": "2026-10-08T08:56:01Z",
+      "container": "cycleops-e2e-api-1",
+      "cpuPercent": 25.29,
+      "memUsage": "81.13MiB / 15.56GiB",
+      "memPercent": 0.51,
+      "netIO": "934kB / 114kB",
+      "blockIO": "0B / 0B",
+      "pids": 2
+    },
+    {
+      "sample": 6,
+      "at": "2026-10-08T08:56:01Z",
+      "container": "cycleops-e2e-worker-1",
+      "cpuPercent": 0.0,
+      "memUsage": "86.44MiB / 15.56GiB",
+      "memPercent": 0.54,
+      "netIO": "567kB / 11.2MB",
+      "blockIO": "0B / 0B",
+      "pids": 3
+    },
+    {
+      "sample": 6,
+      "at": "2026-10-08T08:56:01Z",
+      "container": "cycleops-e2e-postgres-1",
+      "cpuPercent": 3.35,
+      "memUsage": "59.12MiB / 15.56GiB",
+      "memPercent": 0.37,
+      "netIO": "11.4MB / 1.51MB",
+      "blockIO": "0B / 97.8MB",
+      "pids": 13
+    },
+    {
+      "sample": 7,
+      "at": "2026-10-08T08:56:08Z",
+      "container": "cycleops-e2e-edge-1",
+      "cpuPercent": 0.0,
+      "memUsage": "13MiB / 15.56GiB",
+      "memPercent": 0.08,
+      "netIO": "2.57kB / 252B",
+      "blockIO": "0B / 16.4kB",
+      "pids": 15
+    },
+    {
+      "sample": 7,
+      "at": "2026-10-08T08:56:08Z",
+      "container": "cycleops-e2e-api-1",
+      "cpuPercent": 0.23,
+      "memUsage": "80.04MiB / 15.56GiB",
+      "memPercent": 0.5,
+      "netIO": "942kB / 115kB",
+      "blockIO": "0B / 0B",
+      "pids": 2
+    },
+    {
+      "sample": 7,
+      "at": "2026-10-08T08:56:08Z",
+      "container": "cycleops-e2e-worker-1",
+      "cpuPercent": 0.75,
+      "memUsage": "87.24MiB / 15.56GiB",
+      "memPercent": 0.55,
+      "netIO": "568kB / 11.2MB",
+      "blockIO": "0B / 0B",
+      "pids": 3
+    },
+    {
+      "sample": 7,
+      "at": "2026-10-08T08:56:08Z",
+      "container": "cycleops-e2e-postgres-1",
+      "cpuPercent": 0.11,
+      "memUsage": "58.91MiB / 15.56GiB",
+      "memPercent": 0.37,
+      "netIO": "11.4MB / 1.51MB",
+      "blockIO": "0B / 97.9MB",
+      "pids": 13
+    },
+    {
+      "sample": 8,
+      "at": "2026-10-08T08:56:15Z",
+      "container": "cycleops-e2e-edge-1",
+      "cpuPercent": 0.0,
+      "memUsage": "13.55MiB / 15.56GiB",
+      "memPercent": 0.09,
+      "netIO": "2.57kB / 252B",
+      "blockIO": "0B / 16.4kB",
+      "pids": 15
+    },
+    {
+      "sample": 8,
+      "at": "2026-10-08T08:56:15Z",
+      "container": "cycleops-e2e-api-1",
+      "cpuPercent": 0.38,
+      "memUsage": "80.11MiB / 15.56GiB",
+      "memPercent": 0.5,
+      "netIO": "958kB / 117kB",
+      "blockIO": "0B / 0B",
+      "pids": 2
+    },
+    {
+      "sample": 8,
+      "at": "2026-10-08T08:56:15Z",
+      "container": "cycleops-e2e-worker-1",
+      "cpuPercent": 0.0,
+      "memUsage": "87.09MiB / 15.56GiB",
+      "memPercent": 0.55,
+      "netIO": "586kB / 11.6MB",
+      "blockIO": "0B / 0B",
+      "pids": 3
+    },
+    {
+      "sample": 8,
+      "at": "2026-10-08T08:56:15Z",
+      "container": "cycleops-e2e-postgres-1",
+      "cpuPercent": 2.98,
+      "memUsage": "58.3MiB / 15.56GiB",
+      "memPercent": 0.37,
+      "netIO": "11.8MB / 1.55MB",
+      "blockIO": "0B / 98.4MB",
+      "pids": 13
+    },
+    {
+      "sample": 9,
+      "at": "2026-10-08T08:56:22Z",
+      "container": "cycleops-e2e-edge-1",
+      "cpuPercent": 0.04,
+      "memUsage": "12.97MiB / 15.56GiB",
+      "memPercent": 0.08,
+      "netIO": "2.57kB / 252B",
+      "blockIO": "0B / 16.4kB",
+      "pids": 15
+    },
+    {
+      "sample": 9,
+      "at": "2026-10-08T08:56:22Z",
+      "container": "cycleops-e2e-api-1",
+      "cpuPercent": 0.22,
+      "memUsage": "80.61MiB / 15.56GiB",
+      "memPercent": 0.51,
+      "netIO": "968kB / 120kB",
+      "blockIO": "0B / 0B",
+      "pids": 2
+    },
+    {
+      "sample": 9,
+      "at": "2026-10-08T08:56:22Z",
+      "container": "cycleops-e2e-worker-1",
+      "cpuPercent": 7.76,
+      "memUsage": "87.04MiB / 15.56GiB",
+      "memPercent": 0.55,
+      "netIO": "587kB / 11.6MB",
+      "blockIO": "0B / 0B",
+      "pids": 3
+    },
+    {
+      "sample": 9,
+      "at": "2026-10-08T08:56:22Z",
+      "container": "cycleops-e2e-postgres-1",
+      "cpuPercent": 2.29,
+      "memUsage": "58.45MiB / 15.56GiB",
+      "memPercent": 0.37,
+      "netIO": "11.8MB / 1.56MB",
+      "blockIO": "0B / 98.6MB",
+      "pids": 13
+    },
+    {
+      "sample": 10,
+      "at": "2026-10-08T08:56:30Z",
+      "container": "cycleops-e2e-edge-1",
+      "cpuPercent": 0.0,
+      "memUsage": "12.55MiB / 15.56GiB",
+      "memPercent": 0.08,
+      "netIO": "2.57kB / 252B",
+      "blockIO": "0B / 16.4kB",
+      "pids": 15
+    },
+    {
+      "sample": 10,
+      "at": "2026-10-08T08:56:30Z",
+      "container": "cycleops-e2e-api-1",
+      "cpuPercent": 0.42,
+      "memUsage": "80.7MiB / 15.56GiB",
+      "memPercent": 0.51,
+      "netIO": "986kB / 122kB",
+      "blockIO": "0B / 0B",
+      "pids": 2
+    },
+    {
+      "sample": 10,
+      "at": "2026-10-08T08:56:30Z",
+      "container": "cycleops-e2e-worker-1",
+      "cpuPercent": 10.21,
+      "memUsage": "87.25MiB / 15.56GiB",
+      "memPercent": 0.55,
+      "netIO": "606kB / 12.1MB",
+      "blockIO": "0B / 0B",
+      "pids": 3
+    },
+    {
+      "sample": 10,
+      "at": "2026-10-08T08:56:30Z",
+      "container": "cycleops-e2e-postgres-1",
+      "cpuPercent": 4.25,
+      "memUsage": "59.28MiB / 15.56GiB",
+      "memPercent": 0.37,
+      "netIO": "12.2MB / 1.6MB",
+      "blockIO": "0B / 99.1MB",
+      "pids": 14
+    }
+  ]
+}
