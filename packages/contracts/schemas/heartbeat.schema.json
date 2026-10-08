@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "feedState": {
+      "enum": [
+        "unknown",
+        "fresh",
+        "late",
+        "stale",
+        "quarantined",
+        "closed"
+      ],
+      "title": "Feedstate",
+      "type": "string"
+    },
+    "headSequence": {
+      "title": "Headsequence",
+      "type": "integer"
+    },
+    "lastSourceUpdatedAt": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Lastsourceupdatedat"
+    },
+    "serverTime": {
+      "format": "date-time",
+      "title": "Servertime",
+      "type": "string"
+    },
+    "streamId": {
+      "title": "Streamid",
+      "type": "string"
+    }
+  },
+  "required": [
+    "serverTime",
+    "streamId",
+    "headSequence",
+    "lastSourceUpdatedAt",
+    "feedState"
+  ],
+  "title": "Heartbeat",
+  "type": "object"
+}

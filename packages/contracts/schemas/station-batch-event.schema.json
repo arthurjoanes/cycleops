@@ -1,0 +1,707 @@
+{
+  "$defs": {
+    "Coverage": {
+      "additionalProperties": false,
+      "properties": {
+        "total": {
+          "title": "Total",
+          "type": "integer"
+        },
+        "valid": {
+          "title": "Valid",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "valid",
+        "total"
+      ],
+      "title": "Coverage",
+      "type": "object"
+    },
+    "DecisionFacts": {
+      "additionalProperties": false,
+      "properties": {
+        "bikesAvailable": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Bikesavailable"
+        },
+        "capacityUsed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Capacityused"
+        },
+        "docksAvailable": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Docksavailable"
+        },
+        "publicationsUsed": {
+          "title": "Publicationsused",
+          "type": "integer"
+        },
+        "recoveryMinUnits": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Recoveryminunits"
+        },
+        "sourceUpdatedAt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Sourceupdatedat"
+        },
+        "spanSeconds": {
+          "title": "Spanseconds",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "bikesAvailable",
+        "docksAvailable",
+        "capacityUsed",
+        "recoveryMinUnits",
+        "publicationsUsed",
+        "spanSeconds",
+        "sourceUpdatedAt"
+      ],
+      "title": "DecisionFacts",
+      "type": "object"
+    },
+    "FeedHealth": {
+      "additionalProperties": false,
+      "properties": {
+        "breakerOpenUntil": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Breakeropenuntil"
+        },
+        "coverage": {
+          "$ref": "#/$defs/Coverage"
+        },
+        "lastAttemptAt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Lastattemptat"
+        },
+        "lastOutcome": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Lastoutcome"
+        },
+        "lastSourceUpdatedAt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Lastsourceupdatedat"
+        },
+        "quarantinedFeeds": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Quarantinedfeeds",
+          "type": "array"
+        },
+        "state": {
+          "enum": [
+            "unknown",
+            "fresh",
+            "late",
+            "stale",
+            "quarantined",
+            "closed"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state",
+        "lastSourceUpdatedAt",
+        "lastAttemptAt",
+        "lastOutcome",
+        "coverage",
+        "breakerOpenUntil"
+      ],
+      "title": "FeedHealth",
+      "type": "object"
+    },
+    "IncidentItem": {
+      "additionalProperties": false,
+      "properties": {
+        "closeReason": {
+          "anyOf": [
+            {
+              "enum": [
+                "contrary_observation",
+                "source_stale",
+                "station_stale",
+                "flag_disabled",
+                "uninstalled",
+                "return_capacity_unknown",
+                "removed_from_catalog",
+                "service_closed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Closereason"
+        },
+        "confirmedAt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confirmedat"
+        },
+        "firstObservedAt": {
+          "format": "date-time",
+          "title": "Firstobservedat",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "pickup_unavailable",
+            "return_unavailable"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "observedSince": {
+          "format": "date-time",
+          "title": "Observedsince",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "candidate",
+            "confirmed",
+            "recovering",
+            "unverifiable",
+            "resolved",
+            "closed_without_recovery",
+            "discarded"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "suspendedFrom": {
+          "anyOf": [
+            {
+              "enum": [
+                "candidate",
+                "confirmed",
+                "recovering",
+                "unverifiable",
+                "resolved",
+                "closed_without_recovery",
+                "discarded"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Suspendedfrom"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "state",
+        "firstObservedAt",
+        "observedSince"
+      ],
+      "title": "IncidentItem",
+      "type": "object"
+    },
+    "PriorityDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "conditions": {
+          "items": {
+            "enum": [
+              "outside_service_hours",
+              "not_installed",
+              "unverifiable",
+              "pickup_disabled",
+              "return_disabled",
+              "pickup_unavailable",
+              "return_unavailable",
+              "return_capacity_unknown",
+              "ok"
+            ],
+            "type": "string"
+          },
+          "title": "Conditions",
+          "type": "array"
+        },
+        "facts": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DecisionFacts"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "incidents": {
+          "items": {
+            "$ref": "#/$defs/IncidentItem"
+          },
+          "title": "Incidents",
+          "type": "array"
+        },
+        "policyVersion": {
+          "title": "Policyversion",
+          "type": "string"
+        },
+        "primaryCondition": {
+          "enum": [
+            "outside_service_hours",
+            "not_installed",
+            "unverifiable",
+            "pickup_disabled",
+            "return_disabled",
+            "pickup_unavailable",
+            "return_unavailable",
+            "return_capacity_unknown",
+            "ok"
+          ],
+          "title": "Primarycondition",
+          "type": "string"
+        },
+        "quality": {
+          "enum": [
+            "valid",
+            "suspect",
+            "invalid",
+            "unknown"
+          ],
+          "title": "Quality",
+          "type": "string"
+        },
+        "reasonCodes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasoncodes",
+          "type": "array"
+        },
+        "reasonText": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reasontext"
+        },
+        "sortKey": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Sortkey"
+        },
+        "stationId": {
+          "pattern": "^[A-Za-z0-9_-]{1,64}$",
+          "title": "Stationid",
+          "type": "string"
+        },
+        "unverifiableReason": {
+          "anyOf": [
+            {
+              "enum": [
+                "source_unknown",
+                "source_stale",
+                "source_quarantined",
+                "missing_in_status",
+                "invalid_record",
+                "report_stale"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Unverifiablereason"
+        }
+      },
+      "required": [
+        "stationId",
+        "conditions",
+        "primaryCondition",
+        "unverifiableReason",
+        "reasonCodes",
+        "reasonText",
+        "facts",
+        "quality",
+        "incidents",
+        "policyVersion",
+        "sortKey"
+      ],
+      "title": "PriorityDecision",
+      "type": "object"
+    },
+    "StationAvailability": {
+      "additionalProperties": false,
+      "properties": {
+        "bikesAvailable": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Bikesavailable"
+        },
+        "docksAvailable": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Docksavailable"
+        },
+        "isInstalled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Isinstalled"
+        },
+        "isRenting": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Isrenting"
+        },
+        "isReturning": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Isreturning"
+        },
+        "quality": {
+          "enum": [
+            "valid",
+            "suspect",
+            "invalid",
+            "unknown"
+          ],
+          "title": "Quality",
+          "type": "string"
+        },
+        "qualityFlags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Qualityflags",
+          "type": "array"
+        },
+        "sourceUpdatedAt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Sourceupdatedat"
+        },
+        "stationId": {
+          "pattern": "^[A-Za-z0-9_-]{1,64}$",
+          "title": "Stationid",
+          "type": "string"
+        },
+        "stationReportedAt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Stationreportedat"
+        },
+        "vehicleTypes": {
+          "items": {
+            "$ref": "#/$defs/VehicleTypeCount"
+          },
+          "title": "Vehicletypes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "stationId",
+        "isInstalled",
+        "isRenting",
+        "isReturning",
+        "bikesAvailable",
+        "docksAvailable",
+        "vehicleTypes",
+        "sourceUpdatedAt",
+        "stationReportedAt",
+        "quality",
+        "qualityFlags"
+      ],
+      "title": "StationAvailability",
+      "type": "object"
+    },
+    "StationState": {
+      "additionalProperties": false,
+      "properties": {
+        "availability": {
+          "$ref": "#/$defs/StationAvailability"
+        },
+        "decision": {
+          "$ref": "#/$defs/PriorityDecision"
+        }
+      },
+      "required": [
+        "availability",
+        "decision"
+      ],
+      "title": "StationState",
+      "type": "object"
+    },
+    "VehicleTypeCount": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "title": "Count",
+          "type": "integer"
+        },
+        "vehicleTypeId": {
+          "title": "Vehicletypeid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "vehicleTypeId",
+        "count"
+      ],
+      "title": "VehicleTypeCount",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "catalogVersion": {
+      "title": "Catalogversion",
+      "type": "string"
+    },
+    "cause": {
+      "enum": [
+        "publication",
+        "clock",
+        "catalog",
+        "policy"
+      ],
+      "title": "Cause",
+      "type": "string"
+    },
+    "committedAt": {
+      "format": "date-time",
+      "title": "Committedat",
+      "type": "string"
+    },
+    "eventId": {
+      "title": "Eventid",
+      "type": "string"
+    },
+    "feedHealth": {
+      "$ref": "#/$defs/FeedHealth"
+    },
+    "mode": {
+      "enum": [
+        "live",
+        "recorded_replay",
+        "synthetic"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "receivedAt": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Receivedat"
+    },
+    "removedStationIds": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Removedstationids",
+      "type": "array"
+    },
+    "schemaVersion": {
+      "const": 1,
+      "default": 1,
+      "title": "Schemaversion",
+      "type": "integer"
+    },
+    "sequence": {
+      "title": "Sequence",
+      "type": "integer"
+    },
+    "sourceUpdatedAt": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Sourceupdatedat"
+    },
+    "stations": {
+      "items": {
+        "$ref": "#/$defs/StationState"
+      },
+      "title": "Stations",
+      "type": "array"
+    },
+    "streamId": {
+      "title": "Streamid",
+      "type": "string"
+    },
+    "type": {
+      "const": "station_batch",
+      "default": "station_batch",
+      "title": "Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "eventId",
+    "streamId",
+    "sequence",
+    "mode",
+    "cause",
+    "catalogVersion",
+    "sourceUpdatedAt",
+    "receivedAt",
+    "committedAt",
+    "stations",
+    "removedStationIds",
+    "feedHealth"
+  ],
+  "title": "StationBatchEvent",
+  "type": "object"
+}

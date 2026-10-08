@@ -67,4 +67,12 @@ uv run --project apps/backend record-feed --minutes 90 --out data/recordings/rec
 uv run --project apps/backend inspect-feed --recording fixtures/recorded/sample-*.ndjson.gz
 ```
 
+4. Aceite da gravação longa, sem rede. Ele passa quando algum incidente vai de `confirmed` a `resolved` dentro da gravação; sem isso o comando sai com código 3 e não escreve nada:
+
+```bash
+uv run --project apps/backend compile-replay --recording data/recordings/record-<UTC>.ndjson.gz --out data/replay-check
+```
+
+Se passar e tiver até 5 MB, copiar a gravação e o manifesto para `fixtures/recorded/`, criar `fixtures/recorded/demo.yaml` com `recording: <nome do arquivo>` e rodar `uv run --project apps/backend generate-artifacts`. Acima de 5 MB, o recorte ainda não existe: pedir uma sessão para isso.
+
 Com os relatórios, atualizar esta tabela, o ADR 0002 e `docs/results/index.md`.

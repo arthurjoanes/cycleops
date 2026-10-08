@@ -1,0 +1,17 @@
+# Synthetic demo artifact. One hour before and after the nightly closing in Oslo:
+# an incident that resolves, a relapse, and the closing at 01:00.
+seed: 42
+stations: 267
+cadenceSeconds: 15
+changeFraction: 0.05
+start: "2026-10-06T00:15:00+02:00"
+end: "2026-10-06T01:15:00+02:00"
+serviceHours:
+  opens: "05:00"
+  closes: "01:00"
+  timezone: Europe/Oslo
+  source: https://intercom.help/oslo-bysykkel/nb/articles/803699-ofte-stilte-sporsmal
+  checkedAt: "2026-10-06"
+scenarios:
+  - incident_recovery
+  - relapse

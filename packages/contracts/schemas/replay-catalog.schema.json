@@ -1,0 +1,100 @@
+{
+  "$defs": {
+    "CatalogStation": {
+      "additionalProperties": false,
+      "properties": {
+        "capacity": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Capacity"
+        },
+        "isVirtual": {
+          "title": "Isvirtual",
+          "type": "boolean"
+        },
+        "lat": {
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "title": "Lon",
+          "type": "number"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "stationId": {
+          "pattern": "^[A-Za-z0-9_-]{1,64}$",
+          "title": "Stationid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "stationId",
+        "name",
+        "lat",
+        "lon",
+        "capacity",
+        "isVirtual"
+      ],
+      "title": "CatalogStation",
+      "type": "object"
+    },
+    "CatalogVersion": {
+      "additionalProperties": false,
+      "properties": {
+        "catalogVersion": {
+          "title": "Catalogversion",
+          "type": "string"
+        },
+        "stations": {
+          "items": {
+            "$ref": "#/$defs/CatalogStation"
+          },
+          "title": "Stations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "catalogVersion",
+        "stations"
+      ],
+      "title": "CatalogVersion",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": 1,
+      "default": 1,
+      "title": "Schemaversion",
+      "type": "integer"
+    },
+    "systemId": {
+      "title": "Systemid",
+      "type": "string"
+    },
+    "versions": {
+      "items": {
+        "$ref": "#/$defs/CatalogVersion"
+      },
+      "title": "Versions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "systemId",
+    "versions"
+  ],
+  "title": "ReplayCatalog",
+  "type": "object"
+}
