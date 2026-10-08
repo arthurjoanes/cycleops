@@ -3,2141 +3,2141 @@
   "systemId": "synthetic-oslo",
   "versions": [
     {
-      "catalogVersion": "8b332034cdefd7bb",
+      "catalogVersion": "879ad4294973e0b9",
       "stations": [
         {
           "capacity": 30,
           "isVirtual": false,
-          "lat": 59.941598,
-          "lon": 10.731613,
+          "lat": 59.9045,
+          "lon": 10.7862,
           "name": "Estação sintética 001",
           "stationId": "S-0001"
         },
         {
           "capacity": 13,
           "isVirtual": false,
-          "lat": 59.911223,
-          "lon": 10.740274,
+          "lat": 59.9118,
+          "lon": 10.7839,
           "name": "Estação sintética 002",
           "stationId": "S-0002"
         },
         {
           "capacity": 10,
           "isVirtual": false,
-          "lat": 59.912475,
-          "lon": 10.727111,
+          "lat": 59.9194,
+          "lon": 10.7438,
           "name": "Estação sintética 003",
           "stationId": "S-0003"
         },
         {
           "capacity": 18,
           "isVirtual": false,
-          "lat": 59.923466,
-          "lon": 10.70289,
+          "lat": 59.9151,
+          "lon": 10.7306,
           "name": "Estação sintética 004",
           "stationId": "S-0004"
         },
         {
           "capacity": 17,
           "isVirtual": false,
-          "lat": 59.899565,
-          "lon": 10.673273,
+          "lat": 59.9309,
+          "lon": 10.7728,
           "name": "Estação sintética 005",
           "stationId": "S-0005"
         },
         {
           "capacity": 17,
           "isVirtual": false,
-          "lat": 59.925685,
-          "lon": 10.710744,
+          "lat": 59.9411,
+          "lon": 10.7508,
           "name": "Estação sintética 006",
           "stationId": "S-0006"
         },
         {
           "capacity": 14,
           "isVirtual": false,
-          "lat": 59.931288,
-          "lon": 10.772736,
+          "lat": 59.9404,
+          "lon": 10.73,
           "name": "Estação sintética 007",
           "stationId": "S-0007"
         },
         {
           "capacity": 13,
           "isVirtual": false,
-          "lat": 59.913212,
-          "lon": 10.73815,
+          "lat": 59.9178,
+          "lon": 10.7664,
           "name": "Estação sintética 008",
           "stationId": "S-0008"
         },
         {
           "capacity": 27,
           "isVirtual": false,
-          "lat": 59.934066,
-          "lon": 10.724193,
+          "lat": 59.9298,
+          "lon": 10.7436,
           "name": "Estação sintética 009",
           "stationId": "S-0009"
         },
         {
           "capacity": 12,
           "isVirtual": false,
-          "lat": 59.918237,
-          "lon": 10.697304,
+          "lat": 59.9102,
+          "lon": 10.7517,
           "name": "Estação sintética 010",
           "stationId": "S-0010"
         },
         {
           "capacity": 28,
           "isVirtual": false,
-          "lat": 59.929407,
-          "lon": 10.756149,
+          "lat": 59.9151,
+          "lon": 10.7223,
           "name": "Estação sintética 011",
           "stationId": "S-0011"
         },
         {
           "capacity": 23,
           "isVirtual": false,
-          "lat": 59.909306,
-          "lon": 10.779085,
+          "lat": 59.9287,
+          "lon": 10.7999,
           "name": "Estação sintética 012",
           "stationId": "S-0012"
         },
         {
           "capacity": 11,
           "isVirtual": false,
-          "lat": 59.912164,
-          "lon": 10.747926,
+          "lat": 59.8984,
+          "lon": 10.6744,
           "name": "Estação sintética 013",
           "stationId": "S-0013"
         },
         {
           "capacity": 10,
           "isVirtual": false,
-          "lat": 59.915269,
-          "lon": 10.76042,
+          "lat": 59.9428,
+          "lon": 10.723,
           "name": "Estação sintética 014",
           "stationId": "S-0014"
         },
         {
           "capacity": 12,
           "isVirtual": false,
-          "lat": 59.932191,
-          "lon": 10.759054,
+          "lat": 59.9165,
+          "lon": 10.7574,
           "name": "Estação sintética 015",
           "stationId": "S-0015"
         },
         {
           "capacity": 16,
           "isVirtual": false,
-          "lat": 59.936197,
-          "lon": 10.761355,
+          "lat": 59.9134,
+          "lon": 10.7377,
           "name": "Estação sintética 016",
           "stationId": "S-0016"
         },
         {
           "capacity": 17,
           "isVirtual": false,
-          "lat": 59.932855,
-          "lon": 10.760687,
+          "lat": 59.9379,
+          "lon": 10.7305,
           "name": "Estação sintética 017",
           "stationId": "S-0017"
         },
         {
           "capacity": 26,
           "isVirtual": false,
-          "lat": 59.915007,
-          "lon": 10.734608,
+          "lat": 59.9294,
+          "lon": 10.7262,
           "name": "Estação sintética 018",
           "stationId": "S-0018"
         },
         {
           "capacity": 29,
           "isVirtual": false,
-          "lat": 59.91585,
-          "lon": 10.808024,
+          "lat": 59.9419,
+          "lon": 10.6741,
           "name": "Estação sintética 019",
           "stationId": "S-0019"
         },
         {
           "capacity": 10,
           "isVirtual": false,
-          "lat": 59.918897,
-          "lon": 10.694359,
+          "lat": 59.9191,
+          "lon": 10.7578,
           "name": "Estação sintética 020",
           "stationId": "S-0020"
         },
         {
           "capacity": 27,
           "isVirtual": false,
-          "lat": 59.908322,
-          "lon": 10.723082,
+          "lat": 59.9138,
+          "lon": 10.7981,
           "name": "Estação sintética 021",
           "stationId": "S-0021"
         },
         {
           "capacity": 16,
           "isVirtual": false,
-          "lat": 59.933991,
-          "lon": 10.756552,
+          "lat": 59.9178,
+          "lon": 10.7387,
           "name": "Estação sintética 022",
           "stationId": "S-0022"
         },
         {
           "capacity": 30,
           "isVirtual": false,
-          "lat": 59.914614,
-          "lon": 10.733736,
+          "lat": 59.9269,
+          "lon": 10.7208,
           "name": "Estação sintética 023",
           "stationId": "S-0023"
         },
         {
           "capacity": 27,
           "isVirtual": false,
-          "lat": 59.921314,
-          "lon": 10.69292,
+          "lat": 59.9276,
+          "lon": 10.7992,
           "name": "Estação sintética 024",
           "stationId": "S-0024"
         },
         {
           "capacity": 23,
           "isVirtual": false,
-          "lat": 59.920584,
-          "lon": 10.754403,
+          "lat": 59.9492,
+          "lon": 10.7686,
           "name": "Estação sintética 025",
           "stationId": "S-0025"
         },
         {
           "capacity": 17,
           "isVirtual": false,
-          "lat": 59.930088,
-          "lon": 10.733336,
+          "lat": 59.9221,
+          "lon": 10.6859,
           "name": "Estação sintética 026",
           "stationId": "S-0026"
         },
         {
           "capacity": 24,
           "isVirtual": false,
-          "lat": 59.940469,
-          "lon": 10.730806,
+          "lat": 59.9253,
+          "lon": 10.7505,
           "name": "Estação sintética 027",
           "stationId": "S-0027"
         },
         {
           "capacity": 28,
           "isVirtual": false,
-          "lat": 59.930419,
-          "lon": 10.773584,
+          "lat": 59.9274,
+          "lon": 10.6754,
           "name": "Estação sintética 028",
           "stationId": "S-0028"
         },
         {
           "capacity": 18,
           "isVirtual": false,
-          "lat": 59.911335,
-          "lon": 10.751871,
+          "lat": 59.9199,
+          "lon": 10.7354,
           "name": "Estação sintética 029",
           "stationId": "S-0029"
         },
         {
           "capacity": 10,
           "isVirtual": false,
-          "lat": 59.930073,
-          "lon": 10.771752,
+          "lat": 59.9111,
+          "lon": 10.7304,
           "name": "Estação sintética 030",
           "stationId": "S-0030"
         },
         {
           "capacity": 15,
           "isVirtual": false,
-          "lat": 59.915122,
-          "lon": 10.734077,
+          "lat": 59.9119,
+          "lon": 10.7478,
           "name": "Estação sintética 031",
           "stationId": "S-0031"
         },
         {
           "capacity": 23,
           "isVirtual": false,
-          "lat": 59.939847,
-          "lon": 10.723026,
+          "lat": 59.9141,
+          "lon": 10.7155,
           "name": "Estação sintética 032",
           "stationId": "S-0032"
         },
         {
           "capacity": 20,
           "isVirtual": false,
-          "lat": 59.917073,
-          "lon": 10.808861,
+          "lat": 59.9125,
+          "lon": 10.7622,
           "name": "Estação sintética 033",
           "stationId": "S-0033"
         },
         {
           "capacity": 18,
           "isVirtual": false,
-          "lat": 59.910522,
-          "lon": 10.740181,
+          "lat": 59.9073,
+          "lon": 10.7549,
           "name": "Estação sintética 034",
           "stationId": "S-0034"
         },
         {
           "capacity": 14,
           "isVirtual": false,
-          "lat": 59.905709,
-          "lon": 10.747801,
+          "lat": 59.9225,
+          "lon": 10.7045,
           "name": "Estação sintética 035",
           "stationId": "S-0035"
         },
         {
           "capacity": 16,
           "isVirtual": false,
-          "lat": 59.940152,
-          "lon": 10.721376,
+          "lat": 59.9278,
+          "lon": 10.7613,
           "name": "Estação sintética 036",
           "stationId": "S-0036"
         },
         {
           "capacity": 20,
           "isVirtual": false,
-          "lat": 59.925224,
-          "lon": 10.775653,
+          "lat": 59.9211,
+          "lon": 10.7547,
           "name": "Estação sintética 037",
           "stationId": "S-0037"
         },
         {
           "capacity": 13,
           "isVirtual": false,
-          "lat": 59.897468,
-          "lon": 10.676536,
+          "lat": 59.9077,
+          "lon": 10.6868,
           "name": "Estação sintética 038",
           "stationId": "S-0038"
         },
         {
           "capacity": 12,
           "isVirtual": false,
-          "lat": 59.953569,
-          "lon": 10.751419,
+          "lat": 59.9283,
+          "lon": 10.7784,
           "name": "Estação sintética 039",
           "stationId": "S-0039"
         },
         {
           "capacity": 22,
           "isVirtual": false,
-          "lat": 59.921298,
-          "lon": 10.753011,
+          "lat": 59.9147,
+          "lon": 10.7599,
           "name": "Estação sintética 040",
           "stationId": "S-0040"
         },
         {
           "capacity": 13,
           "isVirtual": false,
-          "lat": 59.9108,
-          "lon": 10.74935,
+          "lat": 59.9363,
+          "lon": 10.7054,
           "name": "Estação sintética 041",
           "stationId": "S-0041"
         },
         {
           "capacity": 21,
           "isVirtual": false,
-          "lat": 59.907857,
-          "lon": 10.745108,
+          "lat": 59.9069,
+          "lon": 10.7603,
           "name": "Estação sintética 042",
           "stationId": "S-0042"
         },
         {
           "capacity": 21,
           "isVirtual": false,
-          "lat": 59.915901,
-          "lon": 10.757598,
+          "lat": 59.9225,
+          "lon": 10.7209,
           "name": "Estação sintética 043",
           "stationId": "S-0043"
         },
         {
           "capacity": 29,
           "isVirtual": false,
-          "lat": 59.931822,
-          "lon": 10.772351,
+          "lat": 59.9195,
+          "lon": 10.7088,
           "name": "Estação sintética 044",
           "stationId": "S-0044"
         },
         {
           "capacity": 18,
           "isVirtual": false,
-          "lat": 59.937799,
-          "lon": 10.762644,
+          "lat": 59.9202,
+          "lon": 10.7935,
           "name": "Estação sintética 045",
           "stationId": "S-0045"
         },
         {
           "capacity": 11,
           "isVirtual": false,
-          "lat": 59.916375,
-          "lon": 10.760586,
+          "lat": 59.9328,
+          "lon": 10.7586,
           "name": "Estação sintética 046",
           "stationId": "S-0046"
         },
         {
           "capacity": 24,
           "isVirtual": false,
-          "lat": 59.914115,
-          "lon": 10.747719,
+          "lat": 59.9209,
+          "lon": 10.7334,
           "name": "Estação sintética 047",
           "stationId": "S-0047"
         },
         {
           "capacity": 27,
           "isVirtual": false,
-          "lat": 59.920778,
-          "lon": 10.768476,
+          "lat": 59.9111,
+          "lon": 10.7494,
           "name": "Estação sintética 048",
           "stationId": "S-0048"
         },
         {
           "capacity": 13,
           "isVirtual": false,
-          "lat": 59.943674,
-          "lon": 10.724492,
+          "lat": 59.9349,
+          "lon": 10.7495,
           "name": "Estação sintética 049",
           "stationId": "S-0049"
         },
         {
           "capacity": 22,
           "isVirtual": false,
-          "lat": 59.916282,
-          "lon": 10.713866,
+          "lat": 59.9203,
+          "lon": 10.7606,
           "name": "Estação sintética 050",
           "stationId": "S-0050"
         },
         {
           "capacity": 12,
           "isVirtual": false,
-          "lat": 59.923193,
-          "lon": 10.763521,
+          "lat": 59.9085,
+          "lon": 10.7419,
           "name": "Estação sintética 051",
           "stationId": "S-0051"
         },
         {
           "capacity": 27,
           "isVirtual": false,
-          "lat": 59.914379,
-          "lon": 10.732609,
+          "lat": 59.9529,
+          "lon": 10.7665,
           "name": "Estação sintética 052",
           "stationId": "S-0052"
         },
         {
           "capacity": 19,
           "isVirtual": false,
-          "lat": 59.919932,
-          "lon": 10.692518,
+          "lat": 59.9081,
+          "lon": 10.748,
           "name": "Estação sintética 053",
           "stationId": "S-0053"
         },
         {
           "capacity": 30,
           "isVirtual": false,
-          "lat": 59.914435,
-          "lon": 10.731368,
+          "lat": 59.9228,
+          "lon": 10.7387,
           "name": "Estação sintética 054",
           "stationId": "S-0054"
         },
         {
           "capacity": 29,
           "isVirtual": false,
-          "lat": 59.922088,
-          "lon": 10.706249,
+          "lat": 59.9321,
+          "lon": 10.7234,
           "name": "Estação sintética 055",
           "stationId": "S-0055"
         },
         {
           "capacity": 21,
           "isVirtual": false,
-          "lat": 59.916743,
-          "lon": 10.712945,
+          "lat": 59.9256,
+          "lon": 10.7609,
           "name": "Estação sintética 056",
           "stationId": "S-0056"
         },
         {
           "capacity": 28,
           "isVirtual": false,
-          "lat": 59.947355,
-          "lon": 10.724774,
+          "lat": 59.9127,
+          "lon": 10.8138,
           "name": "Estação sintética 057",
           "stationId": "S-0057"
         },
         {
           "capacity": 16,
           "isVirtual": false,
-          "lat": 59.903077,
-          "lon": 10.743358,
+          "lat": 59.9172,
+          "lon": 10.7622,
           "name": "Estação sintética 058",
           "stationId": "S-0058"
         },
         {
           "capacity": 12,
           "isVirtual": false,
-          "lat": 59.913393,
-          "lon": 10.752321,
+          "lat": 59.946,
+          "lon": 10.7104,
           "name": "Estação sintética 059",
           "stationId": "S-0059"
         },
         {
           "capacity": 11,
           "isVirtual": false,
-          "lat": 59.90596,
-          "lon": 10.746186,
+          "lat": 59.9224,
+          "lon": 10.7272,
           "name": "Estação sintética 060",
           "stationId": "S-0060"
         },
         {
           "capacity": 17,
           "isVirtual": false,
-          "lat": 59.919147,
-          "lon": 10.699224,
+          "lat": 59.9132,
+          "lon": 10.7323,
           "name": "Estação sintética 061",
           "stationId": "S-0061"
         },
         {
           "capacity": 19,
           "isVirtual": false,
-          "lat": 59.910924,
-          "lon": 10.748568,
+          "lat": 59.936,
+          "lon": 10.7654,
           "name": "Estação sintética 062",
           "stationId": "S-0062"
         },
         {
           "capacity": 12,
           "isVirtual": false,
-          "lat": 59.915007,
-          "lon": 10.806893,
+          "lat": 59.9318,
+          "lon": 10.7487,
           "name": "Estação sintética 063",
           "stationId": "S-0063"
         },
         {
           "capacity": 17,
           "isVirtual": false,
-          "lat": 59.930021,
-          "lon": 10.717085,
+          "lat": 59.9059,
+          "lon": 10.7787,
           "name": "Estação sintética 064",
           "stationId": "S-0064"
         },
         {
           "capacity": 13,
           "isVirtual": false,
-          "lat": 59.942073,
-          "lon": 10.72267,
+          "lat": 59.9238,
+          "lon": 10.676,
           "name": "Estação sintética 065",
           "stationId": "S-0065"
         },
         {
           "capacity": 22,
           "isVirtual": false,
-          "lat": 59.94381,
-          "lon": 10.723591,
+          "lat": 59.9328,
+          "lon": 10.7115,
           "name": "Estação sintética 066",
           "stationId": "S-0066"
         },
         {
           "capacity": 18,
           "isVirtual": false,
-          "lat": 59.943635,
-          "lon": 10.724055,
+          "lat": 59.9175,
+          "lon": 10.7321,
           "name": "Estação sintética 067",
           "stationId": "S-0067"
         },
         {
           "capacity": 24,
           "isVirtual": false,
-          "lat": 59.919017,
-          "lon": 10.693101,
+          "lat": 59.9251,
+          "lon": 10.776,
           "name": "Estação sintética 068",
           "stationId": "S-0068"
         },
         {
           "capacity": 30,
           "isVirtual": false,
-          "lat": 59.919066,
-          "lon": 10.695919,
+          "lat": 59.9337,
+          "lon": 10.7519,
           "name": "Estação sintética 069",
           "stationId": "S-0069"
         },
         {
           "capacity": 21,
           "isVirtual": false,
-          "lat": 59.91116,
-          "lon": 10.750792,
+          "lat": 59.9223,
+          "lon": 10.7618,
           "name": "Estação sintética 070",
           "stationId": "S-0070"
         },
         {
           "capacity": 15,
           "isVirtual": false,
-          "lat": 59.922726,
-          "lon": 10.763733,
+          "lat": 59.9206,
+          "lon": 10.7343,
           "name": "Estação sintética 071",
           "stationId": "S-0071"
         },
         {
           "capacity": 21,
           "isVirtual": false,
-          "lat": 59.937366,
-          "lon": 10.760149,
+          "lat": 59.9351,
+          "lon": 10.7691,
           "name": "Estação sintética 072",
           "stationId": "S-0072"
         },
         {
           "capacity": 21,
           "isVirtual": false,
-          "lat": 59.897929,
-          "lon": 10.673009,
+          "lat": 59.9132,
+          "lon": 10.7898,
           "name": "Estação sintética 073",
           "stationId": "S-0073"
         },
         {
           "capacity": 16,
           "isVirtual": false,
-          "lat": 59.933756,
-          "lon": 10.725447,
+          "lat": 59.9123,
+          "lon": 10.7523,
           "name": "Estação sintética 074",
           "stationId": "S-0074"
         },
         {
           "capacity": 18,
           "isVirtual": false,
-          "lat": 59.924961,
-          "lon": 10.774626,
+          "lat": 59.9255,
+          "lon": 10.7461,
           "name": "Estação sintética 075",
           "stationId": "S-0075"
         },
         {
           "capacity": 30,
           "isVirtual": false,
-          "lat": 59.927805,
-          "lon": 10.733207,
+          "lat": 59.9389,
+          "lon": 10.7806,
           "name": "Estação sintética 076",
           "stationId": "S-0076"
         },
         {
           "capacity": 12,
           "isVirtual": false,
-          "lat": 59.913081,
-          "lon": 10.726162,
+          "lat": 59.9288,
+          "lon": 10.7675,
           "name": "Estação sintética 077",
           "stationId": "S-0077"
         },
         {
           "capacity": 29,
           "isVirtual": false,
-          "lat": 59.943119,
-          "lon": 10.722209,
+          "lat": 59.9128,
+          "lon": 10.7101,
           "name": "Estação sintética 078",
           "stationId": "S-0078"
         },
         {
           "capacity": 30,
           "isVirtual": false,
-          "lat": 59.915915,
-          "lon": 10.756978,
+          "lat": 59.9427,
+          "lon": 10.7038,
           "name": "Estação sintética 079",
           "stationId": "S-0079"
         },
         {
           "capacity": 15,
           "isVirtual": false,
-          "lat": 59.912854,
-          "lon": 10.733722,
+          "lat": 59.917,
+          "lon": 10.7799,
           "name": "Estação sintética 080",
           "stationId": "S-0080"
         },
         {
           "capacity": 27,
           "isVirtual": false,
-          "lat": 59.927367,
-          "lon": 10.732289,
+          "lat": 59.9105,
+          "lon": 10.7505,
           "name": "Estação sintética 081",
           "stationId": "S-0081"
         },
         {
           "capacity": 17,
           "isVirtual": false,
-          "lat": 59.925995,
-          "lon": 10.710423,
+          "lat": 59.9284,
+          "lon": 10.756,
           "name": "Estação sintética 082",
           "stationId": "S-0082"
         },
         {
           "capacity": 15,
           "isVirtual": false,
-          "lat": 59.914224,
-          "lon": 10.735343,
+          "lat": 59.9247,
+          "lon": 10.7246,
           "name": "Estação sintética 083",
           "stationId": "S-0083"
         },
         {
           "capacity": 24,
           "isVirtual": false,
-          "lat": 59.921886,
-          "lon": 10.705249,
+          "lat": 59.9142,
+          "lon": 10.7328,
           "name": "Estação sintética 084",
           "stationId": "S-0084"
         },
         {
           "capacity": 22,
           "isVirtual": false,
-          "lat": 59.899342,
-          "lon": 10.67613,
+          "lat": 59.9191,
+          "lon": 10.7641,
           "name": "Estação sintética 085",
           "stationId": "S-0085"
         },
         {
           "capacity": 18,
           "isVirtual": false,
-          "lat": 59.911468,
-          "lon": 10.72835,
+          "lat": 59.9281,
+          "lon": 10.7512,
           "name": "Estação sintética 086",
           "stationId": "S-0086"
         },
         {
           "capacity": 30,
           "isVirtual": false,
-          "lat": 59.952643,
-          "lon": 10.749041,
+          "lat": 59.9082,
+          "lon": 10.7811,
           "name": "Estação sintética 087",
           "stationId": "S-0087"
         },
         {
           "capacity": 27,
           "isVirtual": false,
-          "lat": 59.916502,
-          "lon": 10.756483,
+          "lat": 59.9029,
+          "lon": 10.698,
           "name": "Estação sintética 088",
           "stationId": "S-0088"
         },
         {
           "capacity": 17,
           "isVirtual": false,
-          "lat": 59.912623,
-          "lon": 10.750804,
+          "lat": 59.9273,
+          "lon": 10.7732,
           "name": "Estação sintética 089",
           "stationId": "S-0089"
         },
         {
           "capacity": 20,
           "isVirtual": false,
-          "lat": 59.931129,
-          "lon": 10.77496,
+          "lat": 59.9238,
+          "lon": 10.7347,
           "name": "Estação sintética 090",
           "stationId": "S-0090"
         },
         {
           "capacity": 11,
           "isVirtual": false,
-          "lat": 59.92537,
-          "lon": 10.777053,
+          "lat": 59.929,
+          "lon": 10.7169,
           "name": "Estação sintética 091",
           "stationId": "S-0091"
         },
         {
           "capacity": 17,
           "isVirtual": false,
-          "lat": 59.928224,
-          "lon": 10.757953,
+          "lat": 59.91,
+          "lon": 10.7914,
           "name": "Estação sintética 092",
           "stationId": "S-0092"
         },
         {
           "capacity": 11,
           "isVirtual": false,
-          "lat": 59.926053,
-          "lon": 10.77717,
+          "lat": 59.9271,
+          "lon": 10.731,
           "name": "Estação sintética 093",
           "stationId": "S-0093"
         },
         {
           "capacity": 20,
           "isVirtual": false,
-          "lat": 59.92698,
-          "lon": 10.732209,
+          "lat": 59.921,
+          "lon": 10.7504,
           "name": "Estação sintética 094",
           "stationId": "S-0094"
         },
         {
           "capacity": 22,
           "isVirtual": false,
-          "lat": 59.938466,
-          "lon": 10.724333,
+          "lat": 59.9125,
+          "lon": 10.7508,
           "name": "Estação sintética 095",
           "stationId": "S-0095"
         },
         {
           "capacity": 18,
           "isVirtual": false,
-          "lat": 59.927904,
-          "lon": 10.798118,
+          "lat": 59.9203,
+          "lon": 10.6838,
           "name": "Estação sintética 096",
           "stationId": "S-0096"
         },
         {
           "capacity": 12,
           "isVirtual": false,
-          "lat": 59.910013,
-          "lon": 10.721226,
+          "lat": 59.936,
+          "lon": 10.7319,
           "name": "Estação sintética 097",
           "stationId": "S-0097"
         },
         {
           "capacity": 16,
           "isVirtual": false,
-          "lat": 59.919667,
-          "lon": 10.769093,
+          "lat": 59.9276,
+          "lon": 10.766,
           "name": "Estação sintética 098",
           "stationId": "S-0098"
         },
         {
           "capacity": 28,
           "isVirtual": false,
-          "lat": 59.911062,
-          "lon": 10.749439,
+          "lat": 59.9154,
+          "lon": 10.7693,
           "name": "Estação sintética 099",
           "stationId": "S-0099"
         },
         {
           "capacity": 20,
           "isVirtual": false,
-          "lat": 59.912995,
-          "lon": 10.748708,
+          "lat": 59.9315,
+          "lon": 10.7622,
           "name": "Estação sintética 100",
           "stationId": "S-0100"
         },
         {
           "capacity": 16,
           "isVirtual": false,
-          "lat": 59.922794,
-          "lon": 10.792636,
+          "lat": 59.913,
+          "lon": 10.7468,
           "name": "Estação sintética 101",
           "stationId": "S-0101"
         },
         {
           "capacity": 30,
           "isVirtual": false,
-          "lat": 59.907496,
-          "lon": 10.780717,
+          "lat": 59.9159,
+          "lon": 10.7378,
           "name": "Estação sintética 102",
           "stationId": "S-0102"
         },
         {
           "capacity": 25,
           "isVirtual": false,
-          "lat": 59.934571,
-          "lon": 10.723994,
+          "lat": 59.9137,
+          "lon": 10.7573,
           "name": "Estação sintética 103",
           "stationId": "S-0103"
         },
         {
           "capacity": 22,
           "isVirtual": false,
-          "lat": 59.932513,
-          "lon": 10.756228,
+          "lat": 59.9329,
+          "lon": 10.7776,
           "name": "Estação sintética 104",
           "stationId": "S-0104"
         },
         {
           "capacity": 30,
           "isVirtual": false,
-          "lat": 59.919917,
-          "lon": 10.690572,
+          "lat": 59.9186,
+          "lon": 10.7039,
           "name": "Estação sintética 105",
           "stationId": "S-0105"
         },
         {
           "capacity": 24,
           "isVirtual": false,
-          "lat": 59.923292,
-          "lon": 10.793926,
+          "lat": 59.9212,
+          "lon": 10.77,
           "name": "Estação sintética 106",
           "stationId": "S-0106"
         },
         {
           "capacity": 14,
           "isVirtual": false,
-          "lat": 59.936155,
-          "lon": 10.726444,
+          "lat": 59.9143,
+          "lon": 10.7202,
           "name": "Estação sintética 107",
           "stationId": "S-0107"
         },
         {
           "capacity": 18,
           "isVirtual": false,
-          "lat": 59.916946,
-          "lon": 10.710639,
+          "lat": 59.9232,
+          "lon": 10.7928,
           "name": "Estação sintética 108",
           "stationId": "S-0108"
         },
         {
           "capacity": 14,
           "isVirtual": false,
-          "lat": 59.920505,
-          "lon": 10.770331,
+          "lat": 59.9331,
+          "lon": 10.704,
           "name": "Estação sintética 109",
           "stationId": "S-0109"
         },
         {
           "capacity": 17,
           "isVirtual": false,
-          "lat": 59.913517,
-          "lon": 10.729214,
+          "lat": 59.9269,
+          "lon": 10.777,
           "name": "Estação sintética 110",
           "stationId": "S-0110"
         },
         {
           "capacity": 27,
           "isVirtual": false,
-          "lat": 59.937282,
-          "lon": 10.762553,
+          "lat": 59.9218,
+          "lon": 10.7305,
           "name": "Estação sintética 111",
           "stationId": "S-0111"
         },
         {
           "capacity": 27,
           "isVirtual": false,
-          "lat": 59.933655,
-          "lon": 10.72403,
+          "lat": 59.9352,
+          "lon": 10.7265,
           "name": "Estação sintética 112",
           "stationId": "S-0112"
         },
         {
           "capacity": 18,
           "isVirtual": false,
-          "lat": 59.940229,
-          "lon": 10.731761,
+          "lat": 59.9101,
+          "lon": 10.7407,
           "name": "Estação sintética 113",
           "stationId": "S-0113"
         },
         {
           "capacity": 28,
           "isVirtual": false,
-          "lat": 59.912121,
-          "lon": 10.74942,
+          "lat": 59.9107,
+          "lon": 10.7374,
           "name": "Estação sintética 114",
           "stationId": "S-0114"
         },
         {
           "capacity": 23,
           "isVirtual": false,
-          "lat": 59.914491,
-          "lon": 10.73472,
+          "lat": 59.9255,
+          "lon": 10.7312,
           "name": "Estação sintética 115",
           "stationId": "S-0115"
         },
         {
           "capacity": 28,
           "isVirtual": false,
-          "lat": 59.921768,
-          "lon": 10.763966,
+          "lat": 59.9102,
+          "lon": 10.7435,
           "name": "Estação sintética 116",
           "stationId": "S-0116"
         },
         {
           "capacity": 22,
           "isVirtual": false,
-          "lat": 59.922605,
-          "lon": 10.790793,
+          "lat": 59.9102,
+          "lon": 10.721,
           "name": "Estação sintética 117",
           "stationId": "S-0117"
         },
         {
           "capacity": 21,
           "isVirtual": false,
-          "lat": 59.904598,
-          "lon": 10.73895,
+          "lat": 59.9268,
+          "lon": 10.7384,
           "name": "Estação sintética 118",
           "stationId": "S-0118"
         },
         {
           "capacity": 17,
           "isVirtual": false,
-          "lat": 59.919738,
-          "lon": 10.689029,
+          "lat": 59.9425,
+          "lon": 10.7237,
           "name": "Estação sintética 119",
           "stationId": "S-0119"
         },
         {
           "capacity": 14,
           "isVirtual": false,
-          "lat": 59.939297,
-          "lon": 10.727749,
+          "lat": 59.9135,
+          "lon": 10.7573,
           "name": "Estação sintética 120",
           "stationId": "S-0120"
         },
         {
           "capacity": 26,
           "isVirtual": false,
-          "lat": 59.914778,
-          "lon": 10.755998,
+          "lat": 59.9246,
+          "lon": 10.7817,
           "name": "Estação sintética 121",
           "stationId": "S-0121"
         },
         {
           "capacity": 25,
           "isVirtual": false,
-          "lat": 59.911873,
-          "lon": 10.750673,
+          "lat": 59.9123,
+          "lon": 10.7638,
           "name": "Estação sintética 122",
           "stationId": "S-0122"
         },
         {
           "capacity": 12,
           "isVirtual": false,
-          "lat": 59.911354,
-          "lon": 10.746846,
+          "lat": 59.9153,
+          "lon": 10.7253,
           "name": "Estação sintética 123",
           "stationId": "S-0123"
         },
         {
           "capacity": 11,
           "isVirtual": false,
-          "lat": 59.952015,
-          "lon": 10.750571,
+          "lat": 59.9284,
+          "lon": 10.7594,
           "name": "Estação sintética 124",
           "stationId": "S-0124"
         },
         {
           "capacity": 13,
           "isVirtual": false,
-          "lat": 59.935457,
-          "lon": 10.72769,
+          "lat": 59.9296,
+          "lon": 10.7328,
           "name": "Estação sintética 125",
           "stationId": "S-0125"
         },
         {
           "capacity": 14,
           "isVirtual": false,
-          "lat": 59.911867,
-          "lon": 10.746586,
+          "lat": 59.9275,
+          "lon": 10.7103,
           "name": "Estação sintética 126",
           "stationId": "S-0126"
         },
         {
           "capacity": 30,
           "isVirtual": false,
-          "lat": 59.918059,
-          "lon": 10.690023,
+          "lat": 59.92,
+          "lon": 10.7266,
           "name": "Estação sintética 127",
           "stationId": "S-0127"
         },
         {
           "capacity": 15,
           "isVirtual": false,
-          "lat": 59.919182,
-          "lon": 10.694259,
+          "lat": 59.9132,
+          "lon": 10.75,
           "name": "Estação sintética 128",
           "stationId": "S-0128"
         },
         {
           "capacity": 23,
           "isVirtual": false,
-          "lat": 59.922052,
-          "lon": 10.762832,
+          "lat": 59.9071,
+          "lon": 10.7792,
           "name": "Estação sintética 129",
           "stationId": "S-0129"
         },
         {
           "capacity": 29,
           "isVirtual": false,
-          "lat": 59.909721,
-          "lon": 10.724087,
+          "lat": 59.9092,
+          "lon": 10.8143,
           "name": "Estação sintética 130",
           "stationId": "S-0130"
         },
         {
           "capacity": 12,
           "isVirtual": false,
-          "lat": 59.914545,
-          "lon": 10.759608,
+          "lat": 59.9403,
+          "lon": 10.7661,
           "name": "Estação sintética 131",
           "stationId": "S-0131"
         },
         {
           "capacity": 22,
           "isVirtual": false,
-          "lat": 59.946441,
-          "lon": 10.722781,
+          "lat": 59.9136,
+          "lon": 10.7262,
           "name": "Estação sintética 132",
           "stationId": "S-0132"
         },
         {
           "capacity": 22,
           "isVirtual": false,
-          "lat": 59.933478,
-          "lon": 10.757867,
+          "lat": 59.9069,
+          "lon": 10.7465,
           "name": "Estação sintética 133",
           "stationId": "S-0133"
         },
         {
           "capacity": 29,
           "isVirtual": false,
-          "lat": 59.924788,
-          "lon": 10.759531,
+          "lat": 59.9438,
+          "lon": 10.7601,
           "name": "Estação sintética 134",
           "stationId": "S-0134"
         },
         {
           "capacity": 24,
           "isVirtual": false,
-          "lat": 59.940019,
-          "lon": 10.731678,
+          "lat": 59.9521,
+          "lon": 10.7279,
           "name": "Estação sintética 135",
           "stationId": "S-0135"
         },
         {
           "capacity": 26,
           "isVirtual": false,
-          "lat": 59.926653,
-          "lon": 10.801412,
+          "lat": 59.939,
+          "lon": 10.723,
           "name": "Estação sintética 136",
           "stationId": "S-0136"
         },
         {
           "capacity": 18,
           "isVirtual": false,
-          "lat": 59.93994,
-          "lon": 10.722807,
+          "lat": 59.9392,
+          "lon": 10.7592,
           "name": "Estação sintética 137",
           "stationId": "S-0137"
         },
         {
           "capacity": 27,
           "isVirtual": false,
-          "lat": 59.912345,
-          "lon": 10.751922,
+          "lat": 59.9112,
+          "lon": 10.7301,
           "name": "Estação sintética 138",
           "stationId": "S-0138"
         },
         {
           "capacity": 10,
           "isVirtual": false,
-          "lat": 59.939848,
-          "lon": 10.731479,
+          "lat": 59.9186,
+          "lon": 10.7524,
           "name": "Estação sintética 139",
           "stationId": "S-0139"
         },
         {
           "capacity": 13,
           "isVirtual": false,
-          "lat": 59.930259,
-          "lon": 10.732631,
+          "lat": 59.9467,
+          "lon": 10.7738,
           "name": "Estação sintética 140",
           "stationId": "S-0140"
         },
         {
           "capacity": 27,
           "isVirtual": false,
-          "lat": 59.932944,
-          "lon": 10.727988,
+          "lat": 59.9137,
+          "lon": 10.7359,
           "name": "Estação sintética 141",
           "stationId": "S-0141"
         },
         {
           "capacity": 18,
           "isVirtual": false,
-          "lat": 59.909669,
-          "lon": 10.738364,
+          "lat": 59.8985,
+          "lon": 10.6744,
           "name": "Estação sintética 142",
           "stationId": "S-0142"
         },
         {
           "capacity": 30,
           "isVirtual": false,
-          "lat": 59.926368,
-          "lon": 10.710607,
+          "lat": 59.9333,
+          "lon": 10.7196,
           "name": "Estação sintética 143",
           "stationId": "S-0143"
         },
         {
           "capacity": 20,
           "isVirtual": false,
-          "lat": 59.918969,
-          "lon": 10.770585,
+          "lat": 59.9053,
+          "lon": 10.769,
           "name": "Estação sintética 144",
           "stationId": "S-0144"
         },
         {
           "capacity": 13,
           "isVirtual": false,
-          "lat": 59.91317,
-          "lon": 10.749303,
+          "lat": 59.9193,
+          "lon": 10.7747,
           "name": "Estação sintética 145",
           "stationId": "S-0145"
         },
         {
           "capacity": 19,
           "isVirtual": false,
-          "lat": 59.915717,
-          "lon": 10.809026,
+          "lat": 59.9335,
+          "lon": 10.7263,
           "name": "Estação sintética 146",
           "stationId": "S-0146"
         },
         {
           "capacity": 23,
           "isVirtual": false,
-          "lat": 59.953512,
-          "lon": 10.751468,
+          "lat": 59.9154,
+          "lon": 10.7146,
           "name": "Estação sintética 147",
           "stationId": "S-0147"
         },
         {
           "capacity": 15,
           "isVirtual": false,
-          "lat": 59.930075,
-          "lon": 10.714911,
+          "lat": 59.9191,
+          "lon": 10.7362,
           "name": "Estação sintética 148",
           "stationId": "S-0148"
         },
         {
           "capacity": 24,
           "isVirtual": false,
-          "lat": 59.923173,
-          "lon": 10.794039,
+          "lat": 59.9083,
+          "lon": 10.7678,
           "name": "Estação sintética 149",
           "stationId": "S-0149"
         },
         {
           "capacity": 10,
           "isVirtual": false,
-          "lat": 59.952543,
-          "lon": 10.752217,
+          "lat": 59.9224,
+          "lon": 10.7582,
           "name": "Estação sintética 150",
           "stationId": "S-0150"
         },
         {
           "capacity": 18,
           "isVirtual": false,
-          "lat": 59.925803,
-          "lon": 10.774047,
+          "lat": 59.9035,
+          "lon": 10.778,
           "name": "Estação sintética 151",
           "stationId": "S-0151"
         },
         {
           "capacity": 26,
           "isVirtual": false,
-          "lat": 59.914871,
-          "lon": 10.729368,
+          "lat": 59.9173,
+          "lon": 10.7582,
           "name": "Estação sintética 152",
           "stationId": "S-0152"
         },
         {
           "capacity": 15,
           "isVirtual": false,
-          "lat": 59.942996,
-          "lon": 10.722872,
+          "lat": 59.9324,
+          "lon": 10.7415,
           "name": "Estação sintética 153",
           "stationId": "S-0153"
         },
         {
           "capacity": 26,
           "isVirtual": false,
-          "lat": 59.928625,
-          "lon": 10.719284,
+          "lat": 59.9139,
+          "lon": 10.7423,
           "name": "Estação sintética 154",
           "stationId": "S-0154"
         },
         {
           "capacity": 13,
           "isVirtual": false,
-          "lat": 59.930494,
-          "lon": 10.773774,
+          "lat": 59.9295,
+          "lon": 10.7691,
           "name": "Estação sintética 155",
           "stationId": "S-0155"
         },
         {
           "capacity": 30,
           "isVirtual": false,
-          "lat": 59.916636,
-          "lon": 10.711607,
+          "lat": 59.9262,
+          "lon": 10.7098,
           "name": "Estação sintética 156",
           "stationId": "S-0156"
         },
         {
           "capacity": 19,
           "isVirtual": false,
-          "lat": 59.913257,
-          "lon": 10.737066,
+          "lat": 59.9372,
+          "lon": 10.7606,
           "name": "Estação sintética 157",
           "stationId": "S-0157"
         },
         {
           "capacity": 30,
           "isVirtual": false,
-          "lat": 59.951844,
-          "lon": 10.749839,
+          "lat": 59.9079,
+          "lon": 10.7627,
           "name": "Estação sintética 158",
           "stationId": "S-0158"
         },
         {
           "capacity": 26,
           "isVirtual": false,
-          "lat": 59.926564,
-          "lon": 10.73143,
+          "lat": 59.904,
+          "lon": 10.7406,
           "name": "Estação sintética 159",
           "stationId": "S-0159"
         },
         {
           "capacity": 29,
           "isVirtual": false,
-          "lat": 59.929232,
-          "lon": 10.719206,
+          "lat": 59.9462,
+          "lon": 10.7246,
           "name": "Estação sintética 160",
           "stationId": "S-0160"
         },
         {
           "capacity": 16,
           "isVirtual": false,
-          "lat": 59.913211,
-          "lon": 10.735232,
+          "lat": 59.9118,
+          "lon": 10.7351,
           "name": "Estação sintética 161",
           "stationId": "S-0161"
         },
         {
           "capacity": 14,
           "isVirtual": false,
-          "lat": 59.917834,
-          "lon": 10.692464,
+          "lat": 59.9392,
+          "lon": 10.7743,
           "name": "Estação sintética 162",
           "stationId": "S-0162"
         },
         {
           "capacity": 21,
           "isVirtual": false,
-          "lat": 59.916009,
-          "lon": 10.710762,
+          "lat": 59.921,
+          "lon": 10.7141,
           "name": "Estação sintética 163",
           "stationId": "S-0163"
         },
         {
           "capacity": 15,
           "isVirtual": false,
-          "lat": 59.918274,
-          "lon": 10.736906,
+          "lat": 59.9116,
+          "lon": 10.7618,
           "name": "Estação sintética 164",
           "stationId": "S-0164"
         },
         {
           "capacity": 27,
           "isVirtual": false,
-          "lat": 59.926646,
-          "lon": 10.796859,
+          "lat": 59.9231,
+          "lon": 10.7717,
           "name": "Estação sintética 165",
           "stationId": "S-0165"
         },
         {
           "capacity": 26,
           "isVirtual": false,
-          "lat": 59.917727,
-          "lon": 10.738414,
+          "lat": 59.9267,
+          "lon": 10.7162,
           "name": "Estação sintética 166",
           "stationId": "S-0166"
         },
         {
           "capacity": 10,
           "isVirtual": false,
-          "lat": 59.914317,
-          "lon": 10.748812,
+          "lat": 59.9103,
+          "lon": 10.75,
           "name": "Estação sintética 167",
           "stationId": "S-0167"
         },
         {
           "capacity": 29,
           "isVirtual": false,
-          "lat": 59.926174,
-          "lon": 10.728914,
+          "lat": 59.9204,
+          "lon": 10.6911,
           "name": "Estação sintética 168",
           "stationId": "S-0168"
         },
         {
           "capacity": 20,
           "isVirtual": false,
-          "lat": 59.926578,
-          "lon": 10.799821,
+          "lat": 59.9359,
+          "lon": 10.735,
           "name": "Estação sintética 169",
           "stationId": "S-0169"
         },
         {
           "capacity": 25,
           "isVirtual": false,
-          "lat": 59.907364,
-          "lon": 10.782593,
+          "lat": 59.9309,
+          "lon": 10.7918,
           "name": "Estação sintética 170",
           "stationId": "S-0170"
         },
         {
           "capacity": 10,
           "isVirtual": false,
-          "lat": 59.918004,
-          "lon": 10.691091,
+          "lat": 59.9201,
+          "lon": 10.7689,
           "name": "Estação sintética 171",
           "stationId": "S-0171"
         },
         {
           "capacity": 13,
           "isVirtual": false,
-          "lat": 59.931535,
-          "lon": 10.77331,
+          "lat": 59.9223,
+          "lon": 10.6796,
           "name": "Estação sintética 172",
           "stationId": "S-0172"
         },
         {
           "capacity": 21,
           "isVirtual": false,
-          "lat": 59.936542,
-          "lon": 10.760708,
+          "lat": 59.9146,
+          "lon": 10.7534,
           "name": "Estação sintética 173",
           "stationId": "S-0173"
         },
         {
           "capacity": 19,
           "isVirtual": false,
-          "lat": 59.92608,
-          "lon": 10.775027,
+          "lat": 59.9193,
+          "lon": 10.6969,
           "name": "Estação sintética 174",
           "stationId": "S-0174"
         },
         {
           "capacity": 17,
           "isVirtual": false,
-          "lat": 59.934676,
-          "lon": 10.725366,
+          "lat": 59.9499,
+          "lon": 10.7302,
           "name": "Estação sintética 175",
           "stationId": "S-0175"
         },
         {
           "capacity": 11,
           "isVirtual": false,
-          "lat": 59.936145,
-          "lon": 10.762809,
+          "lat": 59.9295,
+          "lon": 10.749,
           "name": "Estação sintética 176",
           "stationId": "S-0176"
         },
         {
           "capacity": 17,
           "isVirtual": false,
-          "lat": 59.911874,
-          "lon": 10.728297,
+          "lat": 59.909,
+          "lon": 10.7562,
           "name": "Estação sintética 177",
           "stationId": "S-0177"
         },
         {
           "capacity": 28,
           "isVirtual": false,
-          "lat": 59.914035,
-          "lon": 10.73349,
+          "lat": 59.916,
+          "lon": 10.7516,
           "name": "Estação sintética 178",
           "stationId": "S-0178"
         },
         {
           "capacity": 12,
           "isVirtual": false,
-          "lat": 59.914717,
-          "lon": 10.75626,
+          "lat": 59.9032,
+          "lon": 10.7673,
           "name": "Estação sintética 179",
           "stationId": "S-0179"
         },
         {
           "capacity": 12,
           "isVirtual": false,
-          "lat": 59.89818,
-          "lon": 10.675309,
+          "lat": 59.9155,
+          "lon": 10.7511,
           "name": "Estação sintética 180",
           "stationId": "S-0180"
         },
         {
           "capacity": 25,
           "isVirtual": false,
-          "lat": 59.926599,
-          "lon": 10.729711,
+          "lat": 59.9112,
+          "lon": 10.7482,
           "name": "Estação sintética 181",
           "stationId": "S-0181"
         },
         {
           "capacity": 12,
           "isVirtual": false,
-          "lat": 59.918287,
-          "lon": 10.738479,
+          "lat": 59.9294,
+          "lon": 10.7137,
           "name": "Estação sintética 182",
           "stationId": "S-0182"
         },
         {
           "capacity": 27,
           "isVirtual": false,
-          "lat": 59.94556,
-          "lon": 10.72347,
+          "lat": 59.9166,
+          "lon": 10.7833,
           "name": "Estação sintética 183",
           "stationId": "S-0183"
         },
         {
           "capacity": 14,
           "isVirtual": false,
-          "lat": 59.939215,
-          "lon": 10.724459,
+          "lat": 59.9228,
+          "lon": 10.7757,
           "name": "Estação sintética 184",
           "stationId": "S-0184"
         },
         {
           "capacity": 14,
           "isVirtual": false,
-          "lat": 59.91352,
-          "lon": 10.736114,
+          "lat": 59.9155,
+          "lon": 10.7583,
           "name": "Estação sintética 185",
           "stationId": "S-0185"
         },
         {
           "capacity": 25,
           "isVirtual": false,
-          "lat": 59.939558,
-          "lon": 10.728875,
+          "lat": 59.9163,
+          "lon": 10.7574,
           "name": "Estação sintética 186",
           "stationId": "S-0186"
         },
         {
           "capacity": 27,
           "isVirtual": false,
-          "lat": 59.911471,
-          "lon": 10.749196,
+          "lat": 59.9378,
+          "lon": 10.7541,
           "name": "Estação sintética 187",
           "stationId": "S-0187"
         },
         {
           "capacity": 15,
           "isVirtual": false,
-          "lat": 59.919228,
-          "lon": 10.693856,
+          "lat": 59.9409,
+          "lon": 10.7208,
           "name": "Estação sintética 188",
           "stationId": "S-0188"
         },
         {
           "capacity": 18,
           "isVirtual": false,
-          "lat": 59.917654,
-          "lon": 10.73855,
+          "lat": 59.9309,
+          "lon": 10.8019,
           "name": "Estação sintética 189",
           "stationId": "S-0189"
         },
         {
           "capacity": 26,
           "isVirtual": false,
-          "lat": 59.919479,
-          "lon": 10.694425,
+          "lat": 59.9102,
+          "lon": 10.7386,
           "name": "Estação sintética 190",
           "stationId": "S-0190"
         },
         {
           "capacity": 29,
           "isVirtual": false,
-          "lat": 59.928496,
-          "lon": 10.755701,
+          "lat": 59.9262,
+          "lon": 10.7296,
           "name": "Estação sintética 191",
           "stationId": "S-0191"
         },
         {
           "capacity": 23,
           "isVirtual": false,
-          "lat": 59.934096,
-          "lon": 10.726174,
+          "lat": 59.9127,
+          "lon": 10.7356,
           "name": "Estação sintética 192",
           "stationId": "S-0192"
         },
         {
           "capacity": 16,
           "isVirtual": false,
-          "lat": 59.919549,
-          "lon": 10.694624,
+          "lat": 59.9115,
+          "lon": 10.7761,
           "name": "Estação sintética 193",
           "stationId": "S-0193"
         },
         {
           "capacity": 27,
           "isVirtual": false,
-          "lat": 59.916209,
-          "lon": 10.732213,
+          "lat": 59.9392,
+          "lon": 10.7688,
           "name": "Estação sintética 194",
           "stationId": "S-0194"
         },
         {
           "capacity": 16,
           "isVirtual": false,
-          "lat": 59.933009,
-          "lon": 10.7563,
+          "lat": 59.9227,
+          "lon": 10.6786,
           "name": "Estação sintética 195",
           "stationId": "S-0195"
         },
         {
           "capacity": 19,
           "isVirtual": false,
-          "lat": 59.946971,
-          "lon": 10.724966,
+          "lat": 59.9239,
+          "lon": 10.7314,
           "name": "Estação sintética 196",
           "stationId": "S-0196"
         },
         {
           "capacity": 22,
           "isVirtual": false,
-          "lat": 59.913129,
-          "lon": 10.750727,
+          "lat": 59.9336,
+          "lon": 10.7691,
           "name": "Estação sintética 197",
           "stationId": "S-0197"
         },
         {
           "capacity": 30,
           "isVirtual": false,
-          "lat": 59.916336,
-          "lon": 10.71331,
+          "lat": 59.9095,
+          "lon": 10.7225,
           "name": "Estação sintética 198",
           "stationId": "S-0198"
         },
         {
           "capacity": 21,
           "isVirtual": false,
-          "lat": 59.939754,
-          "lon": 10.725251,
+          "lat": 59.9121,
+          "lon": 10.7662,
           "name": "Estação sintética 199",
           "stationId": "S-0199"
         },
         {
           "capacity": 24,
           "isVirtual": false,
-          "lat": 59.926735,
-          "lon": 10.7302,
+          "lat": 59.9152,
+          "lon": 10.7821,
           "name": "Estação sintética 200",
           "stationId": "S-0200"
         },
         {
           "capacity": 26,
           "isVirtual": false,
-          "lat": 59.941851,
-          "lon": 10.721372,
+          "lat": 59.9107,
+          "lon": 10.761,
           "name": "Estação sintética 201",
           "stationId": "S-0201"
         },
         {
           "capacity": 24,
           "isVirtual": false,
-          "lat": 59.923665,
-          "lon": 10.791783,
+          "lat": 59.9052,
+          "lon": 10.7538,
           "name": "Estação sintética 202",
           "stationId": "S-0202"
         },
         {
           "capacity": 13,
           "isVirtual": false,
-          "lat": 59.923253,
-          "lon": 10.70474,
+          "lat": 59.9455,
+          "lon": 10.7139,
           "name": "Estação sintética 203",
           "stationId": "S-0203"
         },
         {
           "capacity": 17,
           "isVirtual": false,
-          "lat": 59.925211,
-          "lon": 10.708612,
+          "lat": 59.9526,
+          "lon": 10.7512,
           "name": "Estação sintética 204",
           "stationId": "S-0204"
         },
         {
           "capacity": 17,
           "isVirtual": false,
-          "lat": 59.912328,
-          "lon": 10.74774,
+          "lat": 59.929,
+          "lon": 10.7497,
           "name": "Estação sintética 205",
           "stationId": "S-0205"
         },
         {
           "capacity": 12,
           "isVirtual": false,
-          "lat": 59.92918,
-          "lon": 10.753606,
+          "lat": 59.9104,
+          "lon": 10.7051,
           "name": "Estação sintética 206",
           "stationId": "S-0206"
         },
         {
           "capacity": 20,
           "isVirtual": false,
-          "lat": 59.929509,
-          "lon": 10.73066,
+          "lat": 59.9232,
+          "lon": 10.7662,
           "name": "Estação sintética 207",
           "stationId": "S-0207"
         },
         {
           "capacity": 10,
           "isVirtual": false,
-          "lat": 59.928668,
-          "lon": 10.718131,
+          "lat": 59.9114,
+          "lon": 10.7473,
           "name": "Estação sintética 208",
           "stationId": "S-0208"
         },
         {
           "capacity": 28,
           "isVirtual": false,
-          "lat": 59.938861,
-          "lon": 10.720848,
+          "lat": 59.9307,
+          "lon": 10.7463,
           "name": "Estação sintética 209",
           "stationId": "S-0209"
         },
         {
           "capacity": 27,
           "isVirtual": false,
-          "lat": 59.917218,
-          "lon": 10.714953,
+          "lat": 59.9149,
+          "lon": 10.774,
           "name": "Estação sintética 210",
           "stationId": "S-0210"
         },
         {
           "capacity": 17,
           "isVirtual": false,
-          "lat": 59.926014,
-          "lon": 10.775927,
+          "lat": 59.9086,
+          "lon": 10.7869,
           "name": "Estação sintética 211",
           "stationId": "S-0211"
         },
         {
           "capacity": 28,
           "isVirtual": false,
-          "lat": 59.905136,
-          "lon": 10.741623,
+          "lat": 59.9217,
+          "lon": 10.6767,
           "name": "Estação sintética 212",
           "stationId": "S-0212"
         },
         {
           "capacity": 17,
           "isVirtual": false,
-          "lat": 59.916003,
-          "lon": 10.757392,
+          "lat": 59.9534,
+          "lon": 10.7577,
           "name": "Estação sintética 213",
           "stationId": "S-0213"
         },
         {
           "capacity": 10,
           "isVirtual": false,
-          "lat": 59.898525,
-          "lon": 10.672447,
+          "lat": 59.9202,
+          "lon": 10.718,
           "name": "Estação sintética 214",
           "stationId": "S-0214"
         },
         {
           "capacity": 12,
           "isVirtual": false,
-          "lat": 59.911107,
-          "lon": 10.746364,
+          "lat": 59.9207,
+          "lon": 10.7595,
           "name": "Estação sintética 215",
           "stationId": "S-0215"
         },
         {
           "capacity": 30,
           "isVirtual": false,
-          "lat": 59.912496,
-          "lon": 10.75184,
+          "lat": 59.9109,
+          "lon": 10.7362,
           "name": "Estação sintética 216",
           "stationId": "S-0216"
         },
         {
           "capacity": 11,
           "isVirtual": false,
-          "lat": 59.928893,
-          "lon": 10.755594,
+          "lat": 59.9377,
+          "lon": 10.7516,
           "name": "Estação sintética 217",
           "stationId": "S-0217"
         },
         {
           "capacity": 17,
           "isVirtual": false,
-          "lat": 59.928253,
-          "lon": 10.72977,
+          "lat": 59.9237,
+          "lon": 10.7405,
           "name": "Estação sintética 218",
           "stationId": "S-0218"
         },
         {
           "capacity": 12,
           "isVirtual": false,
-          "lat": 59.930047,
-          "lon": 10.771315,
+          "lat": 59.904,
+          "lon": 10.7411,
           "name": "Estação sintética 219",
           "stationId": "S-0219"
         },
         {
           "capacity": 11,
           "isVirtual": false,
-          "lat": 59.93522,
-          "lon": 10.728321,
+          "lat": 59.911,
+          "lon": 10.7277,
           "name": "Estação sintética 220",
           "stationId": "S-0220"
         },
         {
           "capacity": 20,
           "isVirtual": false,
-          "lat": 59.908963,
-          "lon": 10.723892,
+          "lat": 59.9225,
+          "lon": 10.751,
           "name": "Estação sintética 221",
           "stationId": "S-0221"
         },
         {
           "capacity": 12,
           "isVirtual": false,
-          "lat": 59.922816,
-          "lon": 10.794181,
+          "lat": 59.9173,
+          "lon": 10.7169,
           "name": "Estação sintética 222",
           "stationId": "S-0222"
         },
         {
           "capacity": 26,
           "isVirtual": false,
-          "lat": 59.917869,
-          "lon": 10.711858,
+          "lat": 59.9149,
+          "lon": 10.701,
           "name": "Estação sintética 223",
           "stationId": "S-0223"
         },
         {
           "capacity": 17,
           "isVirtual": false,
-          "lat": 59.91981,
-          "lon": 10.692684,
+          "lat": 59.9193,
+          "lon": 10.7343,
           "name": "Estação sintética 224",
           "stationId": "S-0224"
         },
         {
           "capacity": 18,
           "isVirtual": false,
-          "lat": 59.942775,
-          "lon": 10.721313,
+          "lat": 59.919,
+          "lon": 10.6923,
           "name": "Estação sintética 225",
           "stationId": "S-0225"
         },
         {
           "capacity": 25,
           "isVirtual": false,
-          "lat": 59.929562,
-          "lon": 10.731996,
+          "lat": 59.9281,
+          "lon": 10.7184,
           "name": "Estação sintética 226",
           "stationId": "S-0226"
         },
         {
           "capacity": 16,
           "isVirtual": false,
-          "lat": 59.929305,
-          "lon": 10.734878,
+          "lat": 59.931,
+          "lon": 10.736,
           "name": "Estação sintética 227",
           "stationId": "S-0227"
         },
         {
           "capacity": 27,
           "isVirtual": false,
-          "lat": 59.914854,
-          "lon": 10.734646,
+          "lat": 59.9402,
+          "lon": 10.7166,
           "name": "Estação sintética 228",
           "stationId": "S-0228"
         },
         {
           "capacity": 14,
           "isVirtual": false,
-          "lat": 59.921661,
-          "lon": 10.763123,
+          "lat": 59.9108,
+          "lon": 10.7297,
           "name": "Estação sintética 229",
           "stationId": "S-0229"
         },
         {
           "capacity": 28,
           "isVirtual": false,
-          "lat": 59.906464,
-          "lon": 10.74637,
+          "lat": 59.9347,
+          "lon": 10.7097,
           "name": "Estação sintética 230",
           "stationId": "S-0230"
         },
         {
           "capacity": 28,
           "isVirtual": false,
-          "lat": 59.922027,
-          "lon": 10.762586,
+          "lat": 59.9121,
+          "lon": 10.7481,
           "name": "Estação sintética 231",
           "stationId": "S-0231"
         },
         {
           "capacity": 25,
           "isVirtual": false,
-          "lat": 59.941554,
-          "lon": 10.729978,
+          "lat": 59.9119,
+          "lon": 10.75,
           "name": "Estação sintética 232",
           "stationId": "S-0232"
         },
         {
           "capacity": 17,
           "isVirtual": false,
-          "lat": 59.906003,
-          "lon": 10.748734,
+          "lat": 59.9127,
+          "lon": 10.742,
           "name": "Estação sintética 233",
           "stationId": "S-0233"
         },
         {
           "capacity": 25,
           "isVirtual": false,
-          "lat": 59.920987,
-          "lon": 10.770696,
+          "lat": 59.9289,
+          "lon": 10.8062,
           "name": "Estação sintética 234",
           "stationId": "S-0234"
         },
         {
           "capacity": 23,
           "isVirtual": false,
-          "lat": 59.924139,
-          "lon": 10.77797,
+          "lat": 59.9135,
+          "lon": 10.7301,
           "name": "Estação sintética 235",
           "stationId": "S-0235"
         },
         {
           "capacity": 16,
           "isVirtual": false,
-          "lat": 59.898934,
-          "lon": 10.673968,
+          "lat": 59.9261,
+          "lon": 10.731,
           "name": "Estação sintética 236",
           "stationId": "S-0236"
         },
         {
           "capacity": 13,
           "isVirtual": false,
-          "lat": 59.941528,
-          "lon": 10.727959,
+          "lat": 59.9148,
+          "lon": 10.741,
           "name": "Estação sintética 237",
           "stationId": "S-0237"
         },
         {
           "capacity": 13,
           "isVirtual": false,
-          "lat": 59.915713,
-          "lon": 10.808125,
+          "lat": 59.9243,
+          "lon": 10.7928,
           "name": "Estação sintética 238",
           "stationId": "S-0238"
         },
         {
           "capacity": 23,
           "isVirtual": false,
-          "lat": 59.939393,
-          "lon": 10.729177,
+          "lat": 59.9127,
+          "lon": 10.7229,
           "name": "Estação sintética 239",
           "stationId": "S-0239"
         },
         {
           "capacity": 21,
           "isVirtual": false,
-          "lat": 59.947062,
-          "lon": 10.724024,
+          "lat": 59.9295,
+          "lon": 10.7811,
           "name": "Estação sintética 240",
           "stationId": "S-0240"
         },
         {
           "capacity": 23,
           "isVirtual": false,
-          "lat": 59.919604,
-          "lon": 10.69876,
+          "lat": 59.9157,
+          "lon": 10.7776,
           "name": "Estação sintética 241",
           "stationId": "S-0241"
         },
         {
           "capacity": 23,
           "isVirtual": false,
-          "lat": 59.928494,
-          "lon": 10.796972,
+          "lat": 59.9127,
+          "lon": 10.7272,
           "name": "Estação sintética 242",
           "stationId": "S-0242"
         },
         {
           "capacity": 24,
           "isVirtual": false,
-          "lat": 59.908863,
-          "lon": 10.723385,
+          "lat": 59.9161,
+          "lon": 10.8072,
           "name": "Estação sintética 243",
           "stationId": "S-0243"
         },
         {
           "capacity": 11,
           "isVirtual": false,
-          "lat": 59.918994,
-          "lon": 10.739884,
+          "lat": 59.9244,
+          "lon": 10.7131,
           "name": "Estação sintética 244",
           "stationId": "S-0244"
         },
         {
           "capacity": 30,
           "isVirtual": false,
-          "lat": 59.925548,
-          "lon": 10.76285,
+          "lat": 59.9198,
+          "lon": 10.6511,
           "name": "Estação sintética 245",
           "stationId": "S-0245"
         },
         {
           "capacity": 30,
           "isVirtual": false,
-          "lat": 59.910665,
-          "lon": 10.730631,
+          "lat": 59.9328,
+          "lon": 10.7345,
           "name": "Estação sintética 246",
           "stationId": "S-0246"
         },
         {
           "capacity": 13,
           "isVirtual": false,
-          "lat": 59.90291,
-          "lon": 10.742521,
+          "lat": 59.9163,
+          "lon": 10.7163,
           "name": "Estação sintética 247",
           "stationId": "S-0247"
         },
         {
           "capacity": 11,
           "isVirtual": false,
-          "lat": 59.91746,
-          "lon": 10.738367,
+          "lat": 59.9156,
+          "lon": 10.7617,
           "name": "Estação sintética 248",
           "stationId": "S-0248"
         },
         {
           "capacity": 22,
           "isVirtual": false,
-          "lat": 59.915575,
-          "lon": 10.758616,
+          "lat": 59.9146,
+          "lon": 10.7355,
           "name": "Estação sintética 249",
           "stationId": "S-0249"
         },
         {
           "capacity": 20,
           "isVirtual": false,
-          "lat": 59.912408,
-          "lon": 10.747979,
+          "lat": 59.9248,
+          "lon": 10.7394,
           "name": "Estação sintética 250",
           "stationId": "S-0250"
         },
         {
           "capacity": 13,
           "isVirtual": false,
-          "lat": 59.922587,
-          "lon": 10.760556,
+          "lat": 59.9304,
+          "lon": 10.6758,
           "name": "Estação sintética 251",
           "stationId": "S-0251"
         },
         {
           "capacity": 17,
           "isVirtual": false,
-          "lat": 59.932643,
-          "lon": 10.726114,
+          "lat": 59.9274,
+          "lon": 10.796,
           "name": "Estação sintética 252",
           "stationId": "S-0252"
         },
         {
           "capacity": 16,
           "isVirtual": false,
-          "lat": 59.916003,
-          "lon": 10.808001,
+          "lat": 59.9456,
+          "lon": 10.7603,
           "name": "Estação sintética 253",
           "stationId": "S-0253"
         },
         {
           "capacity": 16,
           "isVirtual": false,
-          "lat": 59.927163,
-          "lon": 10.710653,
+          "lat": 59.9272,
+          "lon": 10.7498,
           "name": "Estação sintética 254",
           "stationId": "S-0254"
         },
         {
           "capacity": 27,
           "isVirtual": false,
-          "lat": 59.911677,
-          "lon": 10.729337,
+          "lat": 59.918,
+          "lon": 10.7184,
           "name": "Estação sintética 255",
           "stationId": "S-0255"
         },
         {
           "capacity": 24,
           "isVirtual": false,
-          "lat": 59.933018,
-          "lon": 10.728518,
+          "lat": 59.9171,
+          "lon": 10.7129,
           "name": "Estação sintética 256",
           "stationId": "S-0256"
         },
         {
           "capacity": 14,
           "isVirtual": false,
-          "lat": 59.952,
-          "lon": 10.752857,
+          "lat": 59.9248,
+          "lon": 10.7399,
           "name": "Estação sintética 257",
           "stationId": "S-0257"
         },
         {
           "capacity": 23,
           "isVirtual": false,
-          "lat": 59.914898,
-          "lon": 10.737596,
+          "lat": 59.9224,
+          "lon": 10.7554,
           "name": "Estação sintética 258",
           "stationId": "S-0258"
         },
         {
           "capacity": 15,
           "isVirtual": false,
-          "lat": 59.910169,
-          "lon": 10.730045,
+          "lat": 59.9359,
+          "lon": 10.6811,
           "name": "Estação sintética 259",
           "stationId": "S-0259"
         },
         {
           "capacity": 18,
           "isVirtual": false,
-          "lat": 59.93231,
-          "lon": 10.759557,
+          "lat": 59.9434,
+          "lon": 10.7483,
           "name": "Estação sintética 260",
           "stationId": "S-0260"
         },
         {
           "capacity": 24,
           "isVirtual": false,
-          "lat": 59.905147,
-          "lon": 10.74186,
+          "lat": 59.9132,
+          "lon": 10.7676,
           "name": "Estação sintética 261",
           "stationId": "S-0261"
         },
         {
           "capacity": 17,
           "isVirtual": false,
-          "lat": 59.915919,
-          "lon": 10.714652,
+          "lat": 59.9203,
+          "lon": 10.7608,
           "name": "Estação sintética 262",
           "stationId": "S-0262"
         },
         {
           "capacity": 12,
           "isVirtual": false,
-          "lat": 59.909185,
-          "lon": 10.782277,
+          "lat": 59.9474,
+          "lon": 10.7326,
           "name": "Estação sintética 263",
           "stationId": "S-0263"
         },
         {
           "capacity": 24,
           "isVirtual": false,
-          "lat": 59.918462,
-          "lon": 10.737405,
+          "lat": 59.9244,
+          "lon": 10.7616,
           "name": "Estação sintética 264",
           "stationId": "S-0264"
         },
         {
           "capacity": 27,
           "isVirtual": false,
-          "lat": 59.919726,
-          "lon": 10.689613,
+          "lat": 59.9173,
+          "lon": 10.7084,
           "name": "Estação sintética 265",
           "stationId": "S-0265"
         },
         {
           "capacity": 13,
           "isVirtual": false,
-          "lat": 59.916527,
-          "lon": 10.80826,
+          "lat": 59.9179,
+          "lon": 10.7549,
           "name": "Estação sintética 266",
           "stationId": "S-0266"
         },
         {
           "capacity": 11,
           "isVirtual": false,
-          "lat": 59.943234,
-          "lon": 10.721257,
+          "lat": 59.938,
+          "lon": 10.7195,
           "name": "Estação sintética 267",
           "stationId": "S-0267"
         }

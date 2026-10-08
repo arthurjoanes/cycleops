@@ -16,7 +16,7 @@ A demo pública roda no GitHub Pages, sem servidor. Ela precisa mostrar o mesmo 
 - O navegador só reproduz: pausa, 1x, 5x, 20x, passo e "ir para o incidente" pelos offsets do manifesto. Nenhuma regra é recalculada no cliente.
 - Uma gravação só vira replay se passar no aceite: pelo menos um incidente que vai de `confirmed` a `resolved` dentro dela. Sem gravação aceita, a demo abre na simulação, rotulada como tal.
 
-Estado em 2026-10-08: o artefato sintético da demo tem 242 eventos e 86 KB em gzip. A única gravação real, a amostra de 10 min de 2026-10-07, não passa no aceite (40 incidentes confirmados e nenhum resolvido), então ainda não existe replay gravado.
+Estado em 2026-10-08: o artefato sintético da demo tem 242 eventos e 85 KB em gzip. A única gravação real, a amostra de 10 min de 2026-10-07, não passa no aceite (40 incidentes confirmados e nenhum resolvido), então ainda não existe replay gravado.
 
 ## Alternativas
 

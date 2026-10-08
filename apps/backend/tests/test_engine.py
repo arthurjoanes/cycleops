@@ -525,9 +525,11 @@ def test_unknown_station_triggers_one_catalog_fetch() -> None:
     feed.publish(25, {"A": 3, "B": 5, "Z": 1})
     assert not feed.state.catalog_fetch_pending
     feed.catalog(30, ("A", "B", "Z"))
-    assert "Z" in feed.state.stations
+    # Z starts from its record in the last status.
+    z = feed.shown("Z")
+    assert (z.availability.bikes_available, z.decision.primary_condition) == (1, "ok")
     coverage = feed.events[-1].feed_health.coverage
-    assert (coverage.valid, coverage.total) == (2, 3)
+    assert (coverage.valid, coverage.total) == (3, 3)
 
 
 @pytest.mark.parametrize(
@@ -785,3 +787,11 @@ def test_bad_station_ids_do_not_break_the_engine() -> None:
     feed = Feed(ids=("A", "A.1", "B"))
     assert "A.1" not in feed.state.stations
     assert feed.publish(10, {"A": 3, "A.1": 2, "B": 5}) == "ok"
+
+
+def test_valid_catalog_ends_its_quarantine_in_the_same_event() -> None:
+    feed = Feed()
+    feed.publish(10, {"A": 3, "B": 5})
+    feed.apply(ClockTick(feed.t(15), quarantined_feeds=frozenset({"station_information"})))
+    events = feed.catalog(20, ("A", "B", "C"))
+    assert events[0].feed_health.quarantined_feeds == []

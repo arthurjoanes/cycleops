@@ -92,6 +92,9 @@ def step(
     if isinstance(entry, CatalogReceived):
         before = state.catalog_version
         removed = _reconcile(state, entry, now)
+        # A valid response ends this feed's quarantine, like station_status in _receive;
+        # the next tick brings the set from the collection module again.
+        state.quarantined_feeds.discard("station_information")
         changed = bool(removed) or state.catalog_version != before
         return state, _evaluate(
             state, now, policy, "catalog", entry.received_at, force=changed, removed=removed
@@ -211,6 +214,7 @@ def _receive(
             observed.add(sid)
         st.status, st.status_updated_at, st.presence = record, updated, "valid"
     state.unknown_ids = frozenset((records.keys() | invalid) - state.stations.keys())
+    state.unknown_records = {sid: records[sid] for sid in state.unknown_ids if sid in records}
     if (
         state.unknown_ids - state.removed_ids
         and state.catalog_fetch_requested_for != state.catalog_version
@@ -228,12 +232,20 @@ def _reconcile(state: StreamState, entry: CatalogReceived, now: datetime) -> dic
     for sid, info in seen.items():
         st = state.stations.get(sid)
         if st is None:
+            record = state.unknown_records.pop(sid, None)
             st = state.stations[sid] = Station(
                 station_id=sid,
                 info=info,
                 first_seen_at=now,
                 last_seen_in_catalog_at=now,
                 tracked_since=state.last_source_updated_at,
+                status=record,
+                status_updated_at=state.last_source_updated_at if record else None,
+                presence="valid"
+                if record
+                else "invalid"
+                if sid in state.unknown_ids
+                else "missing",
             )
             state.removed_ids.discard(sid)
         st.info = info
@@ -256,6 +268,8 @@ def _reconcile(state: StreamState, entry: CatalogReceived, now: datetime) -> dic
             if st.presence != "missing":
                 # Still in the status: now an id without a catalog entry.
                 state.unknown_ids |= {sid}
+                if st.presence == "valid" and st.status:
+                    state.unknown_records[sid] = st.status
     state.unknown_ids -= state.stations.keys()
     # The fetch happened, whatever it brought.
     state.catalog_fetch_pending = False

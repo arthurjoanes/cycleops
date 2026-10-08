@@ -12,6 +12,7 @@ import random
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+from importlib.resources import files
 from pathlib import Path
 from typing import Annotated, Any, Literal
 
@@ -24,57 +25,16 @@ from cycleops.collection.guard import FeedGuard, next_status_at
 from cycleops.collection.outcome import classify_attempt
 from cycleops.policy import Policy, ServiceHours
 
-# Every sixth real station by position, from station_information in fixtures/recorded
-# (2026-10-07). Synthetic stations sit up to about 130 m from one of them, so they land
-# where the real ones are and not in the fjord.
-ANCHORS = (
-    (59.8984, 10.6744),
-    (59.904, 10.7411),
-    (59.9069, 10.7465),
-    (59.9082, 10.7811),
-    (59.9095, 10.7225),
-    (59.9102, 10.7386),
-    (59.9108, 10.7297),
-    (59.9112, 10.7482),
-    (59.9119, 10.75),
-    (59.9125, 10.7508),
-    (59.9127, 10.7272),
-    (59.9132, 10.75),
-    (59.9137, 10.7359),
-    (59.9146, 10.7355),
-    (59.9151, 10.7306),
-    (59.9155, 10.7583),
-    (59.9161, 10.8072),
-    (59.9171, 10.7129),
-    (59.9178, 10.7387),
-    (59.919, 10.6923),
-    (59.9193, 10.6969),
-    (59.9201, 10.7689),
-    (59.9204, 10.6911),
-    (59.9211, 10.7547),
-    (59.9223, 10.7618),
-    (59.9225, 10.7045),
-    (59.9232, 10.7928),
-    (59.9244, 10.7616),
-    (59.9251, 10.776),
-    (59.9262, 10.7098),
-    (59.9271, 10.731),
-    (59.9276, 10.7992),
-    (59.9284, 10.756),
-    (59.929, 10.7169),
-    (59.9296, 10.7328),
-    (59.9309, 10.7728),
-    (59.9328, 10.7586),
-    (59.9335, 10.7263),
-    (59.9352, 10.7265),
-    (59.9372, 10.7606),
-    (59.939, 10.723),
-    (59.9404, 10.73),
-    (59.9428, 10.723),
-    (59.9462, 10.7246),
-    (59.9526, 10.7512),
-)
-JITTER = (0.0012, 0.0024)  # degrees of latitude and longitude, about 130 m each in Oslo
+# Positions of the real stations (station_information of 2026-10-07, 4 decimals). The
+# synthetic stations take them in a seeded order, so they sit where real stations are and
+# never in the fjord. Past 267 stations the extra ones get a jitter of about 35 m.
+POSITIONS: list[tuple[float, float]] = [
+    (lat, lon)
+    for lat, lon in json.loads(
+        (files("cycleops.adapters") / "oslo_positions.json").read_text(encoding="utf-8")
+    )["positions"]
+]
+EXTRA_JITTER = (0.0003, 0.0006)
 GENERATION_DELAY = timedelta(seconds=3)
 RESPONSE_TIME = timedelta(milliseconds=300)
 
@@ -125,9 +85,15 @@ class SyntheticFeed:
         n = config.stations
         self.ids = [f"S-{i + 1:04d}" for i in range(n)]
         self.capacity = [rng.randint(10, 30) for _ in range(n)]
+        order = rng.sample(POSITIONS, len(POSITIONS))
         self.position = [
-            (lat + rng.uniform(-JITTER[0], JITTER[0]), lon + rng.uniform(-JITTER[1], JITTER[1]))
-            for lat, lon in (rng.choice(ANCHORS) for _ in range(n))
+            order[i]
+            if i < len(order)
+            else (
+                order[i % len(order)][0] + rng.uniform(-EXTRA_JITTER[0], EXTRA_JITTER[0]),
+                order[i % len(order)][1] + rng.uniform(-EXTRA_JITTER[1], EXTRA_JITTER[1]),
+            )
+            for i in range(n)
         ]
         initial = [rng.randint(2, cap - 2) for cap in self.capacity]
         self.cadence = timedelta(seconds=config.cadence_seconds)
