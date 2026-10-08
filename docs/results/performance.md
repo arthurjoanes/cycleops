@@ -1,8 +1,8 @@
-# Desempenho do frontend (laboratório)
+# Desempenho (laboratório)
 
-Números de laboratório, numa máquina só, contra o build do Pages servido sob `/cycleops/` por `apps/web/scripts/serve-pages.mjs`. Não são dados de campo.
+Números de laboratório, numa máquina só. Não são dados de campo. As duas primeiras seções são do frontend contra o build do Pages servido sob `/cycleops/` por `apps/web/scripts/serve-pages.mjs`; as do fim, do Compose.
 
-Ambiente das duas medições:
+Ambiente das medições do frontend:
 
 - CPU AMD Ryzen 7 5700X3D (16 threads), 31,9 GB de RAM, Windows 11 (win32 10.0.26300);
 - Chromium 156.0.8078.4 headless, pelo Playwright 1.64;
@@ -49,3 +49,38 @@ O maior evento nas três execuções é o clique em "Todas as estações", que m
 ## Bundle
 
 `corepack pnpm check:bundle` no build do commit 5794b7a: 116.775 bytes em gzip para o chunk de entrada, os imports estáticos dele e o CSS, contra o orçamento de 127.026 bytes (primeiro build, 115.478 bytes, mais 10%). O mapa, o worker do MapLibre e o gerador de carga ficam fora, em imports dinâmicos.
+
+No commit 01b4497 (Compose): 118.024 bytes no build do Pages e 118.305 bytes no build do edge (`corepack pnpm build`), que inclui a `LiveSseSource`, contra o mesmo orçamento.
+
+## Compose: latência
+
+Compose sintético com `compose.offline.yaml`, uma aba em `#/?measure=1` pelo edge em `127.0.0.1:8080`, sem throttling de CPU nem de rede (loopback). Mesma máquina das medições do frontend, Docker 29.7.2 (linux/amd64), Chromium 153.0.8010.12 headless, commit 01b4497, janela de 08:56:58 a 09:06:58 UTC de 2026-10-08.
+
+Comando, em `apps/web`, com a pilha no ar (`docker compose -p cycleops-e2e -f compose.yaml -f compose.offline.yaml up -d --wait`, com `CYCLEOPS_NET=10.89.2`):
+
+```bash
+CYCLEOPS_MEASURE=1 corepack pnpm e2e:compose latency
+```
+
+| Medida | Meta (p95) | Amostras | p50 | p95 | Máx. |
+|---|---|---|---|---|---|
+| Recebimento até pintura, no navegador | 250 ms | 40 | 119,9 ms | 128,6 ms | 130,2 ms |
+| Commit até escrita no socket, na API | 1 s | 40 | 9,5 ms | 11,3 ms | 11,7 ms |
+
+- Recebimento até pintura: `performance.mark` quando a mensagem `station_batch` chega e `performance.measure` depois da pintura (rAF seguido de uma tarefa de `MessageChannel`). Inclui a janela de 100 ms do store, que é a maior parte do tempo. Dados: `data/compose-latency.json`.
+- Commit até escrita: a API guarda, para cada `station_batch` escrito ao vivo num socket, o instante da escrita menos o `committedAt`, que vem do `clock_timestamp()` do PostgreSQL no mesmo host. A API reiniciou antes da janela e só a aba da medição se conectou. Eventos de catch-up ficam de fora. Dados: `data/compose-commit-to-write.json`.
+- Com uma publicação a cada 15 s, 10 min dão 40 eventos, e o p95 fica perto do máximo.
+- Ponta a ponta (do commit à pintura, com o offset do heartbeat) não foi medido.
+
+## Compose: repouso
+
+`docker stats --no-stream`, 10 amostras com cerca de 5 s entre elas, de 08:55:25 a 08:56:30 UTC, depois de 5 min parado desde o `up -d --build --wait` num volume novo (às 08:50:09). Nenhum navegador ou cliente conectado; só os healthchecks dos containers. CPU em % de um núcleo, como o Docker mostra. Commit 01b4497. Dados: `data/compose-docker-stats.json`.
+
+| Container | CPU média | CPU máx. | Memória (primeira e última amostra) |
+|---|---|---|---|
+| api | 5,23% | 25,29% | 79,4 e 80,7 MiB |
+| worker | 1,95% | 10,21% | 86,4 e 87,3 MiB |
+| postgres | 2,30% | 4,25% | 58,6 e 59,3 MiB |
+| edge | 0,26% | 2,56% | 13,3 e 12,6 MiB |
+
+A API passa de 0,5% em 2 das 10 amostras (24,8% e 25,3%); nas outras 8 fica entre 0,21% e 0,42%. O worker gera uma publicação sintética a cada 15 s mesmo sem cliente.
