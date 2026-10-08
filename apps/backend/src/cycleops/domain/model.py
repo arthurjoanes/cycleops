@@ -152,8 +152,10 @@ class StreamState:
     catalog_version: str = ""
     catalog_fetch_pending: bool = False
     catalog_fetch_requested_for: str | None = None
-    # Ids in the last accepted status that are not in the catalog.
+    # Ids in the last accepted status that are not in the catalog, and their valid records:
+    # a station that enters the catalog starts from them.
     unknown_ids: frozenset[str] = frozenset()
+    unknown_records: dict[str, StationStatus] = field(default_factory=dict)
     removed_ids: set[str] = field(default_factory=set)
     stations: dict[str, Station] = field(default_factory=dict)
     last_event_feed_state: SourceState | None = None

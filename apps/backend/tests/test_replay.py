@@ -9,7 +9,6 @@ import pytest
 from conftest import POLICY_DIR, REPO
 
 from cycleops.adapters.synthetic import (
-    ANCHORS,
     ScenarioName,
     SyntheticConfig,
     SyntheticFeed,
@@ -274,10 +273,13 @@ def test_compile_replay_writes_a_synthetic_scenario_without_resolution(
     assert (tmp_path / "s/manifest.json").exists()
 
 
-def test_synthetic_stations_sit_near_real_ones() -> None:
-    feed = SyntheticFeed(config("incident_recovery"))
-    for lat, lon in feed.position:
-        assert min(abs(lat - a) + abs(lon - b) / 2 for a, b in ANCHORS) < 0.0025
+def test_synthetic_stations_sit_on_real_positions() -> None:
+    info = next(line for line in read_recording(SAMPLE) if line["feed"] == "station_information")
+    real = [(s["lat"], s["lon"]) for s in info["body"]["data"]["stations"]]
+    cfg = config("incident_recovery").model_copy(update={"stations": 267})
+    for lat, lon in SyntheticFeed(cfg).position:
+        # 0.0001 degree is about 11 m: rounding only.
+        assert min(abs(lat - a) + abs(lon - b) for a, b in real) < 0.0001
 
 
 def test_schemas_require_the_version_fields() -> None:
