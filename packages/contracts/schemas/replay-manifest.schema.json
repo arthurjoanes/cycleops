@@ -1,0 +1,211 @@
+{
+  "$defs": {
+    "ManifestIncident": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmedOffsetSeconds": {
+          "title": "Confirmedoffsetseconds",
+          "type": "number"
+        },
+        "confirmedSequence": {
+          "title": "Confirmedsequence",
+          "type": "integer"
+        },
+        "incidentId": {
+          "title": "Incidentid",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "pickup_unavailable",
+            "return_unavailable"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "resolvedOffsetSeconds": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Resolvedoffsetseconds"
+        },
+        "resolvedSequence": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Resolvedsequence"
+        },
+        "stationId": {
+          "pattern": "^[A-Za-z0-9_-]{1,64}$",
+          "title": "Stationid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "incidentId",
+        "kind",
+        "stationId",
+        "confirmedSequence",
+        "resolvedSequence",
+        "confirmedOffsetSeconds",
+        "resolvedOffsetSeconds"
+      ],
+      "title": "ManifestIncident",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "adapterVersion": {
+      "title": "Adapterversion",
+      "type": "string"
+    },
+    "catalogSha256": {
+      "title": "Catalogsha256",
+      "type": "string"
+    },
+    "engineVersion": {
+      "title": "Engineversion",
+      "type": "string"
+    },
+    "eventCount": {
+      "title": "Eventcount",
+      "type": "integer"
+    },
+    "eventSchemaVersion": {
+      "const": 1,
+      "default": 1,
+      "title": "Eventschemaversion",
+      "type": "integer"
+    },
+    "eventsSha256": {
+      "title": "Eventssha256",
+      "type": "string"
+    },
+    "gbfsVersion": {
+      "title": "Gbfsversion",
+      "type": "string"
+    },
+    "hashVersion": {
+      "title": "Hashversion",
+      "type": "integer"
+    },
+    "incidents": {
+      "items": {
+        "$ref": "#/$defs/ManifestIncident"
+      },
+      "title": "Incidents",
+      "type": "array"
+    },
+    "mode": {
+      "enum": [
+        "recorded_replay",
+        "synthetic"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "parameters": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Parameters"
+    },
+    "periodEnd": {
+      "format": "date-time",
+      "title": "Periodend",
+      "type": "string"
+    },
+    "periodEndLocal": {
+      "title": "Periodendlocal",
+      "type": "string"
+    },
+    "periodStart": {
+      "format": "date-time",
+      "title": "Periodstart",
+      "type": "string"
+    },
+    "periodStartLocal": {
+      "title": "Periodstartlocal",
+      "type": "string"
+    },
+    "policyVersion": {
+      "title": "Policyversion",
+      "type": "string"
+    },
+    "recordingHash": {
+      "title": "Recordinghash",
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 1,
+      "default": 1,
+      "title": "Schemaversion",
+      "type": "integer"
+    },
+    "seed": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Seed"
+    },
+    "streamId": {
+      "title": "Streamid",
+      "type": "string"
+    },
+    "systemId": {
+      "title": "Systemid",
+      "type": "string"
+    },
+    "timezone": {
+      "title": "Timezone",
+      "type": "string"
+    }
+  },
+  "required": [
+    "mode",
+    "streamId",
+    "systemId",
+    "timezone",
+    "periodStart",
+    "periodEnd",
+    "periodStartLocal",
+    "periodEndLocal",
+    "recordingHash",
+    "eventsSha256",
+    "catalogSha256",
+    "gbfsVersion",
+    "adapterVersion",
+    "engineVersion",
+    "policyVersion",
+    "hashVersion",
+    "seed",
+    "parameters",
+    "incidents",
+    "eventCount"
+  ],
+  "title": "ReplayManifest",
+  "type": "object"
+}

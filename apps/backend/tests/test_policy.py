@@ -32,6 +32,13 @@ def test_policy_files_load() -> None:
     assert (c.breaker_failures, c.breaker_open_seconds, c.quarantine_probe_seconds) == (3, 60, 300)
 
 
+def test_synthetic_provider_loads() -> None:
+    provider = load_provider("synthetic", POLICY_DIR)
+    oslo = load_provider("oslo", POLICY_DIR)
+    assert (provider.system_id, provider.service_hours) == ("synthetic-oslo", "always")
+    assert provider.collection == oslo.collection
+
+
 def test_policy_dir_from_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     (tmp_path / "provider-oslo.yaml").write_text(
         (POLICY_DIR / "provider-oslo.yaml").read_text(encoding="utf-8"), encoding="utf-8"

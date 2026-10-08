@@ -54,7 +54,11 @@ class Outcome:
         return hashlib.sha256(key.encode()).hexdigest()[:16]
 
 
-def classify_attempt(attempt: Attempt, semantics: ReportSemantics) -> Outcome:
+def classify_attempt(
+    attempt: Attempt, semantics: ReportSemantics, future_after: datetime | None = None
+) -> Outcome:
+    """`future_after`: instant past which last_reported marks the station suspect. The
+    engine's caller passes receivedAt + clockSkewToleranceSeconds; the collector, None."""
     return classify(
         attempt.feed,
         attempt.status,
@@ -63,6 +67,7 @@ def classify_attempt(attempt: Attempt, semantics: ReportSemantics) -> Outcome:
         attempt.headers,
         attempt.received_at,
         semantics,
+        future_after,
     )
 
 
@@ -74,6 +79,7 @@ def classify(
     headers: dict[str, str],
     received_at: datetime,
     semantics: ReportSemantics,
+    future_after: datetime | None = None,
 ) -> Outcome:
     if error in TRANSPORT_ERRORS:
         return Outcome(error, "transport", status)
@@ -94,15 +100,17 @@ def classify(
     if body is None:
         return Outcome("invalid", "contract", status, "body is not JSON")
     try:
-        envelope, publication = _parse(feed, body, semantics)
+        envelope, publication = _parse(feed, body, semantics, future_after)
     except ContractError as exc:
         return Outcome("invalid", "contract", status, str(exc))
     return Outcome("ok", None, status, envelope=envelope, publication=publication)
 
 
-def _parse(feed: str, body: Any, semantics: ReportSemantics) -> tuple[Envelope, Publication]:
+def _parse(
+    feed: str, body: Any, semantics: ReportSemantics, future_after: datetime | None
+) -> tuple[Envelope, Publication]:
     if feed == "station_status":
-        status = parse_station_status(body, semantics)
+        status = parse_station_status(body, semantics, future_after)
         return status.envelope, status
     if feed == "station_information":
         info = parse_station_information(body)

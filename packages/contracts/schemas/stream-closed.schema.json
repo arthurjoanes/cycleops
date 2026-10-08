@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "reason": {
+      "enum": [
+        "superseded",
+        "capacity",
+        "shutdown"
+      ],
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "reason"
+  ],
+  "title": "StreamClosed",
+  "type": "object"
+}

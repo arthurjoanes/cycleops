@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "lastSequence": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Lastsequence"
+    },
+    "reason": {
+      "enum": [
+        "cursor_expired",
+        "cursor_ahead",
+        "unknown_stream",
+        "gap",
+        "queue_overflow",
+        "schema_changed"
+      ],
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "reason",
+    "lastSequence"
+  ],
+  "title": "ResyncRequired",
+  "type": "object"
+}

@@ -1,0 +1,19 @@
+systemId: synthetic-oslo
+timezone: Europe/Oslo
+stationReportSemantics: feed_generation
+# The opening and closing scenarios and the demo artifact replace this with 05:00 to 01:00.
+serviceHours: always
+collection:
+  pollIntervalFloorSeconds: 15
+  publicationMarginSeconds: 10
+  httpTimeouts:
+    connect: 5
+    read: 10
+    write: 5
+    pool: 5
+  requestDeadlineSeconds: 12
+  catalogRefreshSeconds: 600
+  discoveryRefreshSeconds: 3600
+  breakerFailures: 3
+  breakerOpenSeconds: 60
+  quarantineProbeSeconds: 300

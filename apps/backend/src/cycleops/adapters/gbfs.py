@@ -13,6 +13,8 @@ from typing import Annotated, Any, Literal
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 GBFS_VERSION = "2.3"
+# Bump when the normalization changes; it goes into the replay manifest.
+ADAPTER_VERSION = "gbfs-2.3/1"
 
 # Field names defined by GBFS 2.3. Anything else is counted as extra and ignored.
 STATUS_FIELDS = frozenset(

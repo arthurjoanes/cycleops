@@ -1,0 +1,266 @@
+{
+  "$defs": {
+    "HistoryPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "bikesAvailable": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Bikesavailable"
+        },
+        "docksAvailable": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Docksavailable"
+        },
+        "primaryCondition": {
+          "enum": [
+            "outside_service_hours",
+            "not_installed",
+            "unverifiable",
+            "pickup_disabled",
+            "return_disabled",
+            "pickup_unavailable",
+            "return_unavailable",
+            "return_capacity_unknown",
+            "ok"
+          ],
+          "title": "Primarycondition",
+          "type": "string"
+        },
+        "quality": {
+          "enum": [
+            "valid",
+            "suspect",
+            "invalid",
+            "unknown"
+          ],
+          "title": "Quality",
+          "type": "string"
+        },
+        "sourceUpdatedAt": {
+          "format": "date-time",
+          "title": "Sourceupdatedat",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sourceUpdatedAt",
+        "bikesAvailable",
+        "docksAvailable",
+        "quality",
+        "primaryCondition"
+      ],
+      "title": "HistoryPoint",
+      "type": "object"
+    },
+    "IncidentItem": {
+      "additionalProperties": false,
+      "properties": {
+        "closeReason": {
+          "anyOf": [
+            {
+              "enum": [
+                "contrary_observation",
+                "source_stale",
+                "station_stale",
+                "flag_disabled",
+                "uninstalled",
+                "return_capacity_unknown",
+                "removed_from_catalog",
+                "service_closed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Closereason"
+        },
+        "confirmedAt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confirmedat"
+        },
+        "firstObservedAt": {
+          "format": "date-time",
+          "title": "Firstobservedat",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "pickup_unavailable",
+            "return_unavailable"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "observedSince": {
+          "format": "date-time",
+          "title": "Observedsince",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "candidate",
+            "confirmed",
+            "recovering",
+            "unverifiable",
+            "resolved",
+            "closed_without_recovery",
+            "discarded"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "suspendedFrom": {
+          "anyOf": [
+            {
+              "enum": [
+                "candidate",
+                "confirmed",
+                "recovering",
+                "unverifiable",
+                "resolved",
+                "closed_without_recovery",
+                "discarded"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Suspendedfrom"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "state",
+        "firstObservedAt",
+        "observedSince"
+      ],
+      "title": "IncidentItem",
+      "type": "object"
+    },
+    "Interval": {
+      "additionalProperties": false,
+      "properties": {
+        "end": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "End"
+        },
+        "start": {
+          "format": "date-time",
+          "title": "Start",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "Interval",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "closed": {
+      "items": {
+        "$ref": "#/$defs/Interval"
+      },
+      "title": "Closed",
+      "type": "array"
+    },
+    "gaps": {
+      "items": {
+        "$ref": "#/$defs/Interval"
+      },
+      "title": "Gaps",
+      "type": "array"
+    },
+    "incidents": {
+      "items": {
+        "$ref": "#/$defs/IncidentItem"
+      },
+      "title": "Incidents",
+      "type": "array"
+    },
+    "points": {
+      "items": {
+        "$ref": "#/$defs/HistoryPoint"
+      },
+      "title": "Points",
+      "type": "array"
+    },
+    "stationId": {
+      "pattern": "^[A-Za-z0-9_-]{1,64}$",
+      "title": "Stationid",
+      "type": "string"
+    },
+    "streamId": {
+      "title": "Streamid",
+      "type": "string"
+    },
+    "windowEnd": {
+      "format": "date-time",
+      "title": "Windowend",
+      "type": "string"
+    },
+    "windowStart": {
+      "format": "date-time",
+      "title": "Windowstart",
+      "type": "string"
+    }
+  },
+  "required": [
+    "streamId",
+    "stationId",
+    "windowStart",
+    "windowEnd",
+    "points",
+    "incidents",
+    "gaps",
+    "closed"
+  ],
+  "title": "StationHistory",
+  "type": "object"
+}

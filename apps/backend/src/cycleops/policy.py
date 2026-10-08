@@ -4,7 +4,9 @@ The YAML holds literal values only. Formulas live in code and read these fields.
 """
 
 import os
+from dataclasses import dataclass
 from datetime import date
+from functools import cached_property
 from pathlib import Path
 from typing import Annotated, Literal, Self
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
@@ -12,6 +14,8 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 import yaml
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field, model_validator
 from pydantic.alias_generators import to_camel
+
+from cycleops.canonical import sha256_hex
 
 
 def _check_timezone(value: str) -> str:
@@ -116,3 +120,28 @@ def load_provider(name: str = "oslo", directory: Path | None = None) -> Provider
 def load_priority_policy(directory: Path | None = None) -> PriorityPolicy:
     path = (directory or policy_dir()) / "priority-policy.yaml"
     return PriorityPolicy.model_validate(_load_yaml(path))
+
+
+@dataclass(frozen=True)
+class Policy:
+    """Effective policy: priority-policy.yaml plus the provider file in use, with the
+    serviceHours a scenario or demo.yaml declares already applied."""
+
+    priority: PriorityPolicy
+    provider: ProviderConfig
+
+    @cached_property
+    def version(self) -> str:
+        # Hash of the validated models, so CRLF, BOM and comments in the YAML do not count.
+        effective = {
+            "priority": self.priority.model_dump(by_alias=True, mode="json"),
+            "provider": self.provider.model_dump(by_alias=True, mode="json"),
+        }
+        return f"{self.priority.version}+{sha256_hex(effective)[:8]}"
+
+    def with_service_hours(self, hours: ServiceHours | Literal["always"]) -> Policy:
+        return Policy(self.priority, self.provider.model_copy(update={"service_hours": hours}))
+
+
+def load_policy(provider: str = "oslo", directory: Path | None = None) -> Policy:
+    return Policy(load_priority_policy(directory), load_provider(provider, directory))
