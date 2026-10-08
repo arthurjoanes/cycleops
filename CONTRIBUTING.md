@@ -12,6 +12,13 @@ CycleOps lists Oslo Bysykkel stations with no bikes or no docks, in priority ord
   - `contracts.py`: Pydantic models of everything sent to the browser. Source of `packages/contracts/`.
   - `policy.py`: Pydantic models for the files in `policy/`, and `policyVersion`.
   - `cli/`: `inspect-feed`, `record-feed`, `compile-replay`, `generate-artifacts`.
+- `apps/web/`: React, TypeScript strict, Vite, Zustand, MapLibre (corepack pnpm, Node 24).
+  - `src/features/stations/store.ts`: the store and `applyEvents` (contiguous sequences). `src/streams/`: `ReplayPlayer`, artifact loading, the seeded load generator (`#/?source=load`).
+  - `src/features/priorities/`: queue order, freeze, indicators. `src/features/stations/`: list, details, step chart, map.
+  - `src/app/`: layout, header, screen states, hash routing.
+  - `tests/unit/` (Vitest), `tests/e2e/` (Playwright against the Pages build), `tests/performance/` (lab runs, by hand).
+  - `scripts/`: `generate-contracts.mjs`, `serve-pages.mjs` (static server that behaves like Pages), `check-bundle.mjs`.
+- `scripts/basemap/`: generates the map base from OpenStreetMap. Run by hand only.
 - `policy/`: `priority-policy.yaml`, `provider-oslo.yaml`, `provider-synthetic.yaml`. Literal values only.
 - `fixtures/recorded/`: recordings of the real feed (NDJSON.gz with a manifest) and the NLOD `NOTICE`. A `demo.yaml` there names the recording that becomes the recorded replay; it exists only once a recording passes acceptance.
 - `fixtures/synthetic/demo.yaml`: parameters of the synthetic demo artifact.
@@ -52,6 +59,23 @@ uv run --project apps/backend compile-replay --synthetic fixtures/synthetic/demo
 
 `compile-replay --recording` writes only when the recording passes acceptance (an incident goes from confirmed to resolved) and exits 3 otherwise.
 
+Web, from `apps/web`:
+
+```bash
+corepack pnpm install
+corepack pnpm dev                 # http://localhost:5173
+corepack pnpm lint
+corepack pnpm typecheck
+corepack pnpm test
+corepack pnpm e2e                 # builds for Pages and runs Playwright under /cycleops/
+corepack pnpm build:pages && corepack pnpm check:bundle
+corepack pnpm preview:pages       # http://127.0.0.1:4173/cycleops/
+corepack pnpm generate:contracts  # types.ts and validators from packages/contracts/schemas
+corepack pnpm perf                # frontend load and lab Web Vitals, writes docs/results/data/
+```
+
+`e2e` and `perf` reuse a server already on port 4173; stop `preview:pages` first or the run tests the old `dist/`.
+
 Text check for the pt-BR Markdown (must print nothing):
 
 ```bash
@@ -66,7 +90,8 @@ git ls-files -z -- '*.md' ':!README.en.md' ':!CONTRIBUTING.md' ':!THIRD_PARTY_NO
 - Performance numbers only with a run recorded in `docs/results/`.
 - No personal data, tokens or users in recordings.
 - Scope changes and new infrastructure need an accepted ADR. A new architecture decision goes to `docs/adr/` as Proposto; Arthur accepts it. Numeric collection values may change in `policy/` with the data written in ADR 0002; semantic changes stay a proposal until accepted.
-- Generated zones, never edited by hand: `packages/contracts/`, `apps/web/public/replay/`, `apps/web/public/basemap/`. After changing the engine, the policy, the adapter or `contracts.py`, run `generate-artifacts` and commit the result; `--check` (and a test) fails otherwise.
+- Generated zones, never edited by hand: `packages/contracts/`, `apps/web/public/replay/`, `apps/web/public/basemap/`. After changing the engine, the policy, the adapter or `contracts.py`, run `generate-artifacts` and then `corepack pnpm generate:contracts`, and commit the result; `--check`, a test and the CI diff fail otherwise. The basemap changes only through `scripts/basemap/generate.sh`.
+- The web never recomputes domain rules: it applies the engine's events in sequence order and shows them. Text from the feed is always text (no `innerHTML`, no `dangerouslySetInnerHTML`; lint enforces it). CSP exceptions are listed in `SECURITY.md`; `script-src` gets none.
 - Code: the domain does not import FastAPI, SQLAlchemy, HTTPX or React. No `helpers.py`, `utils.ts`, `Manager` or catch-all modules. Interfaces only at replaceable boundaries (source, Clock, repository, event delivery). Comments explain decisions and invariants. Generated text files are UTF-8 with `\n`.
 - GBFS input models use `extra="ignore"`, never `forbid`: Oslo sends `num_vehicles_available`.
 

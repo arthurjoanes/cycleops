@@ -1,0 +1,14 @@
+{
+  "source": "OpenStreetMap via Overpass API, https://overpass-api.de",
+  "query": "[out:xml][timeout:180][bbox:59.8894,10.6331,59.9624,10.8323];\n(\n  way[\"natural\"~\"^(water|bay|wood|coastline)$\"];\n  relation[\"natural\"~\"^(water|bay|wood)$\"];\n  relation[\"waterway\"=\"riverbank\"];\n  way[\"landuse\"~\"^(reservoir|grass|recreation_ground|forest)$\"];\n  relation[\"landuse\"~\"^(reservoir|grass|recreation_ground|forest)$\"];\n  way[\"leisure\"~\"^(park|garden)$\"];\n  relation[\"leisure\"~\"^(park|garden)$\"];\n  way[\"highway\"~\"^(motorway|trunk|primary|secondary|tertiary)(_link)?$\"];\n);\n(._;>;);\nout body;",
+  "retrievedAt": "2026-10-08T01:30:53Z",
+  "license": "ODbL-1.0",
+  "attribution": "© OpenStreetMap contributors",
+  "bbox": [
+    10.6331,
+    59.8894,
+    10.8323,
+    59.9624
+  ],
+  "image": "ghcr.io/osgeo/gdal:ubuntu-small-3.13.3@sha256:64250faf833c06d4b21afce4c27190039ba7ab58d70f0eebc87cf77d929c0b40"
+}
