@@ -26,6 +26,8 @@ DEFAULT_URLS = {feed: f"https://{HOST}{PATH_PREFIX}{feed}.json" for feed in FEED
 MAX_BODY_BYTES = 2 * 1024 * 1024
 # GBFS nests about 9 levels (station_area). Deeper JSON is treated as not JSON: past a
 # few thousand levels json.dumps (in the recording) overflows the stack before loads does.
+# Strings that are not valid Unicode (a lone \ud800 escape) count the same way: they cannot
+# be written to the recording nor hashed.
 MAX_JSON_DEPTH = 32
 RECORDED_HEADERS = (
     "date",
@@ -163,7 +165,7 @@ class FeedClient:
             # JSONDecodeError, UnicodeDecodeError, and RecursionError on deep nesting.
             except ValueError, RecursionError:
                 parsed = None
-            if parsed is not None and _depth_within(parsed, MAX_JSON_DEPTH):
+            if parsed is not None and _well_formed(parsed, MAX_JSON_DEPTH):
                 body_json = strip_station_area(parsed)
         return Attempt(
             feed=feed,
@@ -179,14 +181,20 @@ class FeedClient:
         )
 
 
-def _depth_within(value: Any, limit: int) -> bool:
+def _well_formed(value: Any, limit: int) -> bool:
     stack = [(value, 0)]
     while stack:
         item, depth = stack.pop()
-        children = item.values() if isinstance(item, dict) else item
-        if isinstance(item, dict | list):
+        if isinstance(item, str):
+            if not item.isascii():
+                try:
+                    item.encode()
+                except UnicodeEncodeError:
+                    return False
+        elif isinstance(item, dict | list):
             if depth >= limit:
                 return False
+            children = [*item.keys(), *item.values()] if isinstance(item, dict) else item
             stack.extend((child, depth + 1) for child in children)
     return True
 

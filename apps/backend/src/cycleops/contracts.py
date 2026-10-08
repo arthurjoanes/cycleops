@@ -164,8 +164,10 @@ class FeedHealth(Contract):
 
 
 class StationBatchEvent(Contract):
-    type: Literal["station_batch"] = "station_batch"
-    schema_version: Literal[1] = SCHEMA_VERSION
+    # No defaults on the constant fields: they must be required in the schema, so a
+    # payload without them fails validation in the browser.
+    type: Literal["station_batch"]
+    schema_version: Literal[1]
     event_id: str
     stream_id: str
     sequence: int
@@ -219,7 +221,7 @@ class CatalogVersion(Contract):
 
 
 class ReplayCatalog(Contract):
-    schema_version: Literal[1] = SCHEMA_VERSION
+    schema_version: Literal[1]
     system_id: str
     versions: list[CatalogVersion]
 
@@ -236,7 +238,7 @@ class ManifestIncident(Contract):
 
 
 class ReplayManifest(Contract):
-    schema_version: Literal[1] = SCHEMA_VERSION
+    schema_version: Literal[1]
     mode: Literal["recorded_replay", "synthetic"]
     stream_id: str
     system_id: str
@@ -252,7 +254,7 @@ class ReplayManifest(Contract):
     adapter_version: str
     engine_version: str
     policy_version: str
-    event_schema_version: Literal[1] = SCHEMA_VERSION
+    event_schema_version: Literal[1]
     hash_version: int
     seed: int | None
     parameters: dict[str, Any] | None
@@ -261,13 +263,13 @@ class ReplayManifest(Contract):
 
 
 class Snapshot(Contract):
-    schema_version: Literal[1] = SCHEMA_VERSION
+    schema_version: Literal[1]
     stream_id: str
     mode: DataMode
     system_id: str
     seed: int | None
     cursor: str
-    event_schema_version: Literal[1] = SCHEMA_VERSION
+    event_schema_version: Literal[1]
     catalog_version: str
     feed_health: FeedHealth
     catalog: list[CatalogStation]

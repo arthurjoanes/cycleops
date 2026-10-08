@@ -50,8 +50,12 @@ class CatalogReceived:
 
 @dataclass(frozen=True)
 class ClockTick:
+    """Also carries what only the source knows: the quota suspension (6.4) and which
+    feeds other than station_status are in quarantine."""
+
     at: datetime
     ingestion_suspended: bool = False
+    quarantined_feeds: frozenset[str] = frozenset()
 
 
 @dataclass(frozen=True)

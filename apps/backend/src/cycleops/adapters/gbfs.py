@@ -94,7 +94,8 @@ class _VehicleTypeCount(_In):
 
 
 class _StatusRecord(_In):
-    station_id: Annotated[str, Field(min_length=1)]
+    # Same rule as the contracts' stationId; anything else is an invalid record.
+    station_id: Annotated[str, Field(pattern=r"^[A-Za-z0-9_-]{1,64}$")]
     is_installed: bool
     is_renting: bool
     is_returning: bool
@@ -108,7 +109,8 @@ class _StatusRecord(_In):
 
 
 class _InfoRecord(_In):
-    station_id: Annotated[str, Field(min_length=1)]
+    # Same rule as the contracts' stationId; anything else is an invalid record.
+    station_id: Annotated[str, Field(pattern=r"^[A-Za-z0-9_-]{1,64}$")]
     name: str
     lat: Annotated[float, Field(ge=-90, le=90)]
     lon: Annotated[float, Field(ge=-180, le=180)]

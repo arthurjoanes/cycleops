@@ -1,24 +1,34 @@
 import gzip
 import json
 from collections.abc import Iterable
-from datetime import date, datetime, timedelta
+from dataclasses import replace
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
 import pytest
 from conftest import POLICY_DIR, REPO
 
-from cycleops.adapters.synthetic import ScenarioName, SyntheticConfig, SyntheticFeed, collect
+from cycleops.adapters.synthetic import (
+    ANCHORS,
+    ScenarioName,
+    SyntheticConfig,
+    SyntheticFeed,
+    collect,
+)
 from cycleops.application.replay import (
     Artifact,
     accepted,
+    attempt_from_line,
     compile_recording,
     compile_synthetic,
     entries,
+    run,
 )
 from cycleops.cli import compile_replay, generate_artifacts
 from cycleops.collection.outcome import classify_attempt
-from cycleops.collection.recording import RecordingWriter, recording_line
+from cycleops.collection.recording import RecordingWriter, read_recording, recording_line
 from cycleops.contracts import CatalogVersion, ReplayCatalog, StationBatchEvent
+from cycleops.domain.engine import new_stream
 from cycleops.domain.model import PublicationFailed
 from cycleops.policy import ServiceHours, load_policy
 
@@ -112,7 +122,7 @@ def test_timeouts_open_the_breaker() -> None:
     attempts = [a for a in collect(SyntheticFeed(cfg), policy) if a.feed == "station_status"]
     opened = next(
         e
-        for e in entries(attempts, policy)
+        for _, e, _ in entries(attempts, policy)
         if isinstance(e, PublicationFailed) and e.breaker_open_until
     )
     assert opened.breaker_open_until == opened.received_at + timedelta(seconds=60)
@@ -228,3 +238,53 @@ def test_sort_key_fixture_is_in_ascii_order() -> None:
     fixture = json.loads((REPO / "packages/contracts/fixtures/sort-keys.json").read_text("utf-8"))
     assert fixture["sorted"] == sorted(fixture["input"]) and len(fixture["input"]) > 20
     assert fixture["sorted"].index("0|1791360000|A-1") < fixture["sorted"].index("0|1791360000|A_1")
+
+
+def test_quarantine_of_another_feed_ends_with_a_good_probe() -> None:
+    policy = load_policy("oslo", POLICY_DIR)
+    attempts = [attempt_from_line(line) for line in read_recording(SAMPLE)]
+    good = next(a for a in attempts if a.feed == "system_information")
+    start = attempts[0].received_at
+    bad = replace(good, status=403, body_json=None, received_at=start + timedelta(seconds=60))
+    probe = replace(good, received_at=start + timedelta(seconds=380))
+    system_id = policy.provider.system_id
+    state = new_stream(system_id, "recorded_replay", f"{system_id}:test")
+    events, _ = run(entries([*attempts, bad, probe], policy), policy, state)
+    flagged = [e.feed_health.quarantined_feeds for e in events]
+    assert ["system_information"] in flagged
+    assert flagged[-1] == []
+
+
+def test_synthetic_stream_id_ignores_how_instants_are_written() -> None:
+    cfg = config("incident_recovery", minutes=5)
+    utc = cfg.model_copy(
+        update={"start": cfg.start.astimezone(UTC), "end": cfg.end.astimezone(UTC)}
+    )
+    assert compiled(cfg).manifest.stream_id == compiled(utc).manifest.stream_id
+
+
+def test_compile_replay_writes_a_synthetic_scenario_without_resolution(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.chdir(REPO)
+    cfg_path = tmp_path / "cfg.yaml"
+    cfg = config("frozen_source").model_dump(by_alias=True, mode="json")
+    cfg_path.write_text(json.dumps(cfg), encoding="utf-8")
+    assert compile_replay.main(["--synthetic", str(cfg_path), "--out", str(tmp_path / "s")]) == 0
+    assert (tmp_path / "s/manifest.json").exists()
+
+
+def test_synthetic_stations_sit_near_real_ones() -> None:
+    feed = SyntheticFeed(config("incident_recovery"))
+    for lat, lon in feed.position:
+        assert min(abs(lat - a) + abs(lon - b) / 2 for a, b in ANCHORS) < 0.0025
+
+
+def test_schemas_require_the_version_fields() -> None:
+    schemas = REPO / "packages/contracts/schemas"
+    event = json.loads((schemas / "station-batch-event.schema.json").read_text("utf-8"))
+    assert {"type", "schemaVersion", "eventId", "feedHealth"} <= set(event["required"])
+    snapshot = json.loads((schemas / "snapshot.schema.json").read_text("utf-8"))
+    assert {"schemaVersion", "eventSchemaVersion", "cursor"} <= set(snapshot["required"])
+    manifest = json.loads((schemas / "replay-manifest.schema.json").read_text("utf-8"))
+    assert {"schemaVersion", "eventSchemaVersion"} <= set(manifest["required"])

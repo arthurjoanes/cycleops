@@ -228,6 +228,8 @@ def test_status_classification(
         (200, "[" * 200_000, ("invalid", "contract")),  # RecursionError in json.loads
         # loads copes with this depth but json.dumps in the recording would not
         (200, DEEP_EXTRA, ("invalid", "contract")),
+        # a lone surrogate escape: valid JSON grammar, not valid Unicode
+        (200, json.dumps(status_body())[:-1] + ', "x": "\\ud800"}', ("invalid", "contract")),
     ],
     ids=[
         "503-data-null",
@@ -236,6 +238,7 @@ def test_status_classification(
         "200-data-list",
         "200-deep",
         "200-deep-extra",
+        "200-surrogate",
     ],
 )
 def test_malformed_bodies_are_classified_not_raised(

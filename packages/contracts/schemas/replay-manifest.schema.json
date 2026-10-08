@@ -85,7 +85,6 @@
     },
     "eventSchemaVersion": {
       "const": 1,
-      "default": 1,
       "title": "Eventschemaversion",
       "type": "integer"
     },
@@ -156,7 +155,6 @@
     },
     "schemaVersion": {
       "const": 1,
-      "default": 1,
       "title": "Schemaversion",
       "type": "integer"
     },
@@ -185,6 +183,7 @@
     }
   },
   "required": [
+    "schemaVersion",
     "mode",
     "streamId",
     "systemId",
@@ -200,6 +199,7 @@
     "adapterVersion",
     "engineVersion",
     "policyVersion",
+    "eventSchemaVersion",
     "hashVersion",
     "seed",
     "parameters",
