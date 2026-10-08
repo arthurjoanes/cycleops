@@ -161,6 +161,9 @@ class FeedHealth(Contract):
     coverage: Coverage
     breaker_open_until: Instant | None
     quarantined_feeds: list[str] = []
+    # When the source entered `state`; None while unknown. Optional in schemaVersion 1:
+    # payloads from before it existed leave it out.
+    state_since: Instant | None = None
 
 
 class StationBatchEvent(Contract):
@@ -188,6 +191,9 @@ class Heartbeat(Contract):
     head_sequence: int
     last_source_updated_at: Instant | None
     feed_state: SourceState
+    # FeedHealth.stateSince of feed_state, so a change made only by the API's stale rule
+    # reaches the page with its start.
+    state_since: Instant | None = None
 
 
 class ResyncRequired(Contract):
@@ -282,6 +288,10 @@ class HistoryPoint(Contract):
     docks_available: int | None
     quality: Quality
     primary_condition: Condition
+    # When the change was committed, the instant the gap and closed intervals are cut at.
+    # A change from the clock (source stale, station missing) keeps the station's
+    # source_updated_at, which can be minutes earlier.
+    at: Instant | None = None
 
 
 class Interval(Contract):

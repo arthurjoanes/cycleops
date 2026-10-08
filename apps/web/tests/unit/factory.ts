@@ -5,6 +5,7 @@ import type {
   IncidentItem,
   ReplayCatalog,
   ReplayManifest,
+  Snapshot,
   StationBatchEvent,
   StationState,
 } from "../../src/lib/contracts";
@@ -144,5 +145,25 @@ export function manifest(partial: Partial<ReplayManifest> = {}): ReplayManifest 
     incidents: [],
     eventCount: 0,
     ...partial,
+  };
+}
+
+export function snapshot(
+  sequence: number,
+  options: { streamId?: string; stations?: StationState[]; catalogVersion?: string; feed?: FeedHealth } = {},
+): Snapshot {
+  const streamId = options.streamId ?? "test:00000000";
+  return {
+    schemaVersion: 1,
+    streamId,
+    mode: "synthetic",
+    systemId: "test",
+    seed: 42,
+    cursor: `${streamId}@${sequence}`,
+    eventSchemaVersion: 1,
+    catalogVersion: options.catalogVersion ?? "v1",
+    feedHealth: options.feed ?? feedHealth(),
+    catalog: [catalogStation("A"), catalogStation("B")],
+    stations: options.stations ?? [stationState("A")],
   };
 }

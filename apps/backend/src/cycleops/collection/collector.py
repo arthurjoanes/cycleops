@@ -1,4 +1,4 @@
-"""Polling loop shared by record-feed and, later, the worker.
+"""Polling loop shared by record-feed and the worker.
 
 One task per feed, each sequential, plus a lock per feed for the inline rediscovery
 after a 404: never more than one request in flight per feed.
@@ -32,6 +32,7 @@ class Collector:
         *,
         clock: Clock | None = None,
         sleep: Sleep = asyncio.sleep,
+        gate: Callable[[], Awaitable[None]] | None = None,
     ) -> None:
         self._client = client
         self._provider = provider
@@ -45,6 +46,12 @@ class Collector:
             feed: FeedGuard(self._config, use_breaker=feed == "station_status") for feed in FEEDS
         }
         self.last_ok: dict[str, Outcome] = {}
+        # Start of each feed's last scheduled request. On the instance, so a run() started
+        # again (a new leadership term) or seeded from a previous process goes on with the
+        # same cadence instead of fetching every feed at once.
+        self.last_start: dict[str, datetime] = {}
+        # Awaited before each scheduled request (the worker's quota).
+        self._gate = gate
         self._extra_fields_seen: dict[str, frozenset[str]] = {}
         self._semantics_warned_at: datetime | None = None
 
@@ -79,18 +86,20 @@ class Collector:
             await self.fetch("gbfs")
 
     async def _loop(self, feed: str, until: datetime | None) -> None:
-        previous_start: datetime | None = None
         while True:
-            due = (
-                self._clock.now() if previous_start is None else self._cadence(feed, previous_start)
-            )
+            previous = self.last_start.get(feed)
+            due = self._clock.now() if previous is None else self._cadence(feed, previous)
             due = self.guards[feed].next_allowed_at(due)
             if until is not None and due >= until:
                 return
             delay = (due - self._clock.now()).total_seconds()
             if delay > 0:
                 await self._sleep(delay)
-            previous_start = self._clock.now()
+            if self._gate is not None:
+                # Before the start is taken: after a long wait here the next request still
+                # comes a full interval after this one, not right behind it.
+                await self._gate()
+            self.last_start[feed] = self._clock.now()
             await self.fetch(feed)
 
     def _cadence(self, feed: str, previous_start: datetime) -> datetime:

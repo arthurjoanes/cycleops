@@ -1,11 +1,12 @@
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { createRef } from "react";
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Header } from "../../src/app/Header";
+import { MainMessage } from "../../src/app/MainMessage";
 import { StationPriorityList } from "../../src/features/priorities/StationPriorityList";
 import { StationDetails } from "../../src/features/stations/StationDetails";
 import { useStations } from "../../src/features/stations/store";
-import { catalogStation, event, incident, iso, manifest, stationState, T0 } from "./factory";
+import { catalogStation, event, feedHealth, incident, iso, manifest, snapshot, stationState, T0 } from "./factory";
 
 const catalogs = new Map([["v1", ["A", "B", "C"].map((id) => catalogStation(id, `Estação ${id}`))]]);
 
@@ -98,6 +99,102 @@ describe("details", () => {
     const section = screen.getByRole("region", { name: "Disponibilidade" });
     const bikes = within(section).getByText("Bicicletas").nextElementSibling;
     expect(bikes?.textContent).toBe("0");
+  });
+});
+
+describe("details in the server modes", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("draws the timeline from /history and drops one of another stream", async () => {
+    const history = (streamId: string) => ({
+      streamId,
+      stationId: "A",
+      windowStart: iso(0),
+      windowEnd: iso(3600),
+      points: [
+        { sourceUpdatedAt: iso(0), bikesAvailable: 4, docksAvailable: 16, quality: "valid", primaryCondition: "ok" },
+        { sourceUpdatedAt: iso(600), bikesAvailable: 2, docksAvailable: 18, quality: "valid", primaryCondition: "ok" },
+      ],
+      incidents: [],
+      gaps: [{ start: iso(1200), end: iso(1800) }],
+      closed: [],
+    });
+    let body = history("other:11111111");
+    const fetch = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      headers: new Headers({ "content-type": "application/json" }),
+      json: async () => body,
+    }));
+    vi.stubGlobal("fetch", fetch);
+    act(() => {
+      useStations.getState().beginSnapshot(snapshot(5), "test:00000000");
+      useStations.getState().setConnection("connected");
+    });
+    const { rerender } = render(<StationDetails id="A" zone="oslo" />);
+    expect(screen.getByText("Carregando a linha do tempo.")).toBeInTheDocument();
+    await act(() => vi.waitFor(() => expect(fetch).toHaveBeenCalledTimes(1)));
+    expect(String((fetch.mock.calls[0] as unknown[])[0])).toBe("/api/v1/stations/A/history");
+    expect(screen.getByText("Carregando a linha do tempo.")).toBeInTheDocument();
+
+    body = history("test:00000000");
+    act(() => {
+      useStations.getState().apply([event(6, [stationState("A", { bikes: 2 })])]);
+    });
+    rerender(<StationDetails id="A" zone="oslo" />);
+    expect(await screen.findByText(/bicicletas entre 2 e 4, 2 mudanças, sem dado por 10 min/)).toBeInTheDocument();
+  });
+});
+
+describe("source state since", () => {
+  it("leaves out the start when the payload has none", () => {
+    act(() => {
+      useStations.getState().beginSnapshot(snapshot(5, { feed: feedHealth("stale") }), "test:00000000");
+      useStations.getState().setConnection("connected");
+    });
+    render(<MainMessage zone="oslo" onRetry={() => {}} />);
+    renderQueue();
+    expect(screen.getByText("Fonte vencida.")).toBeInTheDocument();
+    expect(screen.getByText("Dados vencidos. A fila é do último dado válido.")).toBeInTheDocument();
+
+    // An older event without stateSince: its committedAt is not taken as the start.
+    act(() => {
+      useStations.getState().apply([event(6, [], { feed: feedHealth("quarantined"), at: 0 })]);
+    });
+    expect(screen.getByText("O formato do feed mudou e os dados estão em quarentena.")).toBeInTheDocument();
+
+    act(() => {
+      useStations.getState().apply([event(7, [], { feed: { ...feedHealth("quarantined"), stateSince: iso(-60) } })]);
+    });
+    expect(screen.getByText(/em quarentena desde 00:14:00/)).toBeInTheDocument();
+    expect(screen.getByText(/Dados vencidos desde 00:14:00/)).toBeInTheDocument();
+  });
+
+  it("shows the start a heartbeat brings when only the server's rule made the source stale", () => {
+    act(() => {
+      useStations.getState().beginSnapshot(snapshot(5, { feed: { ...feedHealth(), stateSince: iso(-600) } }), "test:00000000");
+      useStations.getState().setConnection("connected");
+    });
+    render(<MainMessage zone="oslo" onRetry={() => {}} />);
+    renderQueue();
+    const beat = { serverTime: iso(120), streamId: "test:00000000", headSequence: 5, lastSourceUpdatedAt: iso(0) };
+    act(() => {
+      useStations.getState().applyHeartbeat({ ...beat, feedState: "stale", stateSince: iso(60) });
+    });
+    expect(screen.getByText(/^Fonte vencida/).textContent).toBe("Fonte vencida desde 00:16:00 (horário de Oslo, UTC+2).");
+    expect(screen.getByText(/Dados vencidos desde 00:16:00 \(horário de Oslo/)).toBeInTheDocument();
+  });
+
+  it("shows the start the server sends with the snapshot", () => {
+    const feed = { ...feedHealth("stale"), stateSince: iso(-600) };
+    act(() => {
+      useStations.getState().beginSnapshot(snapshot(5, { feed }), "test:00000000");
+      useStations.getState().setConnection("connected");
+    });
+    render(<MainMessage zone="oslo" onRetry={() => {}} />);
+    renderQueue();
+    expect(screen.getByText(/^Fonte vencida/).textContent).toBe("Fonte vencida desde 00:05:00 (horário de Oslo, UTC+2).");
+    expect(screen.getByText(/Dados vencidos desde 00:05:00 \(horário de Oslo/)).toBeInTheDocument();
   });
 });
 

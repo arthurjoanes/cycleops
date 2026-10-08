@@ -1,4 +1,4 @@
-# Compose, PostgreSQL integration and phase 3 E2E jobs come with the backend phase.
+# scripts/checks runs the same steps locally.
 name: ci
 
 on:
@@ -16,6 +16,22 @@ concurrency:
 jobs:
   backend:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18.6-alpine@sha256:77f585114c32fbca283dc835b0596f4e52b51b4c6662d7810b2f4084f60a1873
+        env:
+          POSTGRES_PASSWORD: local-only-test
+          POSTGRES_DB: cycleops
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -h 127.0.0.1 -U postgres"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 30
+    env:
+      # Superuser URL; the integration fixture creates its own databases from it.
+      CYCLEOPS_TEST_DATABASE_URL: postgresql://postgres:local-only-test@127.0.0.1:55432/postgres
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -28,7 +44,18 @@ jobs:
       - run: uv run --project apps/backend ruff check apps/backend
       - run: uv run --project apps/backend ruff format --check apps/backend
       - run: uv run --project apps/backend mypy --config-file apps/backend/pyproject.toml apps/backend/src apps/backend/tests
-      - run: uv run --project apps/backend pytest apps/backend
+      - name: Migrations from zero with the migrate job, twice (it is idempotent)
+        env:
+          SUPERUSER_DATABASE_URL: postgresql://postgres:local-only-test@127.0.0.1:55432/cycleops
+          MIGRATOR_DATABASE_URL: postgresql://cycleops_migrator:local-only-migrator@127.0.0.1:55432/cycleops
+          CYCLEOPS_MIGRATOR_DB_PASSWORD: local-only-migrator
+          CYCLEOPS_WORKER_DB_PASSWORD: local-only-worker
+          CYCLEOPS_API_DB_PASSWORD: local-only-api
+        run: |
+          uv run --project apps/backend migrate
+          uv run --project apps/backend migrate
+      - name: Unit and integration tests
+        run: uv run --project apps/backend pytest apps/backend
       - name: Generated contracts and replay artifacts are current
         run: uv run --project apps/backend generate-artifacts --check
       - name: Recordings up to 5 MB
@@ -88,6 +115,52 @@ jobs:
           path: apps/web/playwright-report
           if-no-files-found: ignore
           retention-days: 7
+
+  compose:
+    runs-on: ubuntu-latest
+    # For the shell steps; the Playwright suite names the same project and files itself.
+    env:
+      COMPOSE_PROJECT_NAME: cycleops-e2e
+      CYCLEOPS_NET: 10.89.2
+      COMPOSE_FILE: ${{ github.workspace }}/compose.yaml:${{ github.workspace }}/compose.offline.yaml
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+      - run: corepack enable
+      # Pull and build happen here; with compose.offline.yaml the stack has no internet.
+      - run: docker compose build
+      - run: docker compose up -d --wait --wait-timeout 180
+      - run: bash scripts/smoke
+      - name: No outbound connection from the worker
+        run: |
+          if docker compose exec -T worker python -c \
+            "import socket; socket.create_connection(('1.1.1.1', 443), timeout=5)"; then
+            echo "the worker reached the internet with compose.offline.yaml"
+            exit 1
+          fi
+      - run: corepack pnpm install --frozen-lockfile
+        working-directory: apps/web
+      - run: corepack pnpm exec playwright install --with-deps chromium
+        working-directory: apps/web
+      - run: corepack pnpm e2e:compose
+        working-directory: apps/web
+      - if: failure()
+        run: docker compose logs --no-color --timestamps > compose.log
+      - if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: compose-e2e
+          path: |
+            compose.log
+            apps/web/playwright-report
+          if-no-files-found: ignore
+          retention-days: 7
+      - if: always()
+        run: docker compose down -v
 
   gitleaks:
     runs-on: ubuntu-latest

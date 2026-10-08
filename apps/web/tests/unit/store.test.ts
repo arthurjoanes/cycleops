@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { applyEvents, createEventBuffer, emptyData } from "../../src/features/stations/store";
-import { catalogStation, event, feedHealth, stationState } from "./factory";
+import { applyEvents, createEventBuffer, emptyData, useStations } from "../../src/features/stations/store";
+import { catalogStation, event, feedHealth, iso, snapshot, stationState } from "./factory";
 
 const catalogs = new Map([
   ["v1", [catalogStation("A"), catalogStation("B")]],
@@ -54,6 +54,67 @@ describe("applyEvents", () => {
     expect(data.history.get("A")?.map((p) => p.bikes)).toEqual([5, 0]);
     expect(data.sourceTimeline.map((p) => p.state)).toEqual(["fresh", "stale"]);
     expect(data.monitoringStart).toBe(event(1, []).sourceUpdatedAt);
+  });
+});
+
+describe("beginSnapshot", () => {
+  it("takes the snapshot with its cursor and never calls a later event the monitoring start", () => {
+    useStations.getState().clear();
+    expect(useStations.getState().beginSnapshot(snapshot(5, { stations: [stationState("A")] }), null)).toBe(true);
+    const s = useStations.getState();
+    expect([s.streamId, s.lastSequence, s.catalogVersion, s.status, s.keepHistory]).toEqual([
+      "test:00000000",
+      5,
+      "v1",
+      "ready",
+      false,
+    ]);
+    expect([...s.catalog.keys()]).toEqual(["A", "B"]);
+    expect(s.session?.mode).toBe("synthetic");
+    expect(useStations.getState().apply([event(5, []), event(6, [stationState("A", { bikes: 0 })])])).toEqual([
+      "duplicate",
+      "applied",
+    ]);
+    expect(useStations.getState().monitoringStart).toBe("");
+    expect(useStations.getState().history.size).toBe(0);
+  });
+
+  it("keeps a new_version error: the page still cannot read what the server sends", () => {
+    useStations.getState().clear();
+    useStations.getState().setStatus("ready", "new_version");
+    useStations.getState().beginSnapshot(snapshot(5), null);
+    expect(useStations.getState().error).toBe("new_version");
+  });
+
+  it("takes the start of the source state only from the server", () => {
+    const { beginSnapshot, applyHeartbeat, apply, clear } = useStations.getState();
+    const since = () => useStations.getState().feedHealth?.stateSince;
+    clear();
+    beginSnapshot(snapshot(5), null);
+    apply([event(6, [], { feed: { ...feedHealth("stale"), stateSince: iso(90) } })]);
+    // A resync whose snapshot has no start does not keep the one the page saw.
+    beginSnapshot(snapshot(9, { feed: feedHealth("stale") }), "test:00000000");
+    expect(since()).toBeUndefined();
+
+    beginSnapshot(snapshot(9, { feed: { ...feedHealth("stale"), stateSince: iso(-600) } }), "test:00000000");
+    expect(since()).toBe(iso(-600));
+    expect(useStations.getState().sourceTimeline).toEqual([{ at: iso(-600), state: "stale" }]);
+    const beat = { serverTime: iso(90), streamId: "test:00000000", headSequence: 9, lastSourceUpdatedAt: iso(0) };
+    // A heartbeat without the field keeps the start while the state holds, and drops it on a change.
+    applyHeartbeat({ ...beat, feedState: "stale" });
+    expect(since()).toBe(iso(-600));
+    applyHeartbeat({ ...beat, feedState: "fresh" });
+    expect(since()).toBeNull();
+    applyHeartbeat({ ...beat, feedState: "stale", stateSince: iso(60) });
+    expect(since()).toBe(iso(60));
+    expect(useStations.getState().sourceTimeline.at(-1)).toEqual({ at: iso(60), state: "stale" });
+  });
+
+  it("from an empty stream (cursor @0) the first event is the monitoring start", () => {
+    useStations.getState().clear();
+    useStations.getState().beginSnapshot(snapshot(0, { stations: [] }), null);
+    useStations.getState().apply([event(1, [stationState("A")])]);
+    expect(useStations.getState().monitoringStart).toBe(event(1, []).sourceUpdatedAt);
   });
 });
 

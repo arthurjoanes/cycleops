@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+# Local equivalent of CI (.github/workflows/ci.yml), minus gitleaks. Run from anywhere:
+#   scripts/checks
+# Needs uv (or python -m uv), Node 24 with corepack, the Playwright Chromium
+# (corepack pnpm exec playwright install chromium, in apps/web), Docker and git.
+#
+# Steps, stopping at the first failure:
+# 1. backend: ruff, ruff format --check, mypy, generate-artifacts --check;
+# 2. PostgreSQL from compose.test.yaml (project cycleops-test, 127.0.0.1:55432): migrate
+#    from zero, twice, then pytest with unit and integration tests;
+# 3. web: generated contracts current, lint, typecheck, test, build:pages, check:bundle,
+#    Playwright against the Pages build (port 4173);
+# 4. size caps (recordings 5 MB, replay events 2 MB) and the text check;
+# 5. Compose synthetic with compose.offline.yaml (project cycleops-e2e, port 8080): build,
+#    up --wait, scripts/smoke, no outbound connection from the worker, e2e:compose (its
+#    last test resets the database).
+# Both Compose projects go down with -v at the end, also on failure.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+if command -v uv >/dev/null 2>&1; then uv=(uv); else uv=(python -m uv); fi
+py() { "${uv[@]}" run --project apps/backend "$@"; }
+web() { (cd apps/web && corepack pnpm "$@"); }
+step() { printf '\n== %s\n' "$*"; }
+
+test_db=(docker compose -p cycleops-test -f compose.test.yaml)
+export CYCLEOPS_NET=10.89.2
+stack=(docker compose -p cycleops-e2e -f compose.yaml -f compose.offline.yaml)
+cleanup() {
+    "${stack[@]}" down -v >/dev/null 2>&1 || true
+    "${test_db[@]}" down -v >/dev/null 2>&1 || true
+}
+trap cleanup EXIT
+
+step "backend lint, types, generated artifacts"
+"${uv[@]}" sync --project apps/backend --locked
+py ruff check apps/backend
+py ruff format --check apps/backend
+py mypy --config-file apps/backend/pyproject.toml apps/backend/src apps/backend/tests
+py generate-artifacts --check
+
+step "PostgreSQL: migrate from zero, pytest with integration"
+"${test_db[@]}" up -d --wait
+# From zero even when the project was already up.
+"${test_db[@]}" exec -T postgres sh -c \
+    'dropdb -U postgres --if-exists --force cycleops && createdb -U postgres cycleops'
+(
+    export SUPERUSER_DATABASE_URL=postgresql://postgres:local-only-test@127.0.0.1:55432/cycleops
+    export MIGRATOR_DATABASE_URL=postgresql://cycleops_migrator:local-only-migrator@127.0.0.1:55432/cycleops
+    export CYCLEOPS_MIGRATOR_DB_PASSWORD=local-only-migrator
+    export CYCLEOPS_WORKER_DB_PASSWORD=local-only-worker
+    export CYCLEOPS_API_DB_PASSWORD=local-only-api
+    py migrate
+    py migrate # second run on the same database: the job is idempotent
+)
+CYCLEOPS_TEST_DATABASE_URL=postgresql://postgres:local-only-test@127.0.0.1:55432/postgres \
+    py pytest apps/backend
+
+step "web"
+web install --frozen-lockfile
+contracts() { find packages/contracts -type f -print0 | sort -z | xargs -0 sha1sum; }
+before=$(contracts)
+web generate:contracts
+[[ $(contracts) == "$before" ]] || {
+    echo "generate:contracts changed packages/contracts"
+    exit 1
+}
+web lint
+web typecheck
+web test
+web build:pages
+web check:bundle
+web e2e
+
+step "size caps and text check"
+big=$(find fixtures/recorded -type f -size +5242880c -printf '%s %p\n')
+[[ -z $big ]] || {
+    echo "recordings above 5 MB: $big"
+    exit 1
+}
+big=$(find apps/web/public/replay -mindepth 2 -maxdepth 2 -name events.ndjson.gz \
+    -size +2097152c -printf '%s %p\n')
+[[ -z $big ]] || {
+    echo "replay events above 2 MB: $big"
+    exit 1
+}
+found=$(git ls-files -z -- '*.md' ':!README.en.md' ':!CONTRIBUTING.md' ':!THIRD_PARTY_NOTICES.md' |
+    xargs -0 -r grep -n -i -E '\bevid(e|ê)nc|\bensaio|\batest|\bassegur|\bprov(a|as)\b|\bcomprov|\brobust' ||
+    true)
+[[ -z $found ]] || {
+    echo "$found"
+    exit 1
+}
+
+step "Compose synthetic offline: smoke and Playwright"
+"${stack[@]}" build
+"${stack[@]}" up -d --wait --wait-timeout 180
+bash scripts/smoke
+if "${stack[@]}" exec -T worker python -c \
+    "import socket; socket.create_connection(('1.1.1.1', 443), timeout=5)" 2>/dev/null; then
+    echo "the worker reached the internet with compose.offline.yaml"
+    exit 1
+fi
+web e2e:compose
+
+step "all checks passed"

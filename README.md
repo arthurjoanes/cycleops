@@ -4,11 +4,25 @@ Lista as estações do Oslo Bysykkel sem bicicleta ou sem vaga, em ordem de prio
 
 ![Tela do CycleOps no modo Simulação: fila de prioridades à esquerda, mapa de Oslo com as estações à direita e os detalhes de uma estação sem bicicletas abertos sobre o mapa](docs/media/desktop-1440.png)
 
-## Estado
+## Como rodar
 
-Existem a coleta do feed, o motor de prioridade em Python, o `compile-replay` e a interface web, que reproduz no navegador os eventos gerados pelo motor. O Compose com API, worker e PostgreSQL ainda não existe, então ainda não há modo ao vivo.
+Precisa só de Docker. Da raiz do repositório:
 
-## Como rodar a web
+```bash
+docker compose up --build
+```
+
+Abre em http://127.0.0.1:8080, na simulação: um worker gera estações com seed e passa pelo mesmo motor do feed real, a API entrega os eventos por SSE e o Caddy serve a interface. O banco é um PostgreSQL sem porta publicada. As senhas que o `compose.yaml` usa sem `.env` são inseguras de propósito e só servem para uso local; o `.env.example` mostra como trocar.
+
+Para o feed real de Oslo, copie `.env.live.example` para `.env.live`, ponha o seu identificador no formato `<organização>-<aplicação>` e suba com outro nome de projeto, que separa o banco da simulação:
+
+```bash
+docker compose -p cycleops-live --env-file .env.live up --build
+```
+
+Depois de mudar o código, suba com `--build`: as imagens têm tag local fixa e um `up` simples reaproveita o build antigo. Só uma pilha publica a porta 8080 por vez; para trocar entre simulação, live e `scripts/checks`, pare a outra com `docker compose down` (ou `docker compose -p cycleops-live down`).
+
+## Como rodar só a web
 
 Precisa de Node 24 com corepack. Da raiz do repositório:
 
@@ -29,7 +43,13 @@ Abre em http://127.0.0.1:4173/cycleops/.
 
 ## Como testar
 
-Em `apps/web`:
+Tudo o que o CI roda, localmente (Docker, uv, Node 24 com corepack e o Chromium do Playwright):
+
+```bash
+scripts/checks
+```
+
+Só a web, em `apps/web`:
 
 ```bash
 corepack pnpm lint
@@ -40,22 +60,23 @@ corepack pnpm e2e
 corepack pnpm check:bundle
 ```
 
-O `e2e` gera o build do Pages e roda o Playwright contra ele. O `check:bundle` lê o build que já existe em `dist/`. Os comandos do backend Python estão no `CONTRIBUTING.md`.
+O `e2e` gera o build do Pages e roda o Playwright contra ele. O `check:bundle` lê o build que já existe em `dist/`. Os comandos do backend Python, dos testes de integração com PostgreSQL e do E2E contra o Compose estão no `CONTRIBUTING.md`.
 
 ## Modos de dados
 
+- Ao vivo: o worker lê o feed de Oslo a cada 15 s e a API manda os eventos por SSE. Roda só no Compose local.
+- Simulação: estações e contagens geradas com seed, com a faixa "Simulação" sempre visível. No Compose vem do worker, pelo mesmo caminho do ao vivo; no Pages e no botão "Simulação (arquivo)", de um artefato gerado offline.
 - Replay gravado: uma gravação real do feed passada pelo motor, reproduzida no navegador. Só existe quando uma gravação tem pelo menos um incidente confirmado e resolvido; ainda não há nenhuma.
-- Simulação: estações e contagens geradas com seed, com a faixa "Simulação" sempre visível. É o modo que abre hoje.
-- Ao vivo: o worker lendo o feed e a API mandando os eventos por SSE. Vai rodar só no Compose local.
 
-O modo e a seed ficam no cabeçalho o tempo todo. O replay tem pausa, 1×, 5×, 20×, passo e "ir para o incidente".
+O modo e a seed ficam no cabeçalho o tempo todo, junto com o estado da conexão. Com a fonte fora, a tela mostra o erro e oferece o replay em arquivo; ela nunca troca sozinha. O replay tem pausa, 1×, 5×, 20×, passo e "ir para o incidente".
 
 ## Limitações
 
 - Não é serviço oficial do Oslo Bysykkel.
 - Só leitura, sem reserva nem despacho de equipe.
 - O feed não tem SLA.
-- O live vai rodar só no Compose local.
+- O live roda só no Compose local.
+- No Compose em HTTP/1.1, o navegador abre no máximo 6 conexões por origem, e cada aba segura uma para o SSE. A API também limita a 4 streams por IP: a quinta aba derruba a mais antiga.
 - A base do mapa é simplificada e não serve para navegação.
 - A CSP do Pages vai por meta e é mais fraca que a do Caddy (ver `SECURITY.md`).
 

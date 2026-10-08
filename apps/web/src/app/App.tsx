@@ -4,7 +4,6 @@ import ui from "../components/ui/ui.module.css";
 import { Indicators } from "../features/priorities/Indicators";
 import { StationPriorityList } from "../features/priorities/StationPriorityList";
 import { ReplayControls } from "../features/replay/ReplayControls";
-import { useReplaySession } from "../features/replay/useReplaySession";
 import { AllStationsList } from "../features/stations/AllStationsList";
 import { StationDetails } from "../features/stations/StationDetails";
 import { useStations } from "../features/stations/store";
@@ -12,6 +11,7 @@ import { Footer } from "./Footer";
 import { Header } from "./Header";
 import { LiveAnnouncer } from "./LiveAnnouncer";
 import { MainMessage } from "./MainMessage";
+import { useDataSession } from "./useDataSession";
 import { useHashState } from "./useHashState";
 import styles from "./App.module.css";
 
@@ -42,10 +42,11 @@ function useNarrow(): boolean {
 export function App() {
   const [hash, setHash] = useHashState();
   const [retry, setRetry] = useState(0);
-  const session = useReplaySession(hash.mode, retry, hash.source);
+  const session = useDataSession(hash.mode, retry, hash.source);
   const narrow = useNarrow();
   const [mapUnavailable, setMapUnavailable] = useState(false);
   const status = useStations((s) => s.status);
+  const data = useStations((s) => s.session);
   const selectedName = useStations((s) => (hash.station ? (s.catalog.get(hash.station)?.name ?? hash.station) : null));
   const queueHeading = useRef<HTMLHeadingElement>(null);
   const detailsHeading = useRef<HTMLHeadingElement>(null);
@@ -70,6 +71,8 @@ export function App() {
   }, [hash.station, narrow]);
 
   const player = session.player;
+  // The stream failed: the artifacts are offered, never opened by themselves.
+  const replay = session.kind === "stream" ? session.available.find((k) => k !== "stream") : undefined;
   const showList = !narrow || hash.tab === "list";
   const showMap = !narrow || hash.tab === "map";
 
@@ -97,10 +100,10 @@ export function App() {
         onKind={(mode) => setHash({ mode, station: null })}
         manifest={session.manifest}
       />
-      {session.manifest?.mode === "synthetic" && (
+      {data?.mode === "synthetic" && (
         <p className={styles.simulation}>
-          Simulação: estações e contagens geradas com seed {session.manifest.seed}. Não é a operação real do
-          Oslo Bysykkel.
+          Simulação: estações e contagens geradas com seed {data.seed}. Não é a operação real do Oslo
+          Bysykkel.
         </p>
       )}
       {player && session.manifest && (
@@ -119,7 +122,11 @@ export function App() {
       )}
       <Indicators />
       <div className={styles.message}>
-        <MainMessage zone={hash.zone} onRetry={() => setRetry((n) => n + 1)} />
+        <MainMessage
+          zone={hash.zone}
+          onRetry={() => setRetry((n) => n + 1)}
+          onReplay={replay && (() => setHash({ mode: replay, station: null }))}
+        />
       </div>
       {narrow && (
         <div className={styles.tabs} role="tablist" aria-label="Visão">

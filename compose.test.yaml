@@ -1,0 +1,19 @@
+# Integration tests: only PostgreSQL, published on loopback.
+#   docker compose -p cycleops-test -f compose.test.yaml up -d --wait
+#   CYCLEOPS_TEST_DATABASE_URL=postgresql://postgres:local-only-test@127.0.0.1:55432/postgres
+#   docker compose -p cycleops-test -f compose.test.yaml down -v
+services:
+  postgres:
+    image: postgres:18.6-alpine@sha256:77f585114c32fbca283dc835b0596f4e52b51b4c6662d7810b2f4084f60a1873
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: local-only-test
+      POSTGRES_DB: postgres
+    ports:
+      - "127.0.0.1:55432:5432"
+    healthcheck:
+      # Over TCP: during init the entrypoint runs a temporary server on the socket only.
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U postgres"]
+      interval: 2s
+      timeout: 3s
+      retries: 30

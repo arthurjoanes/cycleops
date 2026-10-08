@@ -1,10 +1,10 @@
 import fixture from "@contracts/fixtures/sort-keys.json";
 import { describe, expect, it } from "vitest";
-import { mainMessage } from "../../src/app/screenState";
+import { mainMessage, queueDimmed } from "../../src/app/screenState";
 import { compareSortKeys, frozenView, indicators, leadIncident, liveOrder } from "../../src/features/priorities/queue";
 import { stationTone } from "../../src/features/stations/mapStyle";
-import { spans } from "../../src/features/stations/timeline";
-import { InvalidPayloadError, validateStationBatchEvent } from "../../src/lib/contracts";
+import { historySpans, spans } from "../../src/features/stations/timeline";
+import { InvalidPayloadError, type StationHistory, validateStationBatchEvent } from "../../src/lib/contracts";
 import { fold } from "../../src/lib/search";
 import { formatTime, utcOffset, zoneLabel } from "../../src/lib/time";
 import { parseEvents } from "../../src/streams/artifact";
@@ -69,7 +69,7 @@ describe("time in Oslo", () => {
 });
 
 describe("main message", () => {
-  const base = { error: null, resyncing: false, source: "fresh" as const, staleSince: null };
+  const base = { error: null, connection: "connected" as const, resyncing: false, source: "fresh" as const, staleSince: null };
   it("shows one message by precedence", () => {
     expect(mainMessage(base)).toBeNull();
     expect(mainMessage({ ...base, source: "late" })).toBeNull();
@@ -81,6 +81,20 @@ describe("main message", () => {
       "bootstrap_error",
     );
     expect(mainMessage({ ...base, error: "new_version" })?.kind).toBe("new_version");
+    expect(mainMessage({ ...base, connection: "superseded", resyncing: true })?.kind).toBe("superseded");
+    expect(mainMessage({ ...base, connection: "superseded", error: "bootstrap" })?.kind).toBe("bootstrap_error");
+    // Reconnecting, suspect and offline only dim the queue; the message stays the source's.
+    expect(mainMessage({ ...base, connection: "suspect", source: "stale", staleSince: iso(0) })?.kind).toBe("stale");
+    expect(mainMessage({ ...base, connection: "offline" })).toBeNull();
+  });
+
+  it("dims the queue when the connection is lost or the source is not current", () => {
+    expect(queueDimmed("fresh", "connected")).toBe(false);
+    expect(queueDimmed("late", "file")).toBe(false);
+    for (const connection of ["reconnecting", "suspect", "offline", "superseded"] as const) {
+      expect(queueDimmed("fresh", connection)).toBe(true);
+    }
+    expect(queueDimmed("quarantined", "connected")).toBe(true);
   });
 });
 
@@ -101,6 +115,82 @@ describe("timeline spans", () => {
       ["data", 0],
       ["gap", 0],
       ["closed", 0],
+    ]);
+  });
+});
+
+describe("server history spans", () => {
+  it("cuts at the server's gap and closed intervals, an open one running to the end", () => {
+    const point = (at: number, bikes: number) => ({
+      sourceUpdatedAt: iso(at),
+      bikesAvailable: bikes,
+      docksAvailable: 10 - bikes,
+      quality: "valid" as const,
+      primaryCondition: bikes ? ("ok" as const) : ("pickup_unavailable" as const),
+    });
+    const list = historySpans(
+      {
+        streamId: "test:00000000",
+        stationId: "A",
+        windowStart: iso(0),
+        windowEnd: iso(300),
+        points: [point(0, 3), point(60, 0)],
+        incidents: [],
+        gaps: [{ start: iso(120), end: iso(180) }],
+        closed: [{ start: iso(240), end: null }],
+      },
+      Date.parse(iso(300)),
+    );
+    expect(list.map((s) => [s.kind, s.bikes, (s.start - Date.parse(iso(0))) / 1000])).toEqual([
+      ["data", 3, 0],
+      ["data", 0, 60],
+      ["gap", 0, 120],
+      ["data", 0, 180],
+      ["closed", 0, 240],
+    ]);
+  });
+
+  it("puts each point at its commit and takes the station's gaps only from the server", () => {
+    // The station empties at 60 s (committed at 63 s), then drops out of the status: that
+    // change commits at 125 s with the sourceUpdatedAt of 60 s.
+    type Condition = StationHistory["points"][number]["primaryCondition"];
+    const point = (updated: number, at: number, bikes: number, condition: Condition) => ({
+      sourceUpdatedAt: iso(updated),
+      at: iso(at),
+      bikesAvailable: bikes,
+      docksAvailable: 10 - bikes,
+      quality: "valid" as const,
+      primaryCondition: condition,
+    });
+    const points = [
+      point(-8, -5, 3, "ok"),
+      point(60, 63, 0, "pickup_unavailable"),
+      point(60, 125, 0, "unverifiable"),
+    ];
+    const shape = (list: StationHistory["points"]) =>
+      historySpans(
+        {
+          streamId: "test:00000000",
+          stationId: "A",
+          windowStart: iso(0),
+          windowEnd: iso(180),
+          points: list,
+          incidents: [],
+          gaps: [{ start: iso(125), end: null }],
+          closed: [],
+        },
+        Date.parse(iso(180)),
+      ).map((s) => [s.kind, s.bikes, (s.start - Date.parse(iso(0))) / 1000]);
+    expect(shape(points)).toEqual([
+      ["data", 3, 0],
+      ["data", 0, 63],
+      ["gap", 0, 125],
+    ]);
+    // A payload without `at` falls back to sourceUpdatedAt; the gap still starts at 125 s.
+    expect(shape(points.map((p) => ({ ...p, at: undefined })))).toEqual([
+      ["data", 3, 0],
+      ["data", 0, 60],
+      ["gap", 0, 125],
     ]);
   });
 });

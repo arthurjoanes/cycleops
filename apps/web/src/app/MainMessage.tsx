@@ -1,17 +1,21 @@
 import ui from "../components/ui/ui.module.css";
 import { useStations } from "../features/stations/store";
 import { formatTime, type Zone, zoneLabel } from "../lib/time";
-import { mainMessage, stateSince } from "./screenState";
+import { mainMessage } from "./screenState";
 
-export function MainMessage(props: { zone: Zone; onRetry(): void }) {
+/** onReplay: the server stream failed and an artifact exists; the switch is the visitor's. */
+export function MainMessage(props: { zone: Zone; onRetry(): void; onReplay?: () => void }) {
   const error = useStations((s) => s.error);
+  const connection = useStations((s) => s.connection);
   const resyncing = useStations((s) => s.resyncing);
   const source = useStations((s) => s.feedHealth?.state ?? null);
-  const timeline = useStations((s) => s.sourceTimeline);
-  const message = mainMessage({ error, resyncing, source, staleSince: stateSince(timeline) });
+  // From the server (events, snapshot, heartbeat), never from when this page saw it.
+  const since = useStations((s) => s.feedHealth?.stateSince ?? null);
+  const message = mainMessage({ error, connection, resyncing, source, staleSince: since });
   if (!message) return null;
-  const at = (iso: string | null) =>
-    iso ? `${formatTime(iso, props.zone, true)} (${zoneLabel(iso, props.zone)})` : "";
+  // Left out when the payload has no start (older server or artifact).
+  const sinceText = (iso: string | null) =>
+    iso ? ` desde ${formatTime(iso, props.zone, true)} (${zoneLabel(iso, props.zone)})` : "";
   switch (message.kind) {
     case "new_version":
       return (
@@ -28,6 +32,23 @@ export function MainMessage(props: { zone: Zone; onRetry(): void }) {
           Não foi possível carregar os dados.{" "}
           <button type="button" className={ui.button} onClick={props.onRetry}>
             Tentar de novo
+          </button>
+          {props.onReplay && (
+            <>
+              {" "}
+              <button type="button" className={ui.button} onClick={props.onReplay}>
+                Abrir o replay em arquivo
+              </button>
+            </>
+          )}
+        </p>
+      );
+    case "superseded":
+      return (
+        <p className={`${ui.notice} ${ui.warning}`} role="alert">
+          O servidor encerrou esta conexão porque outra aba ou aparelho da mesma rede abriu o stream.{" "}
+          <button type="button" className={ui.button} onClick={props.onRetry}>
+            Reconectar
           </button>
         </p>
       );
@@ -46,13 +67,13 @@ export function MainMessage(props: { zone: Zone; onRetry(): void }) {
     case "quarantined":
       return (
         <p className={`${ui.notice} ${ui.warning}`} role="status">
-          O formato do feed mudou e os dados estão em quarentena desde {at(stateSince(timeline))}.
+          O formato do feed mudou e os dados estão em quarentena{sinceText(since)}.
         </p>
       );
     case "stale":
       return (
         <p className={`${ui.notice} ${ui.warning}`} role="status">
-          Fonte vencida desde {at(message.since)}.
+          Fonte vencida{sinceText(message.since)}.
         </p>
       );
   }

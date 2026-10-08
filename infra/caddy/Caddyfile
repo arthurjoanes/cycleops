@@ -1,0 +1,57 @@
+# Edge of the Compose stack: the web build, the replay artifacts and the proxy to the api.
+# No trusted_proxies: Caddy replaces any X-Forwarded-For from the client with the peer
+# address, and the api trusts proxy headers only from this container's fixed address.
+{
+	# The config only changes with a new image.
+	admin off
+}
+
+:8080 {
+	# Same policy as the Pages meta tag, plus frame-ancestors (headers only).
+	header {
+		Content-Security-Policy "default-src 'self'; script-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		Permissions-Policy "accelerometer=(), browsing-topics=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"
+	}
+
+	# SSE: outside encode (text/* is in its default list) and flushed on every write.
+	handle /api/v1/stream/* {
+		reverse_proxy api:8000 {
+			flush_interval -1
+		}
+	}
+
+	# Never falls back to index.html: with the api down this is a 502.
+	@api path /api/* /health/*
+	handle @api {
+		encode
+		reverse_proxy api:8000
+	}
+
+	handle {
+		root * /srv
+
+		# Vite hashes the file names under /assets; everything else revalidates (ETag).
+		# A 404 under /assets is not cached for a year: a rollback brings that file back.
+		@hashed path /assets/*
+		@unhashed not path /assets/*
+		header @hashed {
+			Cache-Control "public, max-age=31536000, immutable"
+			match status 2xx 304
+		}
+		header @unhashed Cache-Control "no-cache"
+
+		# Unknown app paths get index.html; a missing chunk, artifact or basemap stays a 404.
+		@spa {
+			not path /assets/* /replay/* /basemap/*
+			file {path} /index.html
+		}
+		rewrite @spa {file_match.relative}
+
+		# No precompressed: a .gz artifact goes out as the file itself (application/gzip,
+		# no Content-Encoding), and encode leaves that type alone.
+		encode
+		file_server
+	}
+}

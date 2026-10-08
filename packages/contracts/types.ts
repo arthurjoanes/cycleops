@@ -8,6 +8,7 @@ export interface Heartbeat {
   headSequence: number;
   lastSourceUpdatedAt: string | null;
   serverTime: string;
+  stateSince?: string | null;
   streamId: string;
 }
 /**
@@ -123,6 +124,7 @@ export interface FeedHealth {
   lastSourceUpdatedAt: string | null;
   quarantinedFeeds?: string[];
   state: "unknown" | "fresh" | "late" | "stale" | "quarantined" | "closed";
+  stateSince?: string | null;
 }
 /**
  * This interface was referenced by `Contracts`'s JSON-Schema
@@ -272,6 +274,7 @@ export interface StationBatchEvent {
  * via the `definition` "HistoryPoint".
  */
 export interface HistoryPoint {
+  at?: string | null;
   bikesAvailable: number | null;
   docksAvailable: number | null;
   primaryCondition:

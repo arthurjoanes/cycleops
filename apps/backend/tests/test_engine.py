@@ -8,6 +8,7 @@ import pytest
 from conftest import POLICY_DIR, T0, info_body, station, status_body
 
 from cycleops.adapters.gbfs import ReportSemantics, parse_station_information, parse_station_status
+from cycleops.adapters.postgres.queries import api_source_state
 from cycleops.contracts import IncidentKind, StationBatchEvent, StationState
 from cycleops.domain.engine import new_stream, policy_change, state_hash, step
 from cycleops.domain.model import (
@@ -205,6 +206,95 @@ def test_late_then_stale() -> None:
     assert feed.events[-1].cause == "clock" and feed.events[-1].feed_health.state == "stale"
 
 
+def test_state_since_moves_only_when_the_state_changes() -> None:
+    feed = Feed()
+    assert feed.state.source_state_since is None  # unknown since the start
+    feed.publish(10, {"A": 3, "B": 5})
+    assert feed.events[-1].feed_health.state_since == feed.t(10)
+    feed.tick(35)  # still fresh
+    assert feed.state.source_state_since == feed.t(10)
+    feed.tick(65)
+    assert feed.events[-1].feed_health.state == "stale"
+    # Stale by age starts at the crossing (last_updated 0 + 60 s), not at the tick.
+    assert feed.events[-1].feed_health.state_since == feed.t(60)
+    feed.publish(80, {"A": 3, "B": 5})  # one of two publications: still stale
+    assert feed.events[-1].feed_health.state == "stale"
+    assert feed.events[-1].feed_health.state_since == feed.t(60)
+
+
+def test_after_a_worker_outage_stale_starts_at_the_crossing() -> None:
+    # The API showed stale from 60 s (last_updated 0 + 60 s) while the worker was down.
+    feed = Feed()
+    feed.publish(10, {"A": 3, "B": 5})
+    feed.tick(15)
+    feed.tick(1815)  # first entry after the restart
+    assert (feed.state.source_state, feed.state.source_state_since) == ("stale", feed.t(60))
+    feed.tick(1820)
+    assert feed.state.source_state_since == feed.t(60)
+
+
+def test_after_a_worker_outage_a_publication_starts_fresh_now() -> None:
+    # Fresh again, but not since before the stale stretch the API showed.
+    feed = Feed()
+    feed.publish(10, {"A": 3, "B": 5})
+    feed.tick(15)
+    feed.publish(1812, {"A": 3, "B": 5})
+    assert (feed.state.source_state, feed.state.source_state_since) == ("fresh", feed.t(1812))
+
+
+def test_after_a_worker_outage_stale_starts_where_the_api_put_it() -> None:
+    # The last publication came after the last tick (also with the feed's clock 3 s ahead):
+    # during the outage the API puts the start on the tick (worker_seen_at), and the restart
+    # keeps it.
+    for updated in (16, 19):
+        feed = Feed()
+        feed.publish(10, {"A": 3, "B": 5})
+        feed.tick(15)
+        feed.publish(17, {"A": 3, "B": 5}, updated=updated)
+        s = feed.state
+        limit = feed.policy.priority.source_stale_after_seconds
+        args = (s.source_state_since, s.last_source_updated_at, s.last_tick_at, limit)
+        api = api_source_state(s.source_state, *args, feed.t(1800))
+        feed.tick(1815)
+        assert api == (s.source_state, s.source_state_since) == ("stale", feed.t(75))
+
+
+def test_a_tick_after_a_restart_does_not_move_the_start_of_fresh() -> None:
+    # The publication after the outage starts fresh; the next tick finds it still fresh.
+    feed = Feed()
+    feed.publish(10, {"A": 3, "B": 5})
+    feed.tick(15)
+    feed.publish(1812, {"A": 3, "B": 5})
+    feed.tick(1815)
+    assert (feed.state.source_state, feed.state.source_state_since) == ("fresh", feed.t(1812))
+
+
+def test_quarantine_ended_by_a_refused_publication_is_not_stale_inside_it() -> None:
+    # Quarantined from 30 to 600; the response at 600 is valid but a duplicate (last_updated
+    # 0, older than the limit): stale starts when the quarantine ended, never inside it.
+    for updated in (0, -5, 700):  # duplicate, out of order, future
+        feed = Feed()
+        feed.publish(10, {"A": 3, "B": 5})
+        feed.apply(
+            PublicationFailed(feed.t(25), "station_status", "invalid", "contract", None, feed.t(25))
+        )
+        for at in range(30, 600, 5):
+            feed.tick(at)
+        assert feed.state.source_state == "quarantined"
+        feed.publish(600, {"A": 3, "B": 5}, updated=updated)
+        feed.tick(605)
+        assert (feed.state.source_state, feed.state.source_state_since) == ("stale", feed.t(600))
+
+
+def test_opening_without_publications_is_stale_from_the_wait_limit() -> None:
+    feed = Feed(hours=OSLO_HOURS, start=oslo("04:58"))
+    feed.publish(10, {"A": 3, "B": 5})
+    feed.tick(125)  # 05:00:05: the opening, waiting for its first publication
+    assert feed.state.source_state == "unknown"
+    feed.tick(600)  # the worker was down since the opening
+    assert (feed.state.source_state, feed.state.source_state_since) == ("stale", feed.t(185))
+
+
 def test_stale_source_suspends_and_resumes_with_a_new_stretch() -> None:
     feed = confirmed_feed()
     for at in range(45, 125, 5):
@@ -240,6 +330,8 @@ def test_open_breaker_makes_the_source_stale_on_the_next_tick() -> None:
     feed.tick(25)
     assert feed.state.source_state == "stale"
     assert feed.events[-1].feed_health.breaker_open_until == feed.t(80)
+    # Not by age: it starts at the tick that sees the breaker.
+    assert feed.events[-1].feed_health.state_since == feed.t(25)
 
 
 def test_quarantine_needs_two_publications_to_clear() -> None:
@@ -254,6 +346,23 @@ def test_quarantine_needs_two_publications_to_clear() -> None:
     assert feed.state.source_state == "quarantined"
     feed.publish(345, {"A": 3, "B": 5})
     assert feed.state.source_state == "fresh"
+
+
+def test_quarantine_held_after_its_end_goes_stale_at_the_crossing() -> None:
+    # One valid publication (last_updated 30) ended it, then the source went silent: stale
+    # from 30 + 60 s, with the worker running or down until 1815.
+    for ticks in (range(45, 100, 5), [45, 1815]):
+        feed = Feed()
+        feed.publish(10, {"A": 3, "B": 5})
+        feed.apply(
+            PublicationFailed(feed.t(25), "station_status", "invalid", "contract", None, feed.t(25))
+        )
+        feed.tick(30)
+        feed.publish(40, {"A": 3, "B": 5})
+        assert feed.state.source_state == "quarantined" and feed.state.quarantined_since is None
+        for at in ticks:
+            feed.tick(at)
+        assert (feed.state.source_state, feed.state.source_state_since) == ("stale", feed.t(90))
 
 
 # Service hours

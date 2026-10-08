@@ -8,7 +8,7 @@ import gzip
 import hashlib
 import io
 import json
-from collections.abc import Iterable, Iterator
+from collections.abc import Iterable, Iterator, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from importlib.metadata import version
@@ -21,7 +21,7 @@ from cycleops.adapters.synthetic import SyntheticConfig, SyntheticFeed, collect
 from cycleops.canonical import HASH_VERSION, sha256_hex
 from cycleops.collection.client import FEEDS, Attempt
 from cycleops.collection.guard import FeedGuard
-from cycleops.collection.outcome import TRANSPORT_ERRORS, classify_attempt
+from cycleops.collection.outcome import TRANSPORT_ERRORS, Outcome, classify_attempt
 from cycleops.collection.recording import parse_iso, read_recording
 from cycleops.contracts import (
     SCHEMA_VERSION,
@@ -82,31 +82,45 @@ def entries(attempts: Iterable[Attempt], policy: Policy) -> Iterator[Entry]:
     attempts."""
     collection = policy.provider.collection
     guards = {feed: FeedGuard(collection, use_breaker=feed == "station_status") for feed in FEEDS}
+    for attempt in sorted(attempts, key=lambda a: a.received_at):
+        outcome = engine_outcome(attempt, policy)
+        guards[attempt.feed].record(attempt.feed, outcome, attempt.received_at)
+        yield attempt.received_at, *attempt_input(attempt, outcome, guards)
+
+
+def engine_outcome(attempt: Attempt, policy: Policy) -> Outcome:
+    """The attempt classified with the clock skew tolerance, as the engine sees it."""
     skew = timedelta(seconds=policy.priority.clock_skew_tolerance_seconds)
     semantics = policy.provider.station_report_semantics
-    for attempt in sorted(attempts, key=lambda a: a.received_at):
-        outcome = classify_attempt(attempt, semantics, attempt.received_at + skew)
-        guard = guards[attempt.feed]
-        guard.record(attempt.feed, outcome, attempt.received_at)
-        publication = outcome.publication
-        entry: Input | None = None
-        if outcome.ok and isinstance(publication, StatusPublication):
-            entry = PublicationReceived(attempt.received_at, publication)
-        elif outcome.ok and isinstance(publication, InfoPublication):
-            entry = CatalogReceived(attempt.received_at, publication)
-        elif outcome.error_class is not None:
-            entry = PublicationFailed(
-                attempt.received_at,
-                attempt.feed,
-                outcome.code,
-                outcome.error_class,
-                guard.breaker_open_until,
-                guard.quarantined_since,
-            )
-        quarantined = frozenset(
-            name for name, g in guards.items() if name != "station_status" and g.quarantined_since
+    return classify_attempt(attempt, semantics, attempt.received_at + skew)
+
+
+def attempt_input(
+    attempt: Attempt, outcome: Outcome, guards: Mapping[str, FeedGuard]
+) -> tuple[Input | None, frozenset[str]]:
+    """The engine input one attempt makes (None for a successful discovery feed or a 304)
+    and the feeds other than station_status in quarantine after it. The guards have
+    already recorded the attempt. Shared with the worker's source."""
+    guard = guards[attempt.feed]
+    publication = outcome.publication
+    entry: Input | None = None
+    if outcome.ok and isinstance(publication, StatusPublication):
+        entry = PublicationReceived(attempt.received_at, publication)
+    elif outcome.ok and isinstance(publication, InfoPublication):
+        entry = CatalogReceived(attempt.received_at, publication)
+    elif outcome.error_class is not None:
+        entry = PublicationFailed(
+            attempt.received_at,
+            attempt.feed,
+            outcome.code,
+            outcome.error_class,
+            guard.breaker_open_until,
+            guard.quarantined_since,
         )
-        yield attempt.received_at, entry, quarantined
+    quarantined = frozenset(
+        name for name, g in guards.items() if name != "station_status" and g.quarantined_since
+    )
+    return entry, quarantined
 
 
 def run(
@@ -128,7 +142,7 @@ def run(
 
     for at, entry, after in source:
         if next_tick is None:
-            next_tick = _grid_ceil(at, tick)
+            next_tick = grid_ceil(at, tick)
         while next_tick < at:
             apply(ClockTick(next_tick, quarantined_feeds=quarantined))
             next_tick += tick
@@ -279,7 +293,7 @@ def write(artifact: Artifact, out: Path) -> None:
     )
 
 
-def _grid_ceil(at: datetime, tick: timedelta) -> datetime:
+def grid_ceil(at: datetime, tick: timedelta) -> datetime:
     """First multiple of the tick, counted from the epoch, at or after `at`."""
     epoch = datetime(1970, 1, 1, tzinfo=UTC)
     micro = timedelta(microseconds=1)

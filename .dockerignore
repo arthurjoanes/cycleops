@@ -1,0 +1,29 @@
+# Allowlist: everything stays out of the build context except what the Dockerfiles in
+# infra/ copy. Private files at the root never need to be named here.
+*
+
+!apps/backend/pyproject.toml
+!apps/backend/uv.lock
+!apps/backend/.python-version
+!apps/backend/alembic.ini
+!apps/backend/migrations
+!apps/backend/src
+!policy
+!fixtures/synthetic
+
+!apps/web/package.json
+!apps/web/pnpm-lock.yaml
+!apps/web/pnpm-workspace.yaml
+!apps/web/index.html
+!apps/web/tsconfig.json
+!apps/web/vite.config.ts
+!apps/web/src
+!apps/web/public
+!packages/contracts
+!infra/caddy/Caddyfile
+
+**/node_modules
+**/.venv
+**/dist
+**/.env*
+**/__pycache__

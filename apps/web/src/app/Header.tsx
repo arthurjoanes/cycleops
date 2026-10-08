@@ -3,15 +3,25 @@ import { useStations } from "../features/stations/store";
 import type { ReplayManifest } from "../lib/contracts";
 import { MODE_LABEL, SOURCE_LABEL } from "../lib/labels";
 import { formatDate, formatTime, type Zone, zoneLabel } from "../lib/time";
-import type { ArtifactKind } from "../streams/artifact";
 import styles from "./Header.module.css";
+import type { DataKind } from "./useDataSession";
 
 const CONNECTION_LABEL = {
+  connecting: "conectando",
   connected: "conectada",
   reconnecting: "reconectando",
   suspect: "suspeita",
   offline: "offline",
+  superseded: "encerrada",
+  ended: "encerrada",
 } as const;
+
+/** With a server the artifacts are named as files, so "Simulação" is not ambiguous. */
+function kindLabel(kind: DataKind, server: boolean): string {
+  if (kind === "stream") return "Servidor";
+  const label = kind === "recorded" ? MODE_LABEL.recorded_replay : MODE_LABEL.synthetic;
+  return server ? `${label} (arquivo)` : label;
+}
 
 function howMade(manifest: ReplayManifest, zone: Zone): string {
   if (manifest.mode === "recorded_replay") {
@@ -28,9 +38,9 @@ function howMade(manifest: ReplayManifest, zone: Zone): string {
 export function Header(props: {
   zone: Zone;
   onZone(zone: Zone): void;
-  available: ArtifactKind[];
-  kind: ArtifactKind | null;
-  onKind(kind: ArtifactKind): void;
+  available: DataKind[];
+  kind: DataKind | null;
+  onKind(kind: DataKind): void;
   manifest: ReplayManifest | null;
 }) {
   const session = useStations((s) => s.session);
@@ -47,16 +57,20 @@ export function Header(props: {
         ? `gravado em ${formatDate(session.recordedOn, zone)}`
         : null;
   const connectionText =
-    connection === "file"
-      ? session?.mode === "synthetic"
-        ? `arquivo local, seed ${session.seed ?? "?"}`
-        : session?.recordedOn
-          ? `arquivo gravado em ${formatDate(session.recordedOn, zone)}`
-          : "arquivo local"
-      : CONNECTION_LABEL[connection];
+    connection !== "file"
+      ? CONNECTION_LABEL[connection]
+      : !session
+        ? "carregando"
+        : session.mode === "synthetic"
+          ? `arquivo local, seed ${session.seed ?? "?"}`
+          : session.recordedOn
+            ? `arquivo gravado em ${formatDate(session.recordedOn, zone)}`
+            : "arquivo local";
   // Artifact modes say how the artifact was made; the source state follows.
   const made = props.manifest ? howMade(props.manifest, zone) : null;
-  const published = last?.sourceUpdatedAt ?? null;
+  // The feed's last publication; a clock event has none of its own, and the server stream
+  // keeps it current through the heartbeat.
+  const published = feed?.lastSourceUpdatedAt ?? last?.sourceUpdatedAt ?? null;
   const publicationNote =
     session?.mode === "synthetic"
       ? "horário simulado"
@@ -124,7 +138,7 @@ export function Header(props: {
                 aria-pressed={props.kind === kind}
                 onClick={() => props.onKind(kind)}
               >
-                {kind === "recorded" ? MODE_LABEL.recorded_replay : MODE_LABEL.synthetic}
+                {kindLabel(kind, props.available.includes("stream"))}
               </button>
             ))}
           </div>

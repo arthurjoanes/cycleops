@@ -1,4 +1,5 @@
 import { useCallback, useSyncExternalStore } from "react";
+import type { DataKind } from "./useDataSession";
 
 /** View state kept in the URL with hash routing: #/?view=all&station=... */
 export interface HashState {
@@ -6,10 +7,12 @@ export interface HashState {
   tab: "list" | "map";
   station: string | null;
   zone: "oslo" | "local";
-  mode: "recorded" | "synthetic" | null;
+  mode: DataKind | null;
   q: string;
   source: string | null;
 }
+
+const MODES: readonly DataKind[] = ["stream", "recorded", "synthetic"];
 
 export function parseHash(hash: string): HashState {
   const params = new URLSearchParams(hash.replace(/^#\/?\??/, ""));
@@ -18,7 +21,7 @@ export function parseHash(hash: string): HashState {
     tab: params.get("tab") === "map" ? "map" : "list",
     station: params.get("station"),
     zone: params.get("zone") === "local" ? "local" : "oslo",
-    mode: params.get("mode") === "recorded" ? "recorded" : params.get("mode") === "synthetic" ? "synthetic" : null,
+    mode: MODES.find((m) => m === params.get("mode")) ?? null,
     q: params.get("q") ?? "",
     source: params.get("source"),
   };

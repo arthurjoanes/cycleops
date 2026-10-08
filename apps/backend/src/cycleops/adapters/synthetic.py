@@ -64,6 +64,10 @@ class SyntheticConfig(BaseModel):
     end: AwareDatetime
     service_hours: ServiceHours | Literal["always"] = "always"
     scenarios: list[ScenarioName] = []
+    # The worker runs one 24 h window per day: the seed fixes positions, capacities and the
+    # starting counts, and the day only changes the random walk. Day 0 is the artifact's walk.
+    # Left out of dumps: artifacts and their hashes never carry it.
+    day: Annotated[int, Field(ge=0, exclude=True)] = 0
 
 
 def load_config(path: Path) -> SyntheticConfig:
@@ -96,6 +100,7 @@ class SyntheticFeed:
             for i in range(n)
         ]
         initial = [rng.randint(2, cap - 2) for cap in self.capacity]
+        walk = rng if config.day == 0 else random.Random(f"{config.seed}:{config.day}")
         self.cadence = timedelta(seconds=config.cadence_seconds)
         epoch = int(config.start.timestamp())
         self.origin = config.start - timedelta(seconds=epoch % config.cadence_seconds)
@@ -112,8 +117,8 @@ class SyntheticFeed:
             if k:
                 current = list(current)
                 for i in range(n):
-                    if rng.random() < config.change_fraction and i not in self.scripts:
-                        delta = rng.choice((-2, -1, 1, 2))
+                    if walk.random() < config.change_fraction and i not in self.scripts:
+                        delta = walk.choice((-2, -1, 1, 2))
                         current[i] = min(self.capacity[i], max(0, current[i] + delta))
             row = list(current)
             offset = (self.origin + k * self.cadence - config.start).total_seconds()
