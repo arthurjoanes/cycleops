@@ -1,10 +1,10 @@
 # ADR 0004: replay no navegador com Clock e compile-replay
 
-Status: Proposto, 2026-10-08.
+Status: Proposto, 2026-10-08, revisto no fim do MVP.
 
 ## Contexto
 
-A demo pública roda no GitHub Pages, sem servidor. Ela precisa mostrar o mesmo comportamento do live: incidentes confirmados e resolvidos, fonte vencida, fechamento noturno. As regras de prioridade, frescor e horário de serviço estão no motor Python (`cycleops.domain`), e o worker do live vai usar o mesmo motor.
+A demo pública roda no GitHub Pages, sem servidor. Ela precisa mostrar o mesmo comportamento do live: incidentes confirmados e resolvidos, fonte vencida, fechamento noturno. As regras de prioridade, frescor e horário de serviço estão no motor Python (`cycleops.domain`), e o worker usa o mesmo motor.
 
 ## Decisão
 
@@ -17,6 +17,13 @@ A demo pública roda no GitHub Pages, sem servidor. Ela precisa mostrar o mesmo 
 - Uma gravação só vira replay se passar no aceite: pelo menos um incidente que vai de `confirmed` a `resolved` dentro dela. Sem gravação aceita, a demo abre na simulação, rotulada como tal.
 
 Estado em 2026-10-08: o artefato sintético da demo tem 242 eventos e 85 KB em gzip. A única gravação real, a amostra de 10 min de 2026-10-07, não passa no aceite (40 incidentes confirmados e nenhum resolvido), então ainda não existe replay gravado.
+
+O que mudou com o Compose:
+
+- O mesmo player roda no Pages e no Caddy. No Compose ele fica ao lado do stream do servidor, e a troca é sempre por botão; com a fonte fora, a tela oferece o replay sem trocar sozinha.
+- Antes de tocar, o navegador confere os três arquivos entre si: `streamId` igual ao do manifesto, sequências de 1 a `eventCount` sem buraco e `catalogVersion` presente no catálogo. Uma mistura de dois deploys vira a mensagem de versão nova em vez de uma tela parada.
+- O `feedHealth` dos eventos ganhou `stateSince`, o instante em que a fonte entrou no estado. O artefato foi regerado e o player não mudou.
+- Com o live no ar, a gravação para o replay sai do arquivo bruto do worker (`record-feed --from-archive`) e passa pelo mesmo aceite.
 
 ## Alternativas
 

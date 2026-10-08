@@ -4,7 +4,7 @@ Status: Aceito por Arthur Joanes em 2026-10-06.
 
 ## Contexto
 
-O CycleOps lista as estações do Oslo Bysykkel sem bicicleta ou sem vaga, em ordem de prioridade, com o motivo e os dados usados no cálculo. A fonte é o feed GBFS aberto da Oslo Bysykkel, sob a NLOD 2.0.
+O CycleOps lista as estações do Oslo Bysykkel sem bicicleta ou sem vaga, em ordem de prioridade, com o motivo e os dados usados no cálculo. A fonte é o feed GBFS aberto do Oslo Bysykkel, sob a NLOD 2.0.
 
 O foco do projeto é a tela: dado ao vivo, dado vencido, replay de gravação e mapa. O backend existe para alimentar essa tela, e cada peça de infraestrutura precisa de um motivo vindo dela.
 

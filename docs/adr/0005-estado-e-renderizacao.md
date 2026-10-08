@@ -1,6 +1,6 @@
 # ADR 0005: estado e renderização no frontend
 
-Status: Proposto, 2026-10-08.
+Status: Proposto, 2026-10-08, revisto no fim do MVP.
 
 ## Contexto
 
@@ -17,6 +17,8 @@ Oslo tem 267 estações. O feed publica a cada 15 s, e numa publicação de dia 
 - A partir de 768 px a página tem a altura da janela e a fila rola dentro da coluna dela. Uma fila que cresce e encolhe a cada lote mudava a altura da grade e fazia o MapLibre recriar o canvas; no perfil de CPU, era o maior custo por lote.
 
 Estado em 2026-10-08, com a CPU 4× mais lenta (`docs/results/performance.md`, commit 5794b7a): recebimento até pintura com p95 entre 157 e 232 ms nos quatro cenários, abaixo dos 250 ms. A fila de prioridades não gera long task com 267 estações. "Todas as estações" com 1.000 estações gera uma long task por lote, de até 105 ms, e o render fica em 22,9 ms no p95: o gatilho de virtualização abaixo foi atingido nesse cenário. Com 267 estações, a lista completa dá long tasks de até 82 ms quando todas mudam no mesmo lote. Continuar com a lista completa para Oslo ou virtualizar "Todas as estações" é decisão do Arthur.
+
+Com o stream do servidor (Compose, commit 01b4497, sem throttling de CPU): recebimento até pintura com p95 de 128,6 ms em 10 min. A `LiveSseSource` usa o mesmo store, a mesma janela de 100 ms e os mesmos seletores do replay; ela entra por import dinâmico, e o build do Pages não carrega nada da API. Com a aba oculta, o navegador não roda `requestAnimationFrame`, então os eventos vão direto para o store em vez de esperar o frame; depois de mais de 5 min oculta, a volta pede um snapshot novo.
 
 ## Alternativas
 
@@ -35,7 +37,7 @@ Estado em 2026-10-08, com a CPU 4× mais lenta (`docs/results/performance.md`, c
 ## Risco
 
 - Uma cidade bem maior que Oslo, ou um lote com todas as estações a cada poucos segundos, pode passar do orçamento de 250 ms sem virtualização.
-- Os números são de laboratório, numa máquina só, com CPU 4× mais lenta emulada. Celulares fracos de verdade podem ficar abaixo disso.
+- Os números são de laboratório, numa máquina só, com CPU 4× mais lenta emulada. Celulares fracos de verdade podem ser mais lentos que isso.
 
 ## Quando revisar
 
