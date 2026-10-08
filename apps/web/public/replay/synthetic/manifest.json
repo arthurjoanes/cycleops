@@ -1,13 +1,40 @@
 {
   "adapterVersion": "gbfs-2.3/1",
-  "catalogSha256": "e326848cf243bdffc84085f6fbfc39d5e9a45e07d795242367126650ee87acec",
+  "catalogSha256": "9d7952a7a8b65c31d7c5571431412b610e7a8db43041e9d504dbaa5d93c64cc0",
   "engineVersion": "0.1.0",
   "eventCount": 242,
   "eventSchemaVersion": 1,
-  "eventsSha256": "547b5cd80035723ed43666c1ce6aac1c31827af9d237f6df83812c5cf2c5f827",
+  "eventsSha256": "1473e2421cfb962f55a6db429b99cf46f33924bb30d3c628ffc0da4de5cc3638",
   "gbfsVersion": "2.3",
   "hashVersion": 1,
   "incidents": [
+    {
+      "confirmedOffsetSeconds": 115.0,
+      "confirmedSequence": 9,
+      "incidentId": "dac24e134f88bc1b",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": 1705.0,
+      "resolvedSequence": 115,
+      "stationId": "S-0007"
+    },
+    {
+      "confirmedOffsetSeconds": 130.0,
+      "confirmedSequence": 10,
+      "incidentId": "2cdcf9e354176322",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": 2005.0,
+      "resolvedSequence": 135,
+      "stationId": "S-0174"
+    },
+    {
+      "confirmedOffsetSeconds": 130.0,
+      "confirmedSequence": 10,
+      "incidentId": "8978a5364d1bb3d3",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": 1030.0,
+      "resolvedSequence": 70,
+      "stationId": "S-0238"
+    },
     {
       "confirmedOffsetSeconds": 160.0,
       "confirmedSequence": 12,
@@ -20,164 +47,155 @@
     {
       "confirmedOffsetSeconds": 160.0,
       "confirmedSequence": 12,
-      "incidentId": "5f053b6939a817a3",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 265.0,
-      "resolvedSequence": 19,
-      "stationId": "S-0113"
+      "incidentId": "534968d454dbf375",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": 1165.0,
+      "resolvedSequence": 79,
+      "stationId": "S-0108"
     },
     {
       "confirmedOffsetSeconds": 175.0,
       "confirmedSequence": 13,
-      "incidentId": "48fd5bcfe881c584",
+      "incidentId": "3ef8297bd981c52e",
       "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 700.0,
-      "resolvedSequence": 48,
-      "stationId": "S-0241"
-    },
-    {
-      "confirmedOffsetSeconds": 190.0,
-      "confirmedSequence": 14,
-      "incidentId": "a530c58a592a8a08",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 2230.0,
-      "resolvedSequence": 150,
-      "stationId": "S-0123"
+      "resolvedOffsetSeconds": 295.0,
+      "resolvedSequence": 21,
+      "stationId": "S-0058"
     },
     {
       "confirmedOffsetSeconds": 205.0,
       "confirmedSequence": 15,
-      "incidentId": "6c86f57c3d9b0b22",
-      "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 1030.0,
-      "resolvedSequence": 70,
-      "stationId": "S-0046"
+      "incidentId": "0d3f3f67e1724c62",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": 1885.0,
+      "resolvedSequence": 127,
+      "stationId": "S-0093"
     },
     {
       "confirmedOffsetSeconds": 205.0,
       "confirmedSequence": 15,
-      "incidentId": "8ebe10941182bf53",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 820.0,
-      "resolvedSequence": 56,
-      "stationId": "S-0263"
+      "incidentId": "3c3314bdf3491cf2",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": 655.0,
+      "resolvedSequence": 45,
+      "stationId": "S-0118"
     },
     {
       "confirmedOffsetSeconds": 235.0,
       "confirmedSequence": 17,
-      "incidentId": "e73be9a038a15968",
+      "incidentId": "4d8ea6a3d7f505f5",
       "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 1195.0,
-      "resolvedSequence": 81,
-      "stationId": "S-0192"
+      "resolvedOffsetSeconds": 1675.0,
+      "resolvedSequence": 113,
+      "stationId": "S-0009"
+    },
+    {
+      "confirmedOffsetSeconds": 235.0,
+      "confirmedSequence": 17,
+      "incidentId": "a9c6e5549a0c9090",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": 370.0,
+      "resolvedSequence": 26,
+      "stationId": "S-0030"
     },
     {
       "confirmedOffsetSeconds": 265.0,
       "confirmedSequence": 19,
-      "incidentId": "b73dbb15539cadbc",
-      "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 355.0,
-      "resolvedSequence": 25,
-      "stationId": "S-0180"
+      "incidentId": "de44bb4cbd54bf64",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": 760.0,
+      "resolvedSequence": 52,
+      "stationId": "S-0036"
     },
     {
       "confirmedOffsetSeconds": 265.0,
       "confirmedSequence": 19,
-      "incidentId": "a5df43d97cccc8f7",
+      "incidentId": "5193c8a1ca4375e6",
       "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 1525.0,
-      "resolvedSequence": 103,
-      "stationId": "S-0219"
+      "resolvedOffsetSeconds": 730.0,
+      "resolvedSequence": 50,
+      "stationId": "S-0240"
     },
     {
       "confirmedOffsetSeconds": 265.0,
       "confirmedSequence": 19,
-      "incidentId": "87dc545ecc251aa8",
+      "incidentId": "d876141d86caa531",
       "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 910.0,
-      "resolvedSequence": 62,
-      "stationId": "S-0255"
-    },
-    {
-      "confirmedOffsetSeconds": 310.0,
-      "confirmedSequence": 22,
-      "incidentId": "ab13d128565d3a7b",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 1375.0,
-      "resolvedSequence": 93,
-      "stationId": "S-0229"
-    },
-    {
-      "confirmedOffsetSeconds": 325.0,
-      "confirmedSequence": 23,
-      "incidentId": "fd87605aba1a7c1d",
-      "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 505.0,
-      "resolvedSequence": 35,
-      "stationId": "S-0142"
-    },
-    {
-      "confirmedOffsetSeconds": 325.0,
-      "confirmedSequence": 23,
-      "incidentId": "6de24e1128d5f264",
-      "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 1495.0,
-      "resolvedSequence": 101,
-      "stationId": "S-0217"
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "S-0257"
     },
     {
       "confirmedOffsetSeconds": 385.0,
       "confirmedSequence": 27,
-      "incidentId": "3611184b25d9c3e6",
+      "incidentId": "5f769afaae7e6255",
       "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 2020.0,
-      "resolvedSequence": 136,
-      "stationId": "S-0139"
-    },
-    {
-      "confirmedOffsetSeconds": 400.0,
-      "confirmedSequence": 28,
-      "incidentId": "d924eb4dee95bad3",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 745.0,
-      "resolvedSequence": 51,
-      "stationId": "S-0257"
+      "resolvedOffsetSeconds": 475.0,
+      "resolvedSequence": 33,
+      "stationId": "S-0101"
     },
     {
       "confirmedOffsetSeconds": 415.0,
       "confirmedSequence": 29,
-      "incidentId": "f36b7662cfe67290",
+      "incidentId": "35dac409d43ec3f5",
       "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 895.0,
-      "resolvedSequence": 61,
-      "stationId": "S-0030"
+      "resolvedOffsetSeconds": 805.0,
+      "resolvedSequence": 55,
+      "stationId": "S-0148"
+    },
+    {
+      "confirmedOffsetSeconds": 415.0,
+      "confirmedSequence": 29,
+      "incidentId": "ff2a546f3a064401",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": 1060.0,
+      "resolvedSequence": 72,
+      "stationId": "S-0182"
+    },
+    {
+      "confirmedOffsetSeconds": 430.0,
+      "confirmedSequence": 30,
+      "incidentId": "b275b63bdbb71067",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": 1720.0,
+      "resolvedSequence": 116,
+      "stationId": "S-0142"
     },
     {
       "confirmedOffsetSeconds": 460.0,
       "confirmedSequence": 32,
-      "incidentId": "f499404daad60f46",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 1690.0,
-      "resolvedSequence": 114,
-      "stationId": "S-0068"
-    },
-    {
-      "confirmedOffsetSeconds": 490.0,
-      "confirmedSequence": 34,
-      "incidentId": "92a1b28b92cc6965",
+      "incidentId": "4d9e093c0a08c847",
       "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 775.0,
-      "resolvedSequence": 53,
-      "stationId": "S-0031"
+      "resolvedOffsetSeconds": 1300.0,
+      "resolvedSequence": 88,
+      "stationId": "S-0089"
     },
     {
-      "confirmedOffsetSeconds": 490.0,
-      "confirmedSequence": 34,
-      "incidentId": "c9fe70a2dcda84fb",
+      "confirmedOffsetSeconds": 460.0,
+      "confirmedSequence": 32,
+      "incidentId": "90aefb7679d36796",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": 1315.0,
+      "resolvedSequence": 89,
+      "stationId": "S-0242"
+    },
+    {
+      "confirmedOffsetSeconds": 460.0,
+      "confirmedSequence": 32,
+      "incidentId": "e4f05273f0b51328",
       "kind": "return_unavailable",
       "resolvedOffsetSeconds": null,
       "resolvedSequence": null,
-      "stationId": "S-0069"
+      "stationId": "S-0244"
+    },
+    {
+      "confirmedOffsetSeconds": 505.0,
+      "confirmedSequence": 35,
+      "incidentId": "d995f29699bf9f65",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": 1165.0,
+      "resolvedSequence": 79,
+      "stationId": "S-0172"
     },
     {
       "confirmedOffsetSeconds": 520.0,
@@ -189,787 +207,805 @@
       "stationId": "S-0002"
     },
     {
-      "confirmedOffsetSeconds": 520.0,
-      "confirmedSequence": 36,
-      "incidentId": "1ac4abe7a0ebe060",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": null,
-      "resolvedSequence": null,
-      "stationId": "S-0033"
-    },
-    {
-      "confirmedOffsetSeconds": 565.0,
-      "confirmedSequence": 39,
-      "incidentId": "3235bbfe8859c859",
+      "confirmedOffsetSeconds": 535.0,
+      "confirmedSequence": 37,
+      "incidentId": "f5ebaf7644c854a9",
       "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 1150.0,
-      "resolvedSequence": 78,
-      "stationId": "S-0167"
+      "resolvedOffsetSeconds": 610.0,
+      "resolvedSequence": 42,
+      "stationId": "S-0139"
     },
     {
-      "confirmedOffsetSeconds": 595.0,
-      "confirmedSequence": 41,
-      "incidentId": "a57c4faa0011dce8",
+      "confirmedOffsetSeconds": 610.0,
+      "confirmedSequence": 42,
+      "incidentId": "e79509d047feaae2",
       "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": null,
-      "resolvedSequence": null,
-      "stationId": "S-0055"
+      "resolvedOffsetSeconds": 895.0,
+      "resolvedSequence": 61,
+      "stationId": "S-0077"
     },
     {
-      "confirmedOffsetSeconds": 625.0,
-      "confirmedSequence": 43,
-      "incidentId": "818f3a01654e6465",
+      "confirmedOffsetSeconds": 655.0,
+      "confirmedSequence": 45,
+      "incidentId": "eed38e58aa72931f",
       "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 940.0,
-      "resolvedSequence": 64,
-      "stationId": "S-0235"
-    },
-    {
-      "confirmedOffsetSeconds": 670.0,
-      "confirmedSequence": 46,
-      "incidentId": "2f7146fc07dda146",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 880.0,
-      "resolvedSequence": 60,
-      "stationId": "S-0006"
-    },
-    {
-      "confirmedOffsetSeconds": 670.0,
-      "confirmedSequence": 46,
-      "incidentId": "c2bbfb2549d25efb",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 1030.0,
-      "resolvedSequence": 70,
-      "stationId": "S-0222"
+      "resolvedOffsetSeconds": 1015.0,
+      "resolvedSequence": 69,
+      "stationId": "S-0088"
     },
     {
       "confirmedOffsetSeconds": 685.0,
       "confirmedSequence": 47,
-      "incidentId": "98e17a2471ddb503",
+      "incidentId": "4f352258d4c54126",
       "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 1000.0,
-      "resolvedSequence": 68,
-      "stationId": "S-0124"
+      "resolvedOffsetSeconds": 910.0,
+      "resolvedSequence": 62,
+      "stationId": "S-0039"
+    },
+    {
+      "confirmedOffsetSeconds": 685.0,
+      "confirmedSequence": 47,
+      "incidentId": "b96a7d6278aadae3",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "S-0205"
+    },
+    {
+      "confirmedOffsetSeconds": 685.0,
+      "confirmedSequence": 47,
+      "incidentId": "e6ec8a82ac829933",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "S-0213"
     },
     {
       "confirmedOffsetSeconds": 730.0,
       "confirmedSequence": 50,
-      "incidentId": "adcd02b86373f6fd",
-      "kind": "pickup_unavailable",
+      "incidentId": "153f689033ac8d01",
+      "kind": "return_unavailable",
       "resolvedOffsetSeconds": null,
       "resolvedSequence": null,
-      "stationId": "S-0070"
+      "stationId": "S-0084"
     },
     {
       "confirmedOffsetSeconds": 745.0,
       "confirmedSequence": 51,
-      "incidentId": "34ede73bb64ee083",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 1870.0,
-      "resolvedSequence": 126,
-      "stationId": "S-0233"
-    },
-    {
-      "confirmedOffsetSeconds": 775.0,
-      "confirmedSequence": 53,
-      "incidentId": "ac03276ef5e21d51",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 1270.0,
-      "resolvedSequence": 86,
-      "stationId": "S-0093"
-    },
-    {
-      "confirmedOffsetSeconds": 790.0,
-      "confirmedSequence": 54,
-      "incidentId": "06d5818d6986e96c",
+      "incidentId": "24bad026fec4e45f",
       "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 1075.0,
-      "resolvedSequence": 73,
-      "stationId": "S-0206"
+      "resolvedOffsetSeconds": 1150.0,
+      "resolvedSequence": 78,
+      "stationId": "S-0049"
+    },
+    {
+      "confirmedOffsetSeconds": 745.0,
+      "confirmedSequence": 51,
+      "incidentId": "77d767ffdede8ba3",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": 1615.0,
+      "resolvedSequence": 109,
+      "stationId": "S-0169"
+    },
+    {
+      "confirmedOffsetSeconds": 760.0,
+      "confirmedSequence": 52,
+      "incidentId": "67fc09bd034abcec",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "S-0101"
+    },
+    {
+      "confirmedOffsetSeconds": 835.0,
+      "confirmedSequence": 57,
+      "incidentId": "07a31e00d23b0af4",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": 970.0,
+      "resolvedSequence": 66,
+      "stationId": "S-0139"
+    },
+    {
+      "confirmedOffsetSeconds": 835.0,
+      "confirmedSequence": 57,
+      "incidentId": "5aa601c0eda83a8f",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": 910.0,
+      "resolvedSequence": 62,
+      "stationId": "S-0227"
+    },
+    {
+      "confirmedOffsetSeconds": 880.0,
+      "confirmedSequence": 60,
+      "incidentId": "296f890f10c1699a",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": 2125.0,
+      "resolvedSequence": 143,
+      "stationId": "S-0058"
+    },
+    {
+      "confirmedOffsetSeconds": 880.0,
+      "confirmedSequence": 60,
+      "incidentId": "2237792cb8c9a140",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": 1615.0,
+      "resolvedSequence": 109,
+      "stationId": "S-0125"
+    },
+    {
+      "confirmedOffsetSeconds": 880.0,
+      "confirmedSequence": 60,
+      "incidentId": "1aaece6580178356",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": 2455.0,
+      "resolvedSequence": 165,
+      "stationId": "S-0185"
     },
     {
       "confirmedOffsetSeconds": 895.0,
       "confirmedSequence": 61,
-      "incidentId": "4cd49c123f412d3e",
-      "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 1075.0,
-      "resolvedSequence": 73,
-      "stationId": "S-0101"
-    },
-    {
-      "confirmedOffsetSeconds": 955.0,
-      "confirmedSequence": 65,
-      "incidentId": "5ca513026232c5b9",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 1735.0,
-      "resolvedSequence": 117,
-      "stationId": "S-0066"
-    },
-    {
-      "confirmedOffsetSeconds": 970.0,
-      "confirmedSequence": 66,
-      "incidentId": "4f5d4bfe71e09f27",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 1525.0,
-      "resolvedSequence": 103,
-      "stationId": "S-0126"
-    },
-    {
-      "confirmedOffsetSeconds": 1000.0,
-      "confirmedSequence": 68,
-      "incidentId": "e5dec67fb57bba73",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 1735.0,
-      "resolvedSequence": 117,
-      "stationId": "S-0133"
-    },
-    {
-      "confirmedOffsetSeconds": 1000.0,
-      "confirmedSequence": 68,
-      "incidentId": "dda165daca1af788",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 1255.0,
-      "resolvedSequence": 85,
-      "stationId": "S-0171"
-    },
-    {
-      "confirmedOffsetSeconds": 1015.0,
-      "confirmedSequence": 69,
-      "incidentId": "b9020bdb4645203a",
+      "incidentId": "330b908326771675",
       "kind": "return_unavailable",
       "resolvedOffsetSeconds": null,
       "resolvedSequence": null,
-      "stationId": "S-0010"
+      "stationId": "S-0180"
     },
     {
-      "confirmedOffsetSeconds": 1015.0,
-      "confirmedSequence": 69,
-      "incidentId": "102debff8c17102c",
+      "confirmedOffsetSeconds": 1060.0,
+      "confirmedSequence": 72,
+      "incidentId": "8f6ba260977a3900",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": 1465.0,
+      "resolvedSequence": 99,
+      "stationId": "S-0224"
+    },
+    {
+      "confirmedOffsetSeconds": 1090.0,
+      "confirmedSequence": 74,
+      "incidentId": "df1cdd80e1050947",
       "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 2470.0,
-      "resolvedSequence": 166,
-      "stationId": "S-0063"
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "S-0103"
     },
     {
-      "confirmedOffsetSeconds": 1030.0,
-      "confirmedSequence": 70,
-      "incidentId": "9353beb6cd3147a2",
-      "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 1300.0,
-      "resolvedSequence": 88,
-      "stationId": "S-0213"
-    },
-    {
-      "confirmedOffsetSeconds": 1030.0,
-      "confirmedSequence": 70,
-      "incidentId": "51e0dd2b86888a96",
+      "confirmedOffsetSeconds": 1120.0,
+      "confirmedSequence": 76,
+      "incidentId": "6040c78885bfd6d7",
       "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 1345.0,
-      "resolvedSequence": 91,
-      "stationId": "S-0214"
+      "resolvedOffsetSeconds": 1630.0,
+      "resolvedSequence": 110,
+      "stationId": "S-0116"
     },
     {
-      "confirmedOffsetSeconds": 1045.0,
-      "confirmedSequence": 71,
-      "incidentId": "b43735181db86ed6",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 2095.0,
-      "resolvedSequence": 141,
-      "stationId": "S-0098"
-    },
-    {
-      "confirmedOffsetSeconds": 1045.0,
-      "confirmedSequence": 71,
-      "incidentId": "941ebb061337cde1",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 2305.0,
-      "resolvedSequence": 155,
-      "stationId": "S-0143"
-    },
-    {
-      "confirmedOffsetSeconds": 1075.0,
-      "confirmedSequence": 73,
-      "incidentId": "711f705680ccf1ae",
+      "confirmedOffsetSeconds": 1120.0,
+      "confirmedSequence": 76,
+      "incidentId": "481424cda6054f90",
       "kind": "return_unavailable",
       "resolvedOffsetSeconds": null,
       "resolvedSequence": null,
-      "stationId": "S-0104"
+      "stationId": "S-0219"
     },
     {
-      "confirmedOffsetSeconds": 1075.0,
-      "confirmedSequence": 73,
-      "incidentId": "de80c7cda1005ae0",
+      "confirmedOffsetSeconds": 1120.0,
+      "confirmedSequence": 76,
+      "incidentId": "c4b7559f2c9fd153",
       "kind": "return_unavailable",
-      "resolvedOffsetSeconds": null,
-      "resolvedSequence": null,
-      "stationId": "S-0163"
+      "resolvedOffsetSeconds": 1495.0,
+      "resolvedSequence": 101,
+      "stationId": "S-0253"
     },
     {
       "confirmedOffsetSeconds": 1165.0,
       "confirmedSequence": 79,
-      "incidentId": "29a63fb34aeb0b1e",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 2230.0,
-      "resolvedSequence": 150,
-      "stationId": "S-0091"
+      "incidentId": "8fc589aad97b3665",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": 1300.0,
+      "resolvedSequence": 88,
+      "stationId": "S-0203"
     },
     {
       "confirmedOffsetSeconds": 1195.0,
       "confirmedSequence": 81,
-      "incidentId": "ab9c95ddbf1d1f21",
+      "incidentId": "1ac0d052a7366454",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": 1375.0,
+      "resolvedSequence": 93,
+      "stationId": "S-0150"
+    },
+    {
+      "confirmedOffsetSeconds": 1210.0,
+      "confirmedSequence": 82,
+      "incidentId": "9b65bc24b0d76d56",
       "kind": "return_unavailable",
+      "resolvedOffsetSeconds": 1585.0,
+      "resolvedSequence": 107,
+      "stationId": "S-0061"
+    },
+    {
+      "confirmedOffsetSeconds": 1225.0,
+      "confirmedSequence": 83,
+      "incidentId": "eadcb5f600f88b79",
+      "kind": "pickup_unavailable",
       "resolvedOffsetSeconds": null,
       "resolvedSequence": null,
-      "stationId": "S-0127"
+      "stationId": "S-0018"
+    },
+    {
+      "confirmedOffsetSeconds": 1240.0,
+      "confirmedSequence": 84,
+      "incidentId": "32a4f72b0d34812f",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": 1570.0,
+      "resolvedSequence": 106,
+      "stationId": "S-0163"
     },
     {
       "confirmedOffsetSeconds": 1255.0,
       "confirmedSequence": 85,
-      "incidentId": "69131c5347056281",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 1570.0,
-      "resolvedSequence": 106,
-      "stationId": "S-0083"
-    },
-    {
-      "confirmedOffsetSeconds": 1270.0,
-      "confirmedSequence": 86,
-      "incidentId": "6fa6eb4e28864e07",
+      "incidentId": "fbe99270ee65a17d",
       "kind": "return_unavailable",
       "resolvedOffsetSeconds": null,
       "resolvedSequence": null,
-      "stationId": "S-0113"
+      "stationId": "S-0019"
     },
     {
-      "confirmedOffsetSeconds": 1345.0,
-      "confirmedSequence": 91,
-      "incidentId": "b163783faaa20c9d",
+      "confirmedOffsetSeconds": 1315.0,
+      "confirmedSequence": 89,
+      "incidentId": "26aef99246bf3a56",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "S-0092"
+    },
+    {
+      "confirmedOffsetSeconds": 1315.0,
+      "confirmedSequence": 89,
+      "incidentId": "1dbd5a3ff82baeb6",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": 2635.0,
+      "resolvedSequence": 177,
+      "stationId": "S-0118"
+    },
+    {
+      "confirmedOffsetSeconds": 1375.0,
+      "confirmedSequence": 93,
+      "incidentId": "8bc2015ad7b0cdcc",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": 2680.0,
+      "resolvedSequence": 180,
+      "stationId": "S-0141"
+    },
+    {
+      "confirmedOffsetSeconds": 1375.0,
+      "confirmedSequence": 93,
+      "incidentId": "8fb18d634a0e6241",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": 2320.0,
+      "resolvedSequence": 156,
+      "stationId": "S-0158"
+    },
+    {
+      "confirmedOffsetSeconds": 1420.0,
+      "confirmedSequence": 96,
+      "incidentId": "4010c1e47146ccca",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "S-0013"
+    },
+    {
+      "confirmedOffsetSeconds": 1420.0,
+      "confirmedSequence": 96,
+      "incidentId": "b91999f6dc082779",
       "kind": "return_unavailable",
       "resolvedOffsetSeconds": 1555.0,
       "resolvedSequence": 105,
-      "stationId": "S-0171"
-    },
-    {
-      "confirmedOffsetSeconds": 1390.0,
-      "confirmedSequence": 94,
-      "incidentId": "2df357eed8cf0d2d",
-      "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": null,
-      "resolvedSequence": null,
-      "stationId": "S-0054"
-    },
-    {
-      "confirmedOffsetSeconds": 1435.0,
-      "confirmedSequence": 97,
-      "incidentId": "4066c872438a4971",
-      "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 1750.0,
-      "resolvedSequence": 118,
-      "stationId": "S-0167"
-    },
-    {
-      "confirmedOffsetSeconds": 1435.0,
-      "confirmedSequence": 97,
-      "incidentId": "4d7703ec23462505",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": null,
-      "resolvedSequence": null,
-      "stationId": "S-0263"
-    },
-    {
-      "confirmedOffsetSeconds": 1450.0,
-      "confirmedSequence": 98,
-      "incidentId": "df8bca4d92035c4f",
-      "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 2350.0,
-      "resolvedSequence": 158,
-      "stationId": "S-0258"
-    },
-    {
-      "confirmedOffsetSeconds": 1450.0,
-      "confirmedSequence": 98,
-      "incidentId": "25887ee896dbcf7a",
-      "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": null,
-      "resolvedSequence": null,
-      "stationId": "S-0261"
-    },
-    {
-      "confirmedOffsetSeconds": 1495.0,
-      "confirmedSequence": 101,
-      "incidentId": "e4ac8881e5592783",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": null,
-      "resolvedSequence": null,
-      "stationId": "S-0140"
-    },
-    {
-      "confirmedOffsetSeconds": 1495.0,
-      "confirmedSequence": 101,
-      "incidentId": "5ef20ac4bac4050c",
-      "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 1645.0,
-      "resolvedSequence": 111,
       "stationId": "S-0164"
     },
     {
-      "confirmedOffsetSeconds": 1510.0,
-      "confirmedSequence": 102,
-      "incidentId": "2a3e022b0c60ed36",
+      "confirmedOffsetSeconds": 1420.0,
+      "confirmedSequence": 96,
+      "incidentId": "a5638ef5bd4dd540",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": 2155.0,
+      "resolvedSequence": 145,
+      "stationId": "S-0254"
+    },
+    {
+      "confirmedOffsetSeconds": 1465.0,
+      "confirmedSequence": 99,
+      "incidentId": "a996570e93fd10e4",
       "kind": "pickup_unavailable",
       "resolvedOffsetSeconds": null,
       "resolvedSequence": null,
-      "stationId": "S-0060"
+      "stationId": "S-0079"
     },
     {
-      "confirmedOffsetSeconds": 1510.0,
-      "confirmedSequence": 102,
-      "incidentId": "cdadb8016f2e1820",
+      "confirmedOffsetSeconds": 1465.0,
+      "confirmedSequence": 99,
+      "incidentId": "5e19a0c93036b717",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": 2425.0,
+      "resolvedSequence": 163,
+      "stationId": "S-0150"
+    },
+    {
+      "confirmedOffsetSeconds": 1465.0,
+      "confirmedSequence": 99,
+      "incidentId": "209c155ba86a5ec4",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": 1840.0,
+      "resolvedSequence": 124,
+      "stationId": "S-0162"
+    },
+    {
+      "confirmedOffsetSeconds": 1465.0,
+      "confirmedSequence": 99,
+      "incidentId": "4ef4a5893475e613",
       "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 1945.0,
-      "resolvedSequence": 131,
-      "stationId": "S-0137"
+      "resolvedOffsetSeconds": 1750.0,
+      "resolvedSequence": 118,
+      "stationId": "S-0171"
     },
     {
       "confirmedOffsetSeconds": 1525.0,
       "confirmedSequence": 103,
-      "incidentId": "98f63a843d2b8f9a",
+      "incidentId": "e6f1c72d9647aa87",
       "kind": "return_unavailable",
-      "resolvedOffsetSeconds": null,
-      "resolvedSequence": null,
-      "stationId": "S-0093"
+      "resolvedOffsetSeconds": 2455.0,
+      "resolvedSequence": 165,
+      "stationId": "S-0020"
     },
     {
       "confirmedOffsetSeconds": 1525.0,
       "confirmedSequence": 103,
-      "incidentId": "0064a5457547c2fd",
+      "incidentId": "e28add2d4f774bcd",
       "kind": "return_unavailable",
-      "resolvedOffsetSeconds": null,
-      "resolvedSequence": null,
-      "stationId": "S-0245"
-    },
-    {
-      "confirmedOffsetSeconds": 1570.0,
-      "confirmedSequence": 106,
-      "incidentId": "27be6694d8bb2a25",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 1705.0,
-      "resolvedSequence": 115,
-      "stationId": "S-0014"
-    },
-    {
-      "confirmedOffsetSeconds": 1570.0,
-      "confirmedSequence": 106,
-      "incidentId": "78396e701cf5ddbf",
-      "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 2275.0,
-      "resolvedSequence": 153,
-      "stationId": "S-0181"
+      "resolvedOffsetSeconds": 2635.0,
+      "resolvedSequence": 177,
+      "stationId": "S-0059"
     },
     {
       "confirmedOffsetSeconds": 1585.0,
       "confirmedSequence": 107,
-      "incidentId": "fc817854a0bd80df",
+      "incidentId": "0b69880f179ee9da",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": 1840.0,
+      "resolvedSequence": 124,
+      "stationId": "S-0175"
+    },
+    {
+      "confirmedOffsetSeconds": 1600.0,
+      "confirmedSequence": 108,
+      "incidentId": "629abfa57120278d",
       "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 1975.0,
-      "resolvedSequence": 133,
-      "stationId": "S-0211"
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "S-0032"
+    },
+    {
+      "confirmedOffsetSeconds": 1600.0,
+      "confirmedSequence": 108,
+      "incidentId": "d0d6ed5d4145b226",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": 2665.0,
+      "resolvedSequence": 179,
+      "stationId": "S-0246"
+    },
+    {
+      "confirmedOffsetSeconds": 1615.0,
+      "confirmedSequence": 109,
+      "incidentId": "083b81736c27f47b",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "S-0124"
+    },
+    {
+      "confirmedOffsetSeconds": 1615.0,
+      "confirmedSequence": 109,
+      "incidentId": "b869a444fcf7fcb2",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": 2080.0,
+      "resolvedSequence": 140,
+      "stationId": "S-0176"
+    },
+    {
+      "confirmedOffsetSeconds": 1630.0,
+      "confirmedSequence": 110,
+      "incidentId": "3df2a94e65de4700",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "S-0049"
+    },
+    {
+      "confirmedOffsetSeconds": 1645.0,
+      "confirmedSequence": 111,
+      "incidentId": "09ed78feea45d5d2",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": 2050.0,
+      "resolvedSequence": 138,
+      "stationId": "S-0014"
+    },
+    {
+      "confirmedOffsetSeconds": 1645.0,
+      "confirmedSequence": 111,
+      "incidentId": "0739dacb72a96c94",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": 2695.0,
+      "resolvedSequence": 181,
+      "stationId": "S-0119"
     },
     {
       "confirmedOffsetSeconds": 1660.0,
       "confirmedSequence": 112,
-      "incidentId": "2931ccdd40f96770",
+      "incidentId": "114b319297851326",
       "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": null,
-      "resolvedSequence": null,
-      "stationId": "S-0039"
+      "resolvedOffsetSeconds": 1990.0,
+      "resolvedSequence": 134,
+      "stationId": "S-0214"
     },
     {
       "confirmedOffsetSeconds": 1690.0,
       "confirmedSequence": 114,
-      "incidentId": "c206f62a5fc97fed",
+      "incidentId": "4f91df5117927254",
       "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 1900.0,
-      "resolvedSequence": 128,
-      "stationId": "S-0025"
+      "resolvedOffsetSeconds": 2635.0,
+      "resolvedSequence": 177,
+      "stationId": "S-0139"
+    },
+    {
+      "confirmedOffsetSeconds": 1720.0,
+      "confirmedSequence": 116,
+      "incidentId": "50a250f326e710b1",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "S-0128"
     },
     {
       "confirmedOffsetSeconds": 1735.0,
       "confirmedSequence": 117,
-      "incidentId": "9fde7948af2c9e3c",
+      "incidentId": "3b2e26dece0d6f76",
       "kind": "pickup_unavailable",
       "resolvedOffsetSeconds": null,
       "resolvedSequence": null,
-      "stationId": "S-0016"
+      "stationId": "S-0198"
     },
     {
-      "confirmedOffsetSeconds": 1765.0,
-      "confirmedSequence": 119,
-      "incidentId": "fb16de837ab7ad02",
+      "confirmedOffsetSeconds": 1750.0,
+      "confirmedSequence": 118,
+      "incidentId": "2035ca913ee6d10e",
       "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": 2215.0,
+      "resolvedSequence": 149,
+      "stationId": "S-0108"
+    },
+    {
+      "confirmedOffsetSeconds": 1795.0,
+      "confirmedSequence": 121,
+      "incidentId": "b922ced6bbd5a210",
+      "kind": "return_unavailable",
       "resolvedOffsetSeconds": 1945.0,
       "resolvedSequence": 131,
-      "stationId": "S-0067"
+      "stationId": "S-0171"
     },
     {
-      "confirmedOffsetSeconds": 1765.0,
-      "confirmedSequence": 119,
-      "incidentId": "0c8094d5d6b6ff10",
-      "kind": "pickup_unavailable",
+      "confirmedOffsetSeconds": 1795.0,
+      "confirmedSequence": 121,
+      "incidentId": "63083eb0a3b952b0",
+      "kind": "return_unavailable",
       "resolvedOffsetSeconds": null,
       "resolvedSequence": null,
-      "stationId": "S-0217"
+      "stationId": "S-0193"
     },
     {
       "confirmedOffsetSeconds": 1795.0,
       "confirmedSequence": 121,
       "incidentId": "f39e00261a4b1ea1",
       "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 2425.0,
-      "resolvedSequence": 163,
+      "resolvedOffsetSeconds": 2650.0,
+      "resolvedSequence": 178,
       "stationId": "S-0253"
+    },
+    {
+      "confirmedOffsetSeconds": 1810.0,
+      "confirmedSequence": 122,
+      "incidentId": "5e4c4ddbac757c5e",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "S-0142"
     },
     {
       "confirmedOffsetSeconds": 1825.0,
       "confirmedSequence": 123,
-      "incidentId": "bcc8a709696e1c7a",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": null,
-      "resolvedSequence": null,
-      "stationId": "S-0126"
+      "incidentId": "6c601f43c0313261",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": 2590.0,
+      "resolvedSequence": 174,
+      "stationId": "S-0003"
     },
     {
-      "confirmedOffsetSeconds": 1885.0,
-      "confirmedSequence": 127,
-      "incidentId": "28accb7609aff767",
+      "confirmedOffsetSeconds": 1900.0,
+      "confirmedSequence": 128,
+      "incidentId": "de89a18f9a57942d",
       "kind": "return_unavailable",
       "resolvedOffsetSeconds": null,
       "resolvedSequence": null,
-      "stationId": "S-0212"
+      "stationId": "S-0146"
+    },
+    {
+      "confirmedOffsetSeconds": 1900.0,
+      "confirmedSequence": 128,
+      "incidentId": "06ffa960257b026b",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": 2395.0,
+      "resolvedSequence": 161,
+      "stationId": "S-0203"
     },
     {
       "confirmedOffsetSeconds": 1915.0,
       "confirmedSequence": 129,
-      "incidentId": "93593a53b9c33e11",
+      "incidentId": "0d28e4c41ea7e088",
       "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": null,
-      "resolvedSequence": null,
-      "stationId": "S-0184"
+      "resolvedOffsetSeconds": 2320.0,
+      "resolvedSequence": 156,
+      "stationId": "S-0265"
     },
     {
       "confirmedOffsetSeconds": 1945.0,
       "confirmedSequence": 131,
-      "incidentId": "9ed486419f3e8696",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": null,
-      "resolvedSequence": null,
-      "stationId": "S-0175"
+      "incidentId": "d3831ab541c27fb1",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": 2230.0,
+      "resolvedSequence": 150,
+      "stationId": "S-0167"
     },
     {
-      "confirmedOffsetSeconds": 1990.0,
-      "confirmedSequence": 134,
-      "incidentId": "57e8235171fb0124",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": null,
-      "resolvedSequence": null,
-      "stationId": "S-0045"
+      "confirmedOffsetSeconds": 2005.0,
+      "confirmedSequence": 135,
+      "incidentId": "47231461f5225639",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": 2140.0,
+      "resolvedSequence": 144,
+      "stationId": "S-0131"
     },
     {
       "confirmedOffsetSeconds": 2035.0,
       "confirmedSequence": 137,
-      "incidentId": "a234a72e7ac8f7b3",
+      "incidentId": "4ea4de51bbdabb8b",
       "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 2305.0,
-      "resolvedSequence": 155,
-      "stationId": "S-0014"
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "S-0125"
     },
     {
       "confirmedOffsetSeconds": 2050.0,
       "confirmedSequence": 138,
-      "incidentId": "34f4ab74ff608af8",
-      "kind": "pickup_unavailable",
+      "incidentId": "6c3feb3bcabfeac3",
+      "kind": "return_unavailable",
       "resolvedOffsetSeconds": null,
       "resolvedSequence": null,
-      "stationId": "S-0101"
-    },
-    {
-      "confirmedOffsetSeconds": 2065.0,
-      "confirmedSequence": 139,
-      "incidentId": "94a0580c0c9c32c4",
-      "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 2260.0,
-      "resolvedSequence": 152,
-      "stationId": "S-0205"
+      "stationId": "S-0031"
     },
     {
       "confirmedOffsetSeconds": 2080.0,
       "confirmedSequence": 140,
-      "incidentId": "122b5affa7c8ed2f",
-      "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 2605.0,
-      "resolvedSequence": 175,
-      "stationId": "S-0082"
+      "incidentId": "808f391c033261a5",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "S-0009"
     },
     {
       "confirmedOffsetSeconds": 2095.0,
       "confirmedSequence": 141,
-      "incidentId": "1d9bec32bcfb39d3",
+      "incidentId": "be5bc146fb3a7624",
       "kind": "pickup_unavailable",
       "resolvedOffsetSeconds": null,
       "resolvedSequence": null,
-      "stationId": "S-0129"
+      "stationId": "S-0172"
     },
     {
       "confirmedOffsetSeconds": 2110.0,
       "confirmedSequence": 142,
-      "incidentId": "81e681f1131a9d48",
+      "incidentId": "4dea997c1fb5cf81",
       "kind": "return_unavailable",
-      "resolvedOffsetSeconds": null,
-      "resolvedSequence": null,
-      "stationId": "S-0214"
+      "resolvedOffsetSeconds": 2335.0,
+      "resolvedSequence": 157,
+      "stationId": "S-0263"
     },
     {
-      "confirmedOffsetSeconds": 2125.0,
-      "confirmedSequence": 143,
-      "incidentId": "4454ab2957bc7d18",
+      "confirmedOffsetSeconds": 2170.0,
+      "confirmedSequence": 146,
+      "incidentId": "1c7ed1d40dc1293c",
       "kind": "pickup_unavailable",
       "resolvedOffsetSeconds": null,
       "resolvedSequence": null,
-      "stationId": "S-0094"
-    },
-    {
-      "confirmedOffsetSeconds": 2140.0,
-      "confirmedSequence": 144,
-      "incidentId": "d03eec41256dd26b",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 2665.0,
-      "resolvedSequence": 179,
-      "stationId": "S-0259"
+      "stationId": "S-0065"
     },
     {
       "confirmedOffsetSeconds": 2170.0,
       "confirmedSequence": 146,
-      "incidentId": "69d1f272216e73fe",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 2575.0,
-      "resolvedSequence": 173,
-      "stationId": "S-0155"
-    },
-    {
-      "confirmedOffsetSeconds": 2170.0,
-      "confirmedSequence": 146,
-      "incidentId": "f3e46434b3500ef2",
+      "incidentId": "0052c0106a66e9d5",
       "kind": "return_unavailable",
       "resolvedOffsetSeconds": null,
       "resolvedSequence": null,
-      "stationId": "S-0171"
+      "stationId": "S-0166"
     },
     {
-      "confirmedOffsetSeconds": 2200.0,
-      "confirmedSequence": 148,
-      "incidentId": "2b4067dba1f53b22",
+      "confirmedOffsetSeconds": 2185.0,
+      "confirmedSequence": 147,
+      "incidentId": "a253d6999495b22e",
       "kind": "return_unavailable",
       "resolvedOffsetSeconds": null,
       "resolvedSequence": null,
-      "stationId": "S-0083"
+      "stationId": "S-0007"
     },
     {
       "confirmedOffsetSeconds": 2215.0,
       "confirmedSequence": 149,
-      "incidentId": "587a7645d400e5a1",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": null,
-      "resolvedSequence": null,
-      "stationId": "S-0233"
-    },
-    {
-      "confirmedOffsetSeconds": 2230.0,
-      "confirmedSequence": 150,
-      "incidentId": "d882e2a7ea9dd0c3",
-      "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 2395.0,
-      "resolvedSequence": 161,
-      "stationId": "S-0211"
-    },
-    {
-      "confirmedOffsetSeconds": 2245.0,
-      "confirmedSequence": 151,
-      "incidentId": "b62e9fe5efb26a80",
+      "incidentId": "44c89eb8785f6df3",
       "kind": "pickup_unavailable",
       "resolvedOffsetSeconds": null,
       "resolvedSequence": null,
-      "stationId": "S-0025"
+      "stationId": "S-0173"
     },
     {
-      "confirmedOffsetSeconds": 2245.0,
-      "confirmedSequence": 151,
-      "incidentId": "f821ed3bcfc0342e",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": null,
-      "resolvedSequence": null,
-      "stationId": "S-0036"
-    },
-    {
-      "confirmedOffsetSeconds": 2245.0,
-      "confirmedSequence": 151,
-      "incidentId": "2d95296e57ccfff0",
+      "confirmedOffsetSeconds": 2260.0,
+      "confirmedSequence": 152,
+      "incidentId": "59c09c5357477e54",
       "kind": "pickup_unavailable",
       "resolvedOffsetSeconds": null,
       "resolvedSequence": null,
-      "stationId": "S-0087"
+      "stationId": "S-0248"
     },
     {
       "confirmedOffsetSeconds": 2275.0,
       "confirmedSequence": 153,
-      "incidentId": "e750bd17da47cd25",
+      "incidentId": "4df48e9e3f226e68",
       "kind": "return_unavailable",
       "resolvedOffsetSeconds": null,
       "resolvedSequence": null,
-      "stationId": "S-0015"
-    },
-    {
-      "confirmedOffsetSeconds": 2275.0,
-      "confirmedSequence": 153,
-      "incidentId": "b9beb27275e8da42",
-      "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": null,
-      "resolvedSequence": null,
-      "stationId": "S-0096"
-    },
-    {
-      "confirmedOffsetSeconds": 2275.0,
-      "confirmedSequence": 153,
-      "incidentId": "2097ebf5ed0340db",
-      "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 2635.0,
-      "resolvedSequence": 177,
-      "stationId": "S-0131"
+      "stationId": "S-0163"
     },
     {
       "confirmedOffsetSeconds": 2290.0,
       "confirmedSequence": 154,
-      "incidentId": "e627cd5769ad266b",
+      "incidentId": "47ae39c5871b7f9a",
       "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 2560.0,
-      "resolvedSequence": 172,
-      "stationId": "S-0238"
+      "resolvedOffsetSeconds": 2620.0,
+      "resolvedSequence": 176,
+      "stationId": "S-0208"
     },
     {
-      "confirmedOffsetSeconds": 2320.0,
-      "confirmedSequence": 156,
-      "incidentId": "eadd260f2cc1f52d",
+      "confirmedOffsetSeconds": 2305.0,
+      "confirmedSequence": 155,
+      "incidentId": "8e54f21c89eec011",
       "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": 2605.0,
-      "resolvedSequence": 175,
-      "stationId": "S-0030"
-    },
-    {
-      "confirmedOffsetSeconds": 2320.0,
-      "confirmedSequence": 156,
-      "incidentId": "11e450399118cd59",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": 2410.0,
-      "resolvedSequence": 162,
-      "stationId": "S-0222"
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "S-0220"
     },
     {
       "confirmedOffsetSeconds": 2335.0,
       "confirmedSequence": 157,
-      "incidentId": "8b39d530c85e5f1e",
+      "incidentId": "81f9ae55019e6a86",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "S-0225"
+    },
+    {
+      "confirmedOffsetSeconds": 2350.0,
+      "confirmedSequence": 158,
+      "incidentId": "04cf31becf8c1aff",
       "kind": "pickup_unavailable",
       "resolvedOffsetSeconds": null,
       "resolvedSequence": null,
-      "stationId": "S-0021"
+      "stationId": "S-0135"
     },
     {
       "confirmedOffsetSeconds": 2365.0,
       "confirmedSequence": 159,
-      "incidentId": "710962e9f80adbed",
-      "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": null,
-      "resolvedSequence": null,
-      "stationId": "S-0188"
-    },
-    {
-      "confirmedOffsetSeconds": 2395.0,
-      "confirmedSequence": 161,
-      "incidentId": "c1407250a8b45ad9",
+      "incidentId": "ca41a7864c0ea071",
       "kind": "return_unavailable",
       "resolvedOffsetSeconds": null,
       "resolvedSequence": null,
-      "stationId": "S-0229"
+      "stationId": "S-0010"
+    },
+    {
+      "confirmedOffsetSeconds": 2455.0,
+      "confirmedSequence": 165,
+      "incidentId": "e8d26a82624f4e2b",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "S-0060"
     },
     {
       "confirmedOffsetSeconds": 2485.0,
       "confirmedSequence": 167,
-      "incidentId": "859d998d93c9cd1d",
+      "incidentId": "8d0fd9c3bf3249a3",
       "kind": "return_unavailable",
       "resolvedOffsetSeconds": null,
       "resolvedSequence": null,
-      "stationId": "S-0148"
+      "stationId": "S-0260"
     },
     {
-      "confirmedOffsetSeconds": 2500.0,
-      "confirmedSequence": 168,
-      "incidentId": "8376fca2550a53b4",
+      "confirmedOffsetSeconds": 2515.0,
+      "confirmedSequence": 169,
+      "incidentId": "53efee637b0ac328",
       "kind": "return_unavailable",
       "resolvedOffsetSeconds": null,
       "resolvedSequence": null,
-      "stationId": "S-0091"
+      "stationId": "S-0039"
     },
     {
-      "confirmedOffsetSeconds": 2560.0,
-      "confirmedSequence": 172,
-      "incidentId": "88e7a9a0d2837207",
+      "confirmedOffsetSeconds": 2590.0,
+      "confirmedSequence": 174,
+      "incidentId": "41018b90ec4cd291",
       "kind": "return_unavailable",
-      "resolvedOffsetSeconds": null,
-      "resolvedSequence": null,
-      "stationId": "S-0133"
-    },
-    {
-      "confirmedOffsetSeconds": 2605.0,
-      "confirmedSequence": 175,
-      "incidentId": "34d2d85c5bc66a13",
-      "kind": "pickup_unavailable",
-      "resolvedOffsetSeconds": null,
-      "resolvedSequence": null,
-      "stationId": "S-0067"
-    },
-    {
-      "confirmedOffsetSeconds": 2620.0,
-      "confirmedSequence": 176,
-      "incidentId": "d21563b1b6af9611",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": null,
-      "resolvedSequence": null,
-      "stationId": "S-0222"
-    },
-    {
-      "confirmedOffsetSeconds": 2665.0,
-      "confirmedSequence": 179,
-      "incidentId": "a764c5eda4f52cc3",
-      "kind": "return_unavailable",
-      "resolvedOffsetSeconds": null,
-      "resolvedSequence": null,
-      "stationId": "S-0137"
-    },
-    {
-      "confirmedOffsetSeconds": 2695.0,
-      "confirmedSequence": 181,
-      "incidentId": "3851d997f988422d",
-      "kind": "pickup_unavailable",
       "resolvedOffsetSeconds": null,
       "resolvedSequence": null,
       "stationId": "S-0164"
     },
     {
-      "confirmedOffsetSeconds": 2695.0,
-      "confirmedSequence": 181,
-      "incidentId": "c2a12f9e6b1c82f8",
+      "confirmedOffsetSeconds": 2605.0,
+      "confirmedSequence": 175,
+      "incidentId": "f8577a39a112ef41",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "S-0098"
+    },
+    {
+      "confirmedOffsetSeconds": 2635.0,
+      "confirmedSequence": 177,
+      "incidentId": "29549dc0744f7fda",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "S-0058"
+    },
+    {
+      "confirmedOffsetSeconds": 2635.0,
+      "confirmedSequence": 177,
+      "incidentId": "a9534d9d1800013e",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "S-0259"
+    },
+    {
+      "confirmedOffsetSeconds": 2650.0,
+      "confirmedSequence": 178,
+      "incidentId": "5381fd900685edfe",
       "kind": "return_unavailable",
       "resolvedOffsetSeconds": null,
       "resolvedSequence": null,
-      "stationId": "S-0253"
+      "stationId": "S-0088"
+    },
+    {
+      "confirmedOffsetSeconds": 2680.0,
+      "confirmedSequence": 180,
+      "incidentId": "14b57de50294492f",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "S-0071"
+    },
+    {
+      "confirmedOffsetSeconds": 2695.0,
+      "confirmedSequence": 181,
+      "incidentId": "44b1fab94f61767e",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "S-0179"
     }
   ],
   "mode": "synthetic",
@@ -997,10 +1033,10 @@
   "periodStart": "2026-10-05T22:15:00.000Z",
   "periodStartLocal": "2026-10-06T00:15:00+02:00",
   "policyVersion": "1.0.0+4b4ac8de",
-  "recordingHash": "264af9638d5b5b044b7f292040a3e8cb1e9db457030400f298e7dbe0045d53ed",
+  "recordingHash": "da07396109c686d44972244d6578e7bf81412bfedf6906e0c63c744265e4a4c2",
   "schemaVersion": 1,
   "seed": 42,
-  "streamId": "synthetic-oslo:264af963",
+  "streamId": "synthetic-oslo:da073961",
   "systemId": "synthetic-oslo",
   "timezone": "Europe/Oslo"
 }

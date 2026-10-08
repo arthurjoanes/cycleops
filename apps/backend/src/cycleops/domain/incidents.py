@@ -127,8 +127,6 @@ def observe(
     assert status is not None
     inc = st.incidents.get(kind)
     condition = has_condition(kind, status)
-    if not condition:
-        st.seen_without.add(kind)
     if inc is None:
         if condition:
             inc = Incident(
@@ -222,7 +220,7 @@ def suspend(st: Station, reason: Reason, at: datetime | None, now: datetime) -> 
             _move(st, inc, "unverifiable", f"dados vencidos: {REASON_TEXT[reason]}", at, now)
         elif inc.state == "unverifiable" and inc.unverifiable_reason != reason:
             inc.unverifiable_reason = reason
-            inc.reason_text = f"dados vencidos: {REASON_TEXT[reason]}"
+            inc.reason_text = st.reason_text = f"dados vencidos: {REASON_TEXT[reason]}"
 
 
 def close_all(st: Station, cause: CloseReason, at: datetime | None, now: datetime) -> None:

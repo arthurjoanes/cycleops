@@ -33,7 +33,8 @@ def main(argv: list[str] | None = None) -> int:
         f"{manifest.mode}: {manifest.event_count} events, {len(manifest.incidents)} incidents "
         f"confirmed, {sum(i.resolved_sequence is not None for i in manifest.incidents)} resolved"
     )
-    if not accepted(manifest):
+    # Acceptance is for recordings; a synthetic scenario may well have nothing resolved.
+    if args.recording and not accepted(manifest):
         print("not accepted: no incident went from confirmed to resolved", file=sys.stderr)
         return 3
     write(artifact, out)

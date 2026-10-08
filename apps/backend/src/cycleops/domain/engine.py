@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 from cycleops.adapters.gbfs import StatusPublication
 from cycleops.canonical import sha256_hex
 from cycleops.contracts import (
+    SCHEMA_VERSION,
     CatalogStation,
     Condition,
     Coverage,
@@ -76,8 +77,9 @@ def step(
         state.policy_version = policy.version
     if state.service_checked_at is None:
         state.service_checked_at = now
+        # Before the first accepted publication the source is unknown; no 60 s wait here,
+        # that rule is for openings.
         state.in_service = in_service(now, policy.provider.service_hours)
-        state.awaiting_since = now
 
     if isinstance(entry, PublicationFailed):
         _failed(state, entry)
@@ -90,13 +92,16 @@ def step(
     if isinstance(entry, CatalogReceived):
         before = state.catalog_version
         removed = _reconcile(state, entry, now)
-        state.quarantined_feeds.discard("station_information")
-        changed = removed or state.catalog_version != before
+        changed = bool(removed) or state.catalog_version != before
         return state, _evaluate(
-            state, now, policy, "catalog", entry.received_at, force=bool(changed), removed=removed
+            state, now, policy, "catalog", entry.received_at, force=changed, removed=removed
         )
     if isinstance(entry, ClockTick):
+        # Collection state that only the source knows comes in on the tick.
         state.ingestion_suspended = entry.ingestion_suspended
+        if entry.ingestion_suspended:
+            state.last_outcome = "db_quota_exceeded"
+        state.quarantined_feeds = set(entry.quarantined_feeds)
         return state, _evaluate(state, now, policy, "clock")
     # PolicyChanged: open incidents keep their state and follow the new rules from here.
     state.policy_version = entry.policy_version
@@ -115,8 +120,7 @@ def policy_change(state: StreamState, policy: Policy, at: datetime) -> PolicyCha
 
 def _failed(state: StreamState, entry: PublicationFailed) -> None:
     if entry.feed != "station_status":
-        if entry.quarantined_since:
-            state.quarantined_feeds.add(entry.feed)
+        # Other feeds never change the source state; their quarantine comes on the tick.
         return
     state.last_attempt_at = entry.received_at
     state.last_outcome = entry.outcome
@@ -217,7 +221,9 @@ def _receive(
     return observed
 
 
-def _reconcile(state: StreamState, entry: CatalogReceived, now: datetime) -> list[str]:
+def _reconcile(state: StreamState, entry: CatalogReceived, now: datetime) -> dict[str, Station]:
+    """Returns the stations removed now; they go out once more, with the incidents the
+    removal closed, in the catalog event that lists them in removedStationIds."""
     seen = {s.station_id: s for s in entry.catalog.stations}
     for sid, info in seen.items():
         st = state.stations.get(sid)
@@ -233,7 +239,7 @@ def _reconcile(state: StreamState, entry: CatalogReceived, now: datetime) -> lis
         st.info = info
         st.last_seen_in_catalog_at = now
         st.missing_catalog_fetches = 0
-    removed: list[str] = []
+    removed: dict[str, Station] = {}
     for sid, st in list(state.stations.items()):
         if sid in seen:
             continue
@@ -246,12 +252,16 @@ def _reconcile(state: StreamState, entry: CatalogReceived, now: datetime) -> lis
             incidents.close_all(st, "removed_from_catalog", state.last_source_updated_at, now)
             del state.stations[sid]
             state.removed_ids.add(sid)
-            removed.append(sid)
+            removed[sid] = st
+            if st.presence != "missing":
+                # Still in the status: now an id without a catalog entry.
+                state.unknown_ids |= {sid}
+    state.unknown_ids -= state.stations.keys()
+    # The fetch happened, whatever it brought.
+    state.catalog_fetch_pending = False
     version = catalog_version(state)
-    if version != state.catalog_version:
-        state.catalog_version = version
-        state.catalog_fetch_pending = False
-    return sorted(removed)
+    state.catalog_version = version
+    return removed
 
 
 def catalog_stations(state: StreamState) -> list[CatalogStation]:
@@ -293,7 +303,7 @@ def _evaluate(
     received_at: datetime | None = None,
     observed: set[str] | None = None,
     force: bool = False,
-    removed: list[str] | None = None,
+    removed: dict[str, Station] | None = None,
 ) -> list[StationBatchEvent]:
     # 1. service hours
     _service_boundaries(state, now, policy)
@@ -304,7 +314,11 @@ def _evaluate(
     _source_state(state, now, policy)
     usable = state.source_state in ("fresh", "late")
     changed: list[tuple[Station, StationState, tuple[object, ...]]] = []
-    for sid, st in sorted(state.stations.items()):
+    for sid, st in sorted((state.stations | (removed or {})).items()):
+        # Kinds observed without their condition since the opening, whatever the source
+        # state: this is what EMPTY_AT_OPENING and FULL_AT_OPENING look at.
+        if observed and sid in observed and st.status:
+            st.seen_without.update(k for k in KINDS if not incidents.has_condition(k, st.status))
         # 3. station freshness
         reason = _station_stale(st, state, policy)
         # 5. incidents (4, the conditions, only read the record)
@@ -341,6 +355,8 @@ def _evaluate(
     state.last_event_feed_state = feed.state
     return [
         StationBatchEvent(
+            type="station_batch",
+            schema_version=SCHEMA_VERSION,
             event_id=f"{state.stream_id}@{state.head_sequence}",
             stream_id=state.stream_id,
             sequence=state.head_sequence,
@@ -351,7 +367,7 @@ def _evaluate(
             received_at=received_at,
             committed_at=now,
             stations=[station_state for _, station_state, _ in changed],
-            removed_station_ids=removed or [],
+            removed_station_ids=sorted(removed or {}),
             feed_health=feed,
         )
     ]
@@ -414,6 +430,7 @@ def _source_state(state: StreamState, now: datetime, policy: Policy) -> None:
     elif state.fresh_again_count >= p.fresh_again_after_publications:
         # Hysteresis done: out by age.
         state.latched = None
+        state.fresh_again_count = 0
         state.source_state = raw
     else:
         state.source_state = state.latched
@@ -659,6 +676,7 @@ def state_hash(state: StreamState) -> str:
             "freshAgain": state.fresh_again_count,
             "catalogVersion": state.catalog_version,
             "policyVersion": state.policy_version,
+            "contentHash": state.last_content_hash,
             "breakerOpen": state.breaker_open_until is not None,
             "quarantined": state.quarantined_since is not None,
             "stations": [

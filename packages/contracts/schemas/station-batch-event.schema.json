@@ -650,7 +650,6 @@
     },
     "schemaVersion": {
       "const": 1,
-      "default": 1,
       "title": "Schemaversion",
       "type": "integer"
     },
@@ -683,12 +682,13 @@
     },
     "type": {
       "const": "station_batch",
-      "default": "station_batch",
       "title": "Type",
       "type": "string"
     }
   },
   "required": [
+    "type",
+    "schemaVersion",
     "eventId",
     "streamId",
     "sequence",

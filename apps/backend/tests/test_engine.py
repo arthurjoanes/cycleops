@@ -157,11 +157,12 @@ def test_invalid_record_goes_unverifiable_after_the_stale_limit() -> None:
 
 def test_future_last_updated_is_refused_without_changing_state() -> None:
     feed = Feed()
-    feed.publish(10, {"A": 3, "B": 5})
+    # 30 s ahead of the clock is inside the tolerance.
+    assert feed.publish(10, {"A": 3, "B": 5}, updated=10 + 30) == "ok"
     before, count = state_hash(feed.state), len(feed.events)
     assert feed.publish(25, {"A": 0, "B": 5}, updated=25 + 31) == "future_timestamp"
     assert state_hash(feed.state) == before and len(feed.events) == count
-    assert feed.state.last_source_updated_at == feed.t(0)
+    assert feed.state.last_source_updated_at == feed.t(40)
 
 
 def test_same_last_updated_with_other_content_is_a_correction() -> None:
@@ -285,7 +286,8 @@ def test_opening_is_stale_only_with_a_frozen_feed(frozen: bool) -> None:
     states = []
     for at in range(10, 360, 5):
         if at % 15 == 10:
-            feed.publish(at, {"A": 3, "B": 5}, updated=0 if frozen and at > 130 else at - 10)
+            # Frozen: the 04:58 file is the only one; everything after is a duplicate.
+            feed.publish(at, {"A": 3, "B": 5}, updated=0 if frozen else at - 10)
         feed.tick(at)
         states.append(feed.state.source_state)
     assert states[0] == "closed" and "unknown" in states
@@ -463,11 +465,30 @@ def test_per_station_needs_last_reported_to_advance() -> None:
 
 def test_two_incidents_at_one_station() -> None:
     feed = Feed()
-    for at in (10, 25, 40):
+    feed.publish(10, {"A": 3, "B": 5}, A={"num_docks_available": 0})  # full from 0
+    for at in (25, 40, 55):  # empty too from 15
         feed.publish(at, {"A": 0, "B": 5}, A={"num_docks_available": 0})
     decision = feed.shown("A").decision
-    assert [i.kind for i in decision.incidents] == [PICKUP, RETURN]
+    assert [(i.kind, i.state) for i in decision.incidents] == [
+        (PICKUP, "confirmed"),
+        (RETURN, "confirmed"),
+    ]
     assert decision.reason_codes[:2] == ["CONFIRMED_EMPTY", "CONFIRMED_FULL"]
+    # Same tier: the older firstObservedAt (the return incident) sets the key.
+    assert decision.sort_key == f"0|{int(START.timestamp()):010d}|A"
+
+
+def test_lower_tier_sets_the_key() -> None:
+    feed = Feed()
+    for at in (10, 25, 40):
+        feed.publish(at, {"A": 3, "B": 5}, A={"num_docks_available": 0})
+    feed.publish(55, {"A": 0, "B": 5}, A={"num_docks_available": 0})
+    decision = feed.shown("A").decision
+    assert [(i.kind, i.state) for i in decision.incidents] == [
+        (PICKUP, "candidate"),
+        (RETURN, "confirmed"),
+    ]
+    assert decision.sort_key == f"0|{int(START.timestamp()):010d}|A"
 
 
 # Order, catalog and policy
@@ -495,12 +516,18 @@ def test_sort_key_order_and_first_observed_at_through_unverifiable() -> None:
 def test_unknown_station_triggers_one_catalog_fetch() -> None:
     feed = Feed()
     feed.publish(10, {"A": 3, "B": 5, "Z": 1})
-    assert feed.state.catalog_fetch_pending and feed.events[-1].feed_health.coverage.total == 3
-    feed.state.catalog_fetch_pending = False  # the worker fetched it
+    assert feed.state.catalog_fetch_pending
+    coverage = feed.events[-1].feed_health.coverage
+    assert (coverage.valid, coverage.total) == (2, 3)
+    # The fetch comes back without Z: the version is the same, so no second request.
+    feed.catalog(15, ("A", "B"))
+    assert not feed.state.catalog_fetch_pending
     feed.publish(25, {"A": 3, "B": 5, "Z": 1})
     assert not feed.state.catalog_fetch_pending
     feed.catalog(30, ("A", "B", "Z"))
     assert "Z" in feed.state.stations
+    coverage = feed.events[-1].feed_health.coverage
+    assert (coverage.valid, coverage.total) == (2, 3)
 
 
 @pytest.mark.parametrize(
@@ -563,4 +590,198 @@ def test_clock_never_goes_back() -> None:
     assert feed.events[-1].committed_at == feed.t(30)
 
 
-GOLDEN_STATE_HASH = "d7244be79b4ce32d89f986c24a35903c557199bec51db2fe13663c7970a21919"
+GOLDEN_STATE_HASH = "e83faad421dd79135009b55d135db3c8d067b514f889e398a21b689e8fbed389"
+
+
+# Cases added after review
+
+
+def test_late_source_still_moves_incidents() -> None:
+    feed = Feed()
+    for at in (55, 70, 85):  # files 45 s old: late
+        feed.publish(at, {"A": 0, "B": 5}, updated=at - 45)
+    assert feed.state.source_state == "late"
+    inc = feed.incident("A")
+    assert inc is not None and inc.state == "confirmed"
+
+
+def test_station_reason_wins_over_the_source() -> None:
+    feed = confirmed_feed()
+    for at in range(55, 130, 15):
+        feed.publish(at, {"B": 5})
+    for at in range(130, 215, 5):
+        feed.tick(at)
+    assert feed.state.source_state == "stale"
+    inc = feed.incident("A")
+    assert inc is not None and inc.unverifiable_reason == "missing_in_status"
+    decision = feed.shown("A").decision
+    assert decision.sort_key is None
+    assert decision.reason_text == "dados vencidos: estação ausente do status"
+
+
+def test_reason_text_follows_the_reason() -> None:
+    feed = confirmed_feed()
+    feed.tick(110)
+    assert feed.shown("A").decision.reason_text == "dados vencidos: fonte vencida"
+    feed.publish(115, {"B": 5})
+    feed.publish(130, {"B": 5})
+    decision = feed.shown("A").decision
+    assert decision.unverifiable_reason == "missing_in_status"
+    assert decision.reason_text == "dados vencidos: estação ausente do status"
+
+
+def test_confirms_and_resolves_by_span_with_an_irregular_cadence() -> None:
+    feed = Feed()
+    feed.publish(10, {"A": 0, "B": 5}, updated=0)
+    feed.publish(40, {"A": 0, "B": 5}, updated=30)  # 2 observations, 30 s apart
+    inc = feed.incident("A")
+    assert inc is not None and inc.state == "confirmed"
+    feed.publish(55, {"A": 5, "B": 5}, updated=45)
+    feed.publish(115, {"A": 5, "B": 5}, updated=105)  # 2 observations, 60 s apart
+    assert inc.state == "resolved"
+
+
+def test_disabled_renting_closes_on_the_way_back_from_unverifiable() -> None:
+    feed = confirmed_feed(capacity=30)
+    feed.tick(110)
+    inc = feed.incident("A")
+    assert inc is not None and inc.state == "unverifiable"
+    feed.publish(115, {"A": 5, "B": 5}, A={"is_renting": False})
+    feed.publish(130, {"A": 5, "B": 5}, A={"is_renting": False})
+    assert (inc.state, inc.close_reason) == ("closed_without_recovery", "flag_disabled")
+
+
+def test_uninstalled_closes_without_recovery() -> None:
+    feed = confirmed_feed()
+    inc = feed.incident("A")
+    feed.publish(55, {"A": 0, "B": 5}, A={"is_installed": False})
+    assert inc is not None and (inc.state, inc.close_reason) == (
+        "closed_without_recovery",
+        "uninstalled",
+    )
+
+
+def test_recovery_base_uses_bikes_plus_docks() -> None:
+    # Capacity 30, 0 bikes and 10 docks: base 10, so 1 bike is enough to recover.
+    feed = confirmed_feed(capacity=30)
+    inc = feed.incident("A")
+    feed.publish(55, {"A": 1, "B": 5}, A={"num_docks_available": 9})
+    assert inc is not None and inc.state == "recovering"
+
+
+def test_no_stale_before_the_first_publication() -> None:
+    feed = Feed()
+    for at in range(5, 75, 5):
+        feed.tick(at)
+    assert feed.state.source_state == "unknown"
+    feed.publish(75, {"A": 3, "B": 5})
+    assert feed.state.source_state == "fresh"
+
+
+def stale_then_one_publication() -> Feed:
+    feed = Feed()
+    feed.publish(10, {"A": 3, "B": 5})
+    feed.tick(75)
+    assert feed.state.source_state == "stale"
+    feed.publish(80, {"A": 3, "B": 5})
+    assert feed.state.source_state == "stale"
+    return feed
+
+
+def test_breaker_during_hysteresis_starts_it_over() -> None:
+    feed = stale_then_one_publication()
+    opened = PublicationFailed(
+        feed.t(90), "station_status", "timeout", "transport", feed.t(95), None
+    )
+    feed.apply(opened)
+    feed.publish(100, {"A": 3, "B": 5})
+    assert feed.state.source_state == "stale"
+    feed.publish(115, {"A": 3, "B": 5})
+    assert feed.state.source_state == "fresh"
+
+
+def test_a_stale_gap_during_hysteresis_starts_it_over() -> None:
+    feed = stale_then_one_publication()
+    feed.tick(145)  # 75 s after the file of 70
+    feed.publish(150, {"A": 3, "B": 5})
+    assert feed.state.source_state == "stale"
+    feed.publish(165, {"A": 3, "B": 5})
+    assert feed.state.source_state == "fresh"
+
+
+def test_quota_suspension_needs_the_hysteresis_too() -> None:
+    feed = stale_then_one_publication()
+    feed.publish(95, {"A": 3, "B": 5})
+    assert feed.state.source_state == "fresh"
+    feed.apply(ClockTick(feed.t(100), ingestion_suspended=True))
+    assert feed.state.source_state == "stale"
+    assert feed.events[-1].feed_health.last_outcome == "db_quota_exceeded"
+    feed.tick(105)
+    assert feed.state.source_state == "stale"
+    feed.publish(110, {"A": 3, "B": 5})
+    assert feed.state.source_state == "stale"
+    feed.publish(125, {"A": 3, "B": 5})
+    assert feed.state.source_state == "fresh"
+
+
+def test_quarantine_wins_over_closed() -> None:
+    feed = Feed(hours=OSLO_HOURS, start=oslo("02:00"))
+    feed.publish(10, {"A": 3, "B": 5})
+    feed.apply(
+        PublicationFailed(feed.t(25), "station_status", "invalid", "contract", None, feed.t(25))
+    )
+    feed.tick(30)
+    assert feed.state.source_state == "quarantined"
+
+
+def test_other_feeds_in_quarantine_come_on_the_tick() -> None:
+    feed = Feed()
+    feed.publish(10, {"A": 3, "B": 5})
+    # A tick only makes an event when a decision or the source state changes, so the
+    # list goes out with the next event.
+    assert feed.apply(ClockTick(feed.t(15), quarantined_feeds=frozenset({"vehicle_types"}))) == []
+    assert feed.state.source_state == "fresh"
+    feed.publish(25, {"A": 3, "B": 5})
+    assert feed.events[-1].feed_health.quarantined_feeds == ["vehicle_types"]
+    feed.tick(30)
+    feed.publish(40, {"A": 3, "B": 5})
+    assert feed.events[-1].feed_health.quarantined_feeds == []
+
+
+def test_an_observation_during_hysteresis_counts_for_the_opening() -> None:
+    feed = Feed(hours=OSLO_HOURS, start=oslo("04:58"))
+    feed.publish(10, {"A": 3, "B": 5})
+    for at in range(120, 200, 5):  # opening at 05:00 and no publication: stale
+        feed.tick(at)
+    assert feed.state.source_state == "stale"
+    feed.publish(205, {"A": 5, "B": 5})  # eligible, A has bikes, source still stale
+    for at in (220, 235, 250):
+        feed.publish(at, {"A": 0, "B": 5})
+    decision = feed.shown("A").decision
+    assert "CONFIRMED_EMPTY" in decision.reason_codes
+    assert "EMPTY_AT_OPENING" not in decision.reason_codes
+
+
+def test_removal_sends_the_closed_incident_once() -> None:
+    feed = confirmed_feed()
+    events = []
+    for at in (610, 1210, 1915):
+        feed.publish(at - 5, {"A": 0, "B": 5})
+        events += feed.catalog(at, ("B",))
+    removal = events[-1]
+    assert removal.removed_station_ids == ["A"]
+    shown = [s for s in removal.stations if s.decision.station_id == "A"]
+    assert [(i.state, i.close_reason) for i in shown[0].decision.incidents] == [
+        ("closed_without_recovery", "removed_from_catalog")
+    ]
+    # A is still in the status: now an id without catalog.
+    coverage = removal.feed_health.coverage
+    assert (coverage.valid, coverage.total) == (1, 2)
+    feed.publish(1930, {"A": 0, "B": 5})
+    assert not feed.state.catalog_fetch_pending  # a removed id does not ask for a fetch
+
+
+def test_bad_station_ids_do_not_break_the_engine() -> None:
+    feed = Feed(ids=("A", "A.1", "B"))
+    assert "A.1" not in feed.state.stations
+    assert feed.publish(10, {"A": 3, "A.1": 2, "B": 5}) == "ok"

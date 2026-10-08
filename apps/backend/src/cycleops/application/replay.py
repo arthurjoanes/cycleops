@@ -24,6 +24,7 @@ from cycleops.collection.guard import FeedGuard
 from cycleops.collection.outcome import TRANSPORT_ERRORS, classify_attempt
 from cycleops.collection.recording import parse_iso, read_recording
 from cycleops.contracts import (
+    SCHEMA_VERSION,
     CatalogStation,
     CatalogVersion,
     ManifestIncident,
@@ -39,7 +40,6 @@ from cycleops.domain.model import (
     PublicationFailed,
     PublicationReceived,
     StreamState,
-    instant_of,
 )
 from cycleops.policy import Policy
 
@@ -72,9 +72,14 @@ def attempt_from_line(line: dict[str, Any]) -> Attempt:
     )
 
 
-def entries(attempts: Iterable[Attempt], policy: Policy) -> Iterator[Input]:
-    """Attempts in receivedAt order, as engine inputs. Breaker and quarantine are the
-    collection module's, run here over the attempts."""
+Entry = tuple[datetime, Input | None, frozenset[str]]
+
+
+def entries(attempts: Iterable[Attempt], policy: Policy) -> Iterator[Entry]:
+    """For each attempt, in receivedAt order: its instant, the engine input it makes (None
+    for a successful discovery feed) and the feeds other than station_status in quarantine
+    after it. Breaker and quarantine are the collection module's, run here over the
+    attempts."""
     collection = policy.provider.collection
     guards = {feed: FeedGuard(collection, use_breaker=feed == "station_status") for feed in FEEDS}
     skew = timedelta(seconds=policy.priority.clock_skew_tolerance_seconds)
@@ -84,12 +89,13 @@ def entries(attempts: Iterable[Attempt], policy: Policy) -> Iterator[Input]:
         guard = guards[attempt.feed]
         guard.record(attempt.feed, outcome, attempt.received_at)
         publication = outcome.publication
+        entry: Input | None = None
         if outcome.ok and isinstance(publication, StatusPublication):
-            yield PublicationReceived(attempt.received_at, publication)
+            entry = PublicationReceived(attempt.received_at, publication)
         elif outcome.ok and isinstance(publication, InfoPublication):
-            yield CatalogReceived(attempt.received_at, publication)
+            entry = CatalogReceived(attempt.received_at, publication)
         elif outcome.error_class is not None:
-            yield PublicationFailed(
+            entry = PublicationFailed(
                 attempt.received_at,
                 attempt.feed,
                 outcome.code,
@@ -97,33 +103,40 @@ def entries(attempts: Iterable[Attempt], policy: Policy) -> Iterator[Input]:
                 guard.breaker_open_until,
                 guard.quarantined_since,
             )
+        quarantined = frozenset(
+            name for name, g in guards.items() if name != "station_status" and g.quarantined_since
+        )
+        yield attempt.received_at, entry, quarantined
 
 
 def run(
-    inputs: Iterable[Input], policy: Policy, state: StreamState, end: datetime | None = None
+    source: Iterable[Entry], policy: Policy, state: StreamState, end: datetime | None = None
 ) -> tuple[list[StationBatchEvent], dict[str, list[CatalogStation]]]:
     """Runs the engine with ticks on the epoch grid between inputs. On a tie the input goes
-    first. Returns the events and every catalog version seen."""
+    first. Ticks carry the quarantined feeds as they were at their instant. Returns the
+    events and every catalog version seen."""
     tick = timedelta(seconds=policy.priority.tick_interval_seconds)
     events: list[StationBatchEvent] = []
     catalogs: dict[str, list[CatalogStation]] = {}
     next_tick: datetime | None = None
+    quarantined: frozenset[str] = frozenset()
 
     def apply(entry: Input) -> None:
         events.extend(step(state, entry, policy)[1])
         if state.catalog_version not in catalogs:
             catalogs[state.catalog_version] = catalog_stations(state)
 
-    for entry in inputs:
-        at = instant_of(entry)
+    for at, entry, after in source:
         if next_tick is None:
             next_tick = _grid_ceil(at, tick)
         while next_tick < at:
-            apply(ClockTick(next_tick))
+            apply(ClockTick(next_tick, quarantined_feeds=quarantined))
             next_tick += tick
-        apply(entry)
+        if entry is not None:
+            apply(entry)
+        quarantined = after
     while end is not None and next_tick is not None and next_tick <= end:
-        apply(ClockTick(next_tick))
+        apply(ClockTick(next_tick, quarantined_feeds=quarantined))
         next_tick += tick
     return events, catalogs
 
@@ -142,8 +155,9 @@ def compile_recording(path: Path, policy: Policy) -> Artifact:
 
 def compile_synthetic(config: SyntheticConfig, policy: Policy) -> Artifact:
     policy = policy.with_service_hours(config.service_hours)
-    # The demo's "recording hash" is the canonical hash of its configuration.
-    config_hash = sha256_hex(config.model_dump(by_alias=True, mode="json"))
+    # The demo's "recording hash" is the canonical hash of its configuration, with instants
+    # as epoch: the same demo written with another UTC offset hashes the same.
+    config_hash = sha256_hex(config.model_dump(by_alias=True))
     system_id = policy.provider.system_id
     state = new_stream(system_id, "synthetic", f"{system_id}:{config_hash[:8]}", config.seed)
     attempts = collect(SyntheticFeed(config), policy)
@@ -178,6 +192,7 @@ def _artifact(
     ndjson = b"".join(e.model_dump_json().encode() + b"\n" for e in events)
     used = list(dict.fromkeys(e.catalog_version for e in events))
     catalog = ReplayCatalog(
+        schema_version=SCHEMA_VERSION,
         system_id=policy.provider.system_id,
         versions=[CatalogVersion(catalog_version=v, stations=catalogs[v]) for v in used],
     )
@@ -187,6 +202,8 @@ def _artifact(
     ).encode()
     tz = ZoneInfo(policy.provider.timezone)
     manifest = ReplayManifest(
+        schema_version=SCHEMA_VERSION,
+        event_schema_version=SCHEMA_VERSION,
         mode=mode,
         stream_id=events[0].stream_id,
         system_id=policy.provider.system_id,
