@@ -2,7 +2,7 @@
 
 Teste curto do Compose contra o feed real de Oslo, com a interface aberta no navegador.
 
-- Data: 2026-10-08, das 09:08:14 às 09:16:42 UTC (11:08 às 11:16 em Oslo, dentro do horário de serviço).
+- Data: 2026-10-08, das 09:08:14 às 09:16:42 UTC (das 11:08 às 11:16 em Oslo, dentro do horário de serviço).
 - Commit: 01b4497.
 - Comando, da raiz, com `.env.live` copiado de `.env.live.example` e `CYCLEOPS_CLIENT_IDENTIFIER=arthurjoanes-cycleops`:
 
@@ -40,8 +40,8 @@ Lidos do banco no fim, antes do `down -v`:
 ## Observações
 
 - A primeira publicação de `station_status` chegou antes do cadastro: o evento 2 saiu sem estações e o cadastro entrou no evento 3, um segundo depois.
-- As duas respostas `duplicate` repetiram o `last_updated` da anterior, como na coleta da fase 0.
-- A idade da publicação na fila ficou entre 10 e 25 s, a mesma faixa medida na fase 0 entre o `last_updated` e o recebimento.
+- As duas respostas `duplicate` repetiram o `last_updated` da anterior, como na coleta de 2026-10-07 (`feed-validation.md`).
+- A idade da publicação na fila ficou entre 10 e 25 s, a mesma faixa medida em 2026-10-07 entre o `last_updated` e o recebimento.
 - Na linha do tempo de 6 h, o período anterior ao início do fluxo aparece como "sem dado".
 
 ## Fora deste teste

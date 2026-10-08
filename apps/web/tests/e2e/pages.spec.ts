@@ -27,12 +27,18 @@ async function open(page: Page, hash = "") {
 const details = (page: Page) => page.locator("aside[aria-labelledby='details-title']");
 
 test("opens without login, with the mode and the seed always visible", async ({ page }) => {
+  // The Pages build never talks to the API: it has artifacts only.
+  const api: string[] = [];
+  page.on("request", (request) => {
+    if (new URL(request.url()).pathname.includes("/api/")) api.push(request.url());
+  });
   await open(page);
   await expect(page.getByTestId("mode")).toContainText("seed 42");
   await expect(page.getByTestId("connection")).toHaveText("arquivo local, seed 42");
   await expect(page.getByText(/^Simulação: estações e contagens geradas/)).toBeVisible();
   await expect(page.getByText(/Norwegian Licence for Open Government Data/)).toBeVisible();
   await expect(page.getByText("© OpenStreetMap contributors").first()).toBeVisible();
+  expect(api).toEqual([]);
 });
 
 test("pause, 5x, step and go to the incident, with confirmation and resolution", async ({ page }) => {

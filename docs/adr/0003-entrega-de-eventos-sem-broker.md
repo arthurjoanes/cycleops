@@ -1,6 +1,6 @@
 # ADR 0003: entrega de eventos sem broker
 
-Status: Proposto, 2026-10-08.
+Status: Proposto, 2026-10-08, com a medição do Compose.
 
 ## Contexto
 
@@ -12,6 +12,10 @@ O worker grava estado, decisões e eventos no PostgreSQL. A API precisa entregar
 - Cada processo da API tem um tailer com uma conexão LISTEN própria. Ele lê `event_log` a partir do próprio cursor a cada 1 s e quando chega uma notificação; a notificação só acorda o tailer. Os eventos vão para os clientes por um distribuidor em memória, com fila limitada por cliente.
 - O cliente reconecta com `Last-Event-ID` ou `?after=`. Até 40 eventos atrás (cerca de 10 min), a API faz o catch-up pelo `event_log`; além disso, ou com geração trocada, manda `resync_required` e o cliente pede um snapshot novo.
 - Entrega pelo menos uma vez: o cliente descarta `sequence` repetida e trata salto como lacuna.
+- Um cliente que para de ler perde a conexão depois de um tempo de escrita, e a fila dele tem teto de 200 mensagens ou 4 MiB; passou disso, recebe `resync_required` e fecha.
+- Se o tailer fica mais de 3 s sem ler o banco, o heartbeat não sai e o stream termina sem mensagem. O navegador consulta o `/api/v1/feed-health` (503 com o banco fora) e reconecta com backoff, em vez de receber heartbeats com um estado que a API já não consegue conferir.
+
+Estado em 2026-10-08, no Compose local com a simulação (`docs/results/performance.md`, commit 01b4497): commit até escrita no socket com p95 de 11,3 ms e máximo de 11,7 ms em 40 eventos em 10 min, contra a meta de 1 s.
 
 ## Alternativas
 

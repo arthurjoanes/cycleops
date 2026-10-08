@@ -30,7 +30,7 @@ CycleOps lists Oslo Bysykkel stations with no bikes or no docks, in priority ord
 - `fixtures/recorded/`: recordings of the real feed (NDJSON.gz with a manifest) and the NLOD `NOTICE`. A `demo.yaml` there names the recording that becomes the recorded replay; it exists only once a recording passes acceptance.
 - `fixtures/synthetic/demo.yaml`: parameters of the synthetic demo artifact.
 - `data/recordings/`: full recordings, not versioned.
-- `docs/adr/`, `docs/results/`.
+- `docs/architecture.md` (processes, connections and the test covering each), `docs/adr/` (decisions; new ones start as Proposto), `docs/results/` (every run with commit and command, indexed in `index.md`; `a11y-manual.md` is filled by a person; `publicacao.md` lists what only Arthur can do), `docs/media/` (captures, made with the Playwright `media` project; `tests/media/demo.spec.ts` records `demo.webm` against the Compose stack with `CYCLEOPS_DEMO=1`).
 
 ## Commands
 
@@ -83,6 +83,15 @@ corepack pnpm exec playwright test --project=media  # captures in docs/media/
 ```
 
 `e2e`, `perf` and `media` reuse a server already on port 4173; stop `preview:pages` first or the run tests the old `dist/`.
+
+Against the Compose stack (port 8080, project `cycleops-e2e`; the last test resets that project's database with `down -v`):
+
+```bash
+CYCLEOPS_NET=10.89.2 docker compose -p cycleops-e2e -f compose.yaml -f compose.offline.yaml up -d --build --wait
+corepack pnpm e2e:compose                                   # in apps/web
+CYCLEOPS_MEASURE=1 corepack pnpm e2e:compose latency        # 10 min receive-to-paint and commit-to-write
+CYCLEOPS_DEMO=1 corepack pnpm exec playwright test --project=media demo   # records docs/media/demo.webm on a fresh stack
+```
 
 Compose (Docker only):
 

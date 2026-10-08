@@ -32,7 +32,7 @@ corepack pnpm install
 corepack pnpm dev
 ```
 
-Abre em http://localhost:5173. Para ver o build do GitHub Pages, servido sob `/cycleops/` como no Pages:
+Abre em http://localhost:5173 e tenta primeiro o stream do servidor, pelo proxy para o edge do Compose em 127.0.0.1:8080. Sem a pilha no ar, a página mostra o erro de carga com o botão para abrir o replay em arquivo. Para ver o build do GitHub Pages, que só tem o replay, servido sob `/cycleops/` como no Pages:
 
 ```bash
 corepack pnpm build:pages
@@ -43,7 +43,7 @@ Abre em http://127.0.0.1:4173/cycleops/.
 
 ## Como testar
 
-Tudo o que o CI roda, localmente (Docker, uv, Node 24 com corepack e o Chromium do Playwright):
+O que o CI roda, menos o gitleaks, localmente (Docker, git, uv, Node 24 com corepack e o Chromium do Playwright):
 
 ```bash
 scripts/checks
@@ -60,7 +60,7 @@ corepack pnpm e2e
 corepack pnpm check:bundle
 ```
 
-O `e2e` gera o build do Pages e roda o Playwright contra ele. O `check:bundle` lê o build que já existe em `dist/`. Os comandos do backend Python, dos testes de integração com PostgreSQL e do E2E contra o Compose estão no `CONTRIBUTING.md`.
+O `e2e` gera o build do Pages e roda o Playwright contra ele. O `check:bundle` lê o build que já existe em `dist/`. Os comandos do backend Python, dos testes de integração com PostgreSQL e do E2E contra o Compose (`corepack pnpm e2e:compose`, que no fim apaga o banco do projeto `cycleops-e2e`) estão no `CONTRIBUTING.md`.
 
 ## Modos de dados
 
@@ -68,7 +68,7 @@ O `e2e` gera o build do Pages e roda o Playwright contra ele. O `check:bundle` l
 - Simulação: estações e contagens geradas com seed, com a faixa "Simulação" sempre visível. No Compose vem do worker, pelo mesmo caminho do ao vivo; no Pages e no botão "Simulação (arquivo)", de um artefato gerado offline.
 - Replay gravado: uma gravação real do feed passada pelo motor, reproduzida no navegador. Só existe quando uma gravação tem pelo menos um incidente confirmado e resolvido; ainda não há nenhuma.
 
-O modo e a seed ficam no cabeçalho o tempo todo, junto com o estado da conexão. Com a fonte fora, a tela mostra o erro e oferece o replay em arquivo; ela nunca troca sozinha. O replay tem pausa, 1×, 5×, 20×, passo e "ir para o incidente".
+O modo fica no cabeçalho o tempo todo, com a seed na simulação e o estado da conexão. Com a fonte fora, a tela mostra o erro e oferece o replay em arquivo; ela nunca troca sozinha. O replay tem pausa, 1×, 5×, 20×, passo e "ir para o incidente".
 
 ## Limitações
 
@@ -82,8 +82,10 @@ O modo e a seed ficam no cabeçalho o tempo todo, junto com o estado da conexão
 
 ## Fontes e licenças
 
-- Dados do Oslo Bysykkel sob NLOD 2.0 e base do mapa do OpenStreetMap sob ODbL: `DATA_SOURCES.md`.
-- Software de terceiros: `THIRD_PARTY_NOTICES.md`.
-- Código sob a licença MIT: `LICENSE`.
+- Dados do Oslo Bysykkel sob NLOD 2.0 e base do mapa do OpenStreetMap sob ODbL: [DATA_SOURCES.md](DATA_SOURCES.md).
+- Software de terceiros: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+- Código sob a licença MIT: [LICENSE](LICENSE).
 
-Decisões de arquitetura em `docs/adr/`. Resultados de execução, com commit e comando, em `docs/results/`.
+## Arquitetura
+
+Processos, ligações e o teste que cobre cada uma em [docs/architecture.md](docs/architecture.md). Decisões em [docs/adr/](docs/adr/). Resultados de execução, com commit e comando, em [docs/results/](docs/results/).

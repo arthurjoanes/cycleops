@@ -50,7 +50,7 @@ O maior evento nas três execuções é o clique em "Todas as estações", que m
 
 `corepack pnpm check:bundle` no build do commit 5794b7a: 116.775 bytes em gzip para o chunk de entrada, os imports estáticos dele e o CSS, contra o orçamento de 127.026 bytes (primeiro build, 115.478 bytes, mais 10%). O mapa, o worker do MapLibre e o gerador de carga ficam fora, em imports dinâmicos.
 
-No commit 01b4497 (Compose): 118.024 bytes no build do Pages e 118.305 bytes no build do edge (`corepack pnpm build`), que inclui a `LiveSseSource`, contra o mesmo orçamento.
+No commit 01b4497 (Compose): 118.024 bytes no build do Pages e 118.305 bytes no build do edge (`corepack pnpm build`), contra o mesmo orçamento. A `LiveSseSource` fica fora da conta, num import dinâmico, como o mapa.
 
 ## Compose: latência
 
@@ -74,7 +74,7 @@ CYCLEOPS_MEASURE=1 corepack pnpm e2e:compose latency
 
 ## Compose: repouso
 
-`docker stats --no-stream`, 10 amostras com cerca de 5 s entre elas, de 08:55:25 a 08:56:30 UTC, depois de 5 min parado desde o `up -d --build --wait` num volume novo (às 08:50:09). Nenhum navegador ou cliente conectado; só os healthchecks dos containers. CPU em % de um núcleo, como o Docker mostra. Commit 01b4497. Dados: `data/compose-docker-stats.json`.
+`docker stats --no-stream`, 10 amostras com cerca de 7 s entre elas, de 08:55:25 a 08:56:30 UTC, depois de 5 min parado desde o `up -d --build --wait` num volume novo (às 08:50:09). Nenhum navegador ou cliente conectado; só os healthchecks dos containers. CPU em % de um núcleo, como o Docker mostra. Commit 01b4497. Dados: `data/compose-docker-stats.json`.
 
 | Container | CPU média | CPU máx. | Memória (primeira e última amostra) |
 |---|---|---|---|

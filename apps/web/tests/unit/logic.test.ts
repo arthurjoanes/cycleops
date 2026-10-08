@@ -1,5 +1,6 @@
 import fixture from "@contracts/fixtures/sort-keys.json";
-import { describe, expect, it } from "vitest";
+import { gzipSync } from "node:zlib";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { mainMessage, queueDimmed } from "../../src/app/screenState";
 import { compareSortKeys, frozenView, indicators, leadIncident, liveOrder } from "../../src/features/priorities/queue";
 import { stationTone } from "../../src/features/stations/mapStyle";
@@ -7,8 +8,8 @@ import { historySpans, spans } from "../../src/features/stations/timeline";
 import { InvalidPayloadError, type StationHistory, validateStationBatchEvent } from "../../src/lib/contracts";
 import { fold } from "../../src/lib/search";
 import { formatTime, utcOffset, zoneLabel } from "../../src/lib/time";
-import { parseEvents } from "../../src/streams/artifact";
-import { event, incident, iso, stationState } from "./factory";
+import { loadArtifact, parseEvents } from "../../src/streams/artifact";
+import { catalog, catalogStation, event, incident, iso, manifest, stationState } from "./factory";
 
 describe("sortKey order", () => {
   it("matches the order the backend generated", () => {
@@ -203,6 +204,36 @@ describe("contract validation", () => {
     const missing: Record<string, unknown> = { ...good };
     delete missing.feedHealth;
     expect(validateStationBatchEvent(missing)).toBe(false);
+  });
+
+  // The three files must be one artifact: a mix from two deploys would freeze the screen.
+  describe("loadArtifact", () => {
+    afterEach(() => vi.unstubAllGlobals());
+    const serve = (events: ReturnType<typeof event>[], eventCount = events.length) => {
+      const files: Record<string, BodyInit> = {
+        "manifest.json": JSON.stringify(manifest({ eventCount })),
+        "catalog.json": JSON.stringify(catalog({ v1: [catalogStation("A")] })),
+        "events.ndjson.gz": gzipSync(events.map((e) => JSON.stringify(e)).join("\n")),
+      };
+      vi.stubGlobal("fetch", async (url: string) => new Response(files[url.split("/").pop() ?? ""] ?? null));
+    };
+
+    it("loads three files that match", async () => {
+      serve([event(1, [stationState("A")]), event(2, [])]);
+      expect((await loadArtifact("synthetic")).events).toHaveLength(2);
+    });
+
+    it("refuses another stream, a hole in the sequence, an unknown catalog or a wrong count", async () => {
+      for (const [events, count] of [
+        [[event(1, []), event(2, [], { streamId: "other:00000000" })], 2],
+        [[event(1, []), event(3, [])], 2],
+        [[event(1, [], { catalogVersion: "v9" })], 1],
+        [[event(1, [])], 2],
+      ] as const) {
+        serve([...events], count);
+        await expect(loadArtifact("synthetic")).rejects.toThrow(InvalidPayloadError);
+      }
+    });
   });
 
   it("rejects an artifact with one bad line", () => {
