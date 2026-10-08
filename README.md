@@ -4,6 +4,8 @@ Lista as estações do Oslo Bysykkel sem bicicleta ou sem vaga, em ordem de prio
 
 ![Tela do CycleOps no modo Simulação: fila de prioridades à esquerda, mapa de Oslo com as estações à direita e os detalhes de uma estação sem bicicletas abertos sobre o mapa](docs/media/desktop-1440.png)
 
+Um vídeo de 27 s, [docs/media/demo.webm](docs/media/demo.webm), mostra a simulação pelo stream do servidor no Compose: um incidente confirmado no topo da fila e o motivo nos detalhes, a API reiniciando (conexão em "reconectando" e de volta a "conectada") e a troca para o replay em arquivo, pausado.
+
 ## Como rodar
 
 Precisa só de Docker. Da raiz do repositório:

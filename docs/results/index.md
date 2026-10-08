@@ -28,8 +28,12 @@ Cada execução registrada no repositório, com o commit do código usado. Coman
 | Orçamento do bundle com o Compose: 118.024 bytes no build do Pages e 118.305 no build do edge, teto de 127.026 | `apps/web/bundle-budget.json` | em `apps/web`: `corepack pnpm build:pages && corepack pnpm check:bundle`; `corepack pnpm build && corepack pnpm check:bundle` | 01b4497 | 2026-10-08 |
 | Teste manual do live contra Oslo: 37 requisições em 7 min 46 s, nenhum warning ou erro | `docs/results/live-manual.md` | `docker compose -p cycleops-live --env-file .env.live up -d --build --wait` | 01b4497 | 2026-10-08 09:08 a 09:16 |
 | gitleaks 8.30.1 no histórico: 11 commits, nenhum vazamento; actionlint e shellcheck sem achado | | imagem do `ci.yml`; `rhysd/actionlint`; `koalaman/shellcheck` em `scripts/` | 01b4497 | 2026-10-08 09:18 |
+| Testes Python no fechamento do MVP, com PostgreSQL real: 343 passando | | `docker compose -p cycleops-test -f compose.test.yaml up -d --wait`; `CYCLEOPS_TEST_DATABASE_URL=postgresql://postgres:local-only-test@127.0.0.1:55432/postgres uv run --project apps/backend pytest apps/backend` | 60706cb | 2026-10-08 21:53 |
+| Testes da web no fechamento do MVP: ESLint e tsc sem erro, 65 testes no Vitest, 12 E2E contra o build do Pages (com a checagem de nenhuma requisição à API) | | em `apps/web`: `corepack pnpm lint`, `typecheck`, `test`, `e2e` | 60706cb (rodou antes do commit, mesmo código) | 2026-10-08 |
+| Compose sem internet no fechamento do MVP: smoke ok, saída do worker bloqueada (`Network is unreachable`), 11 E2E passando | `apps/web/tests/compose/` | `CYCLEOPS_NET=10.89.2 docker compose -p cycleops-e2e -f compose.yaml -f compose.offline.yaml up -d --build --wait`; `scripts/smoke`; em `apps/web`: `corepack pnpm e2e:compose` | 60706cb | 2026-10-08 21:59 a 22:03 |
+| Vídeo da aplicação: 26,5 s, 1280×720, VP8, 2,4 MB | `docs/media/demo.webm` | com a pilha recém-criada: em `apps/web`, `CYCLEOPS_DEMO=1 corepack pnpm exec playwright test --project=media demo` | 60706cb | 2026-10-08 22:06 |
+| gitleaks 8.30.1 no histórico: 13 commits, nenhum vazamento; actionlint sem achado | | imagem do `ci.yml`; `rhysd/actionlint` | 60706cb | 2026-10-08 22:07 |
 
 ## Pendente
 
 - A coleta de dia, de outras redes e a gravação de 60 a 90 min estão em "Coleta pendente", em `feed-validation.md`.
-- O vídeo `docs/media/demo.webm` ainda não foi gravado. O teste que grava é `apps/web/tests/media/demo.spec.ts` (comando no `CONTRIBUTING.md`), contra uma pilha do Compose recém-criada.

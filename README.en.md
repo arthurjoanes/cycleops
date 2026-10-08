@@ -4,6 +4,8 @@ Lists Oslo Bysykkel stations with no bikes or no free docks, in priority order, 
 
 ![CycleOps in simulation mode: priority queue on the left, map of Oslo with the stations on the right, and the details of an empty station open over the map](docs/media/desktop-1440.png)
 
+A 27 s video, [docs/media/demo.webm](docs/media/demo.webm), shows the simulation over the server stream in Compose: a confirmed incident at the top of the queue with its reason in the details, the API restarting (connection "reconectando", then "conectada" again) and the switch to the file replay, paused.
+
 ## Run
 
 Docker only. From the repository root:
