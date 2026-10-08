@@ -9,6 +9,8 @@ __pycache__/
 # Node
 node_modules/
 dist/
+test-results/
+playwright-report/
 
 # Ambiente local
 .env
@@ -17,5 +19,5 @@ dist/
 !.env.live.example
 
 # Gravações completas e caches
-data/
+/data/
 scripts/basemap/cache/

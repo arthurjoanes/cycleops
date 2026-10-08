@@ -1,0 +1,76 @@
+import {
+  InvalidPayloadError,
+  type ReplayCatalog,
+  type ReplayManifest,
+  type StationBatchEvent,
+  validateReplayCatalog,
+  validateReplayManifest,
+  validateStationBatchEvent,
+} from "../lib/contracts";
+
+export interface Artifact {
+  manifest: ReplayManifest;
+  catalog: ReplayCatalog;
+  events: StationBatchEvent[];
+}
+
+export type ArtifactKind = "recorded" | "synthetic";
+
+export function artifactBase(kind: ArtifactKind): string {
+  return `${import.meta.env.BASE_URL}replay/${kind}/`;
+}
+
+async function fetchOk(url: string, signal?: AbortSignal): Promise<Response> {
+  const response = await fetch(url, { signal });
+  if (!response.ok) throw new Error(`${url}: ${response.status}`);
+  return response;
+}
+
+/** The recorded replay exists only when a recording passed acceptance. */
+export async function artifactExists(kind: ArtifactKind, signal?: AbortSignal): Promise<boolean> {
+  try {
+    const response = await fetch(`${artifactBase(kind)}manifest.json`, { signal });
+    // A server with an HTML fallback answers 200 for anything; the manifest is JSON.
+    return response.ok && (response.headers.get("content-type") ?? "").includes("json");
+  } catch {
+    return false;
+  }
+}
+
+/** Splits NDJSON and validates every event; one bad line rejects the artifact. */
+export function parseEvents(text: string): StationBatchEvent[] {
+  const events: StationBatchEvent[] = [];
+  for (const line of text.split("\n")) {
+    if (!line.trim()) continue;
+    const event: unknown = JSON.parse(line);
+    if (!validateStationBatchEvent(event)) throw new InvalidPayloadError("event");
+    events.push(event);
+  }
+  return events;
+}
+
+/** Manifest and catalog first, then the events. The .gz is served as a plain file (no
+ * Content-Encoding), so it is decompressed here. */
+export async function loadArtifact(kind: ArtifactKind, signal?: AbortSignal): Promise<Artifact> {
+  const base = artifactBase(kind);
+  const manifest: unknown = await (await fetchOk(`${base}manifest.json`, signal)).json();
+  if (!validateReplayManifest(manifest)) throw new InvalidPayloadError("manifest");
+  const catalog: unknown = await (await fetchOk(`${base}catalog.json`, signal)).json();
+  if (!validateReplayCatalog(catalog)) throw new InvalidPayloadError("catalog");
+  const gz = await fetchOk(`${base}events.ndjson.gz`, signal);
+  if (!gz.body) throw new Error("events.ndjson.gz: empty body");
+  // Served as a plain .gz (GitHub Pages, Caddy). A server that adds Content-Encoding has
+  // already had the browser decompress it.
+  const encoded = (gz.headers.get("content-encoding") ?? "").includes("gzip");
+  const body = encoded ? gz.body : gz.body.pipeThrough(new DecompressionStream("gzip"));
+  const text = await new Response(body).text();
+  const events = parseEvents(text);
+  // The three files must be one artifact: a mix from two deploys would play as a frozen
+  // screen, because the store only takes sequence 1, 2, 3... of one stream.
+  const versions = new Set(catalog.versions.map((v) => v.catalogVersion));
+  const consistent =
+    events.length === manifest.eventCount &&
+    events.every((e, i) => e.streamId === manifest.streamId && e.sequence === i + 1 && versions.has(e.catalogVersion));
+  if (!consistent) throw new InvalidPayloadError("events");
+  return { manifest, catalog, events };
+}

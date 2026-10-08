@@ -1,0 +1,147 @@
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  font-size: var(--size-s);
+}
+
+.details p {
+  margin: 0;
+}
+
+.badges,
+.incidents {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.incidents {
+  flex-direction: column;
+}
+
+.subtitle {
+  margin-bottom: var(--space-1);
+  font-size: var(--size-s);
+  font-weight: 600;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: minmax(0, 11em) minmax(0, 1fr);
+  gap: 2px var(--space-3);
+  margin: 0;
+}
+
+.facts dt {
+  color: var(--muted);
+}
+
+.facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.chart {
+  margin: 0;
+}
+
+.chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.chartBg {
+  fill: var(--surface);
+  stroke: var(--border);
+}
+
+.gap {
+  stroke: var(--stale);
+  stroke-width: 1;
+}
+
+.hatch {
+  stroke: var(--stale);
+  stroke-width: 2;
+}
+
+/* 3:1 against the chart background. */
+.closed {
+  fill: #8c959f;
+}
+
+.bikesLine,
+.docksLine {
+  fill: none;
+  stroke-width: 2;
+}
+
+.bikesLine {
+  stroke: var(--empty);
+}
+
+.docksLine {
+  stroke: var(--recovering);
+  stroke-dasharray: 5 3;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-1);
+  font-size: var(--size-xs);
+  color: var(--muted);
+}
+
+.legend span::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 0;
+  margin-right: var(--space-1);
+  vertical-align: middle;
+  border-top: 3px solid;
+}
+
+.keyBikes::before {
+  border-color: var(--empty);
+}
+
+.keyDocks::before {
+  border-color: var(--recovering);
+  border-top-style: dashed;
+}
+
+.keyGap::before {
+  height: 10px;
+  border: 1px solid var(--stale);
+  background: repeating-linear-gradient(45deg, var(--stale) 0 2px, transparent 2px 4px);
+}
+
+.keyClosed::before {
+  border-color: #8c959f;
+  border-top-width: 10px;
+}
+
+.summary {
+  margin-top: var(--space-1);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--size-xs);
+}
+
+.table th,
+.table td {
+  padding: 2px var(--space-1);
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}

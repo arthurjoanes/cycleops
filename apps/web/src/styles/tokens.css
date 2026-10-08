@@ -1,0 +1,59 @@
+/* Local font, latin subset only (covers ø, æ, å). */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("@fontsource-variable/inter/files/inter-latin-wght-normal.woff2") format("woff2-variations");
+}
+
+:root {
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --size-xs: 0.75rem;
+  --size-s: 0.875rem;
+  --size-m: 1rem;
+  --size-l: 1.25rem;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  --radius: 6px;
+
+  /* Neutral, light theme. Text contrast on --surface: --text 16:1, --muted 6.3:1. */
+  --bg: #f4f5f7;
+  --surface: #ffffff;
+  --text: #1b1f24;
+  --muted: #57606a;
+  --border: #d0d7de;
+  --focus: #0b5cad;
+  --link: #0b5cad;
+
+  /* State colors, at least 4.5:1 on --surface for text and 3:1 for marks. */
+  --empty: #b42318;
+  --empty-bg: #fdecea;
+  --full: #8a4b00;
+  --full-bg: #fdf1e2;
+  --candidate: #6b5300;
+  --candidate-bg: #fbf4d8;
+  --recovering: #0b5cad;
+  --recovering-bg: #e8f1fb;
+  --ok: #1a7f37;
+  --ok-bg: #e9f6ed;
+  --stale: #57606a;
+  --stale-bg: #eef0f2;
+  --warning: #8a4b00;
+  --warning-bg: #fdf1e2;
+  --simulation: #5a3e9b;
+  --simulation-bg: #f1edfa;
+
+  /* Base map. */
+  --map-land: #eef0ec;
+  --map-water: #b9d3e6;
+  --map-park: #d4e6cc;
+  --map-road: #ffffff;
+  --map-road-edge: #c9cdd2;
+}

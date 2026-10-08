@@ -1,0 +1,109 @@
+# Compose, PostgreSQL integration and phase 3 E2E jobs come with the backend phase.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          version: "0.12.23"
+          enable-cache: true
+      - run: uv sync --project apps/backend --locked
+      - run: uv run --project apps/backend ruff check apps/backend
+      - run: uv run --project apps/backend ruff format --check apps/backend
+      - run: uv run --project apps/backend mypy --config-file apps/backend/pyproject.toml apps/backend/src apps/backend/tests
+      - run: uv run --project apps/backend pytest apps/backend
+      - name: Generated contracts and replay artifacts are current
+        run: uv run --project apps/backend generate-artifacts --check
+      - name: Recordings up to 5 MB
+        run: |
+          big=$(find fixtures/recorded -type f -size +5242880c -printf '%s %p\n')
+          if [ -n "$big" ]; then echo "$big"; exit 1; fi
+      - name: Replay events up to 2 MB
+        run: |
+          big=$(find apps/web/public/replay -mindepth 2 -maxdepth 2 -name events.ndjson.gz -size +2097152c -printf '%s %p\n')
+          if [ -n "$big" ]; then echo "$big"; exit 1; fi
+      - name: Text check
+        run: |
+          found=$(git ls-files -z -- '*.md' ':!README.en.md' ':!CONTRIBUTING.md' ':!THIRD_PARTY_NOTICES.md' \
+            | xargs -0 -r grep -n -i -E '\bevid(e|ê)nc|\bensaio|\batest|\bassegur|\bprov(a|as)\b|\bcomprov|\brobust' || true)
+          if [ -n "$found" ]; then echo "$found"; exit 1; fi
+
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+      - run: corepack enable
+      # setup-node's pnpm cache needs pnpm on PATH before it runs, so the store is cached here.
+      - id: pnpm-store
+        run: echo "path=$(corepack pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ steps.pnpm-store.outputs.path }}
+          key: pnpm-store-${{ runner.os }}-${{ hashFiles('apps/web/pnpm-lock.yaml') }}
+          restore-keys: pnpm-store-${{ runner.os }}-
+      - run: corepack pnpm install --frozen-lockfile
+      - run: corepack pnpm generate:contracts
+      - name: Generated contracts are committed
+        working-directory: .
+        run: |
+          git diff --exit-code -- packages/contracts
+          untracked=$(git ls-files --others --exclude-standard -- packages/contracts)
+          if [ -n "$untracked" ]; then echo "$untracked"; exit 1; fi
+      - run: corepack pnpm lint
+      - run: corepack pnpm typecheck
+      - run: corepack pnpm test
+      - run: corepack pnpm build:pages
+      - run: corepack pnpm check:bundle
+      - run: corepack pnpm exec playwright install --with-deps chromium
+      - run: corepack pnpm e2e
+      - if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: playwright-report
+          path: apps/web/playwright-report
+          if-no-files-found: ignore
+          retention-days: 7
+
+  gitleaks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      # Official image by digest: no GITHUB_TOKEN or license needed, unlike gitleaks-action.
+      # The container runs as root with HOME=/github/home, so git would reject the runner-owned
+      # workspace as dubious ownership and gitleaks would scan 0 commits and pass. Command-scope
+      # config is one of the places git reads safe.directory from.
+      - uses: docker://ghcr.io/gitleaks/gitleaks:v8.30.1@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f
+        env:
+          GIT_CONFIG_COUNT: "1"
+          GIT_CONFIG_KEY_0: safe.directory
+          GIT_CONFIG_VALUE_0: /github/workspace
+        with:
+          args: git --redact --verbose /github/workspace
