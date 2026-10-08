@@ -1,0 +1,51 @@
+# Desempenho do frontend (laboratório)
+
+Números de laboratório, numa máquina só, contra o build do Pages servido sob `/cycleops/` por `apps/web/scripts/serve-pages.mjs`. Não são dados de campo.
+
+Ambiente das duas medições:
+
+- CPU AMD Ryzen 7 5700X3D (16 threads), 31,9 GB de RAM, Windows 11 (win32 10.0.26300);
+- Chromium 156.0.8078.4 headless, pelo Playwright 1.64;
+- CPU 4× mais lenta, emulada pelo DevTools Protocol;
+- commit 5794b7a, 2026-10-08 às 02:24 UTC.
+
+Comando, em `apps/web`: `corepack pnpm perf`. Dados brutos: `data/frontend-load.json` e `data/web-vitals.json`.
+
+## Teste de carga
+
+Um gerador TypeScript com seed 7 manda lotes direto no store pelo mesmo caminho do replay (janela de 100 ms e commit em `requestAnimationFrame`), sem rede (`#/?source=load`). São 30 lotes, os 5 primeiros de aquecimento, com 1 s entre lotes em vez de 15 s: o custo de um lote não depende do intervalo. Viewport de 1440×900, com o mapa na tela.
+
+- Recebimento até pintura: do lote saindo do gerador até a primeira tarefa depois do frame seguinte ao commit. Inclui a janela de 100 ms.
+- Render: atualização do store mais o render e o commit do React (a lista). O mapa atualiza no frame seguinte e fica de fora.
+- Heap medido depois de forçar o GC, no fim do aquecimento e no fim.
+
+| Cenário | Lista | Recebimento até pintura, p50 / p95 / máx (ms) | Render p95 (ms) | Long tasks (qtd., máx. ms) | Linhas renderizadas por lote (p50) | Frames/s | Nós no DOM | Heap (MB) |
+|---|---|---|---|---|---|---|---|---|
+| 267 estações, todas mudando | Prioridades | 138 / 157 / 161 | 8,3 | 0 | 11 | 56 | 208 | 11,8 → 12,3 |
+| 267 estações, todas mudando | Todas | 188 / 210 / 212 | 16,2 | 25, 82 | 267 | 53 | 1.180 | 13,4 → 13,9 |
+| 1.000 estações, 30% mudando | Prioridades | 162 / 171 / 173 | 16,7 | 1, 51 | 49 | 52 | 550 | 13,2 → 13,9 |
+| 1.000 estações, 30% mudando | Todas | 218 / 232 / 234 | 22,9 | 25, 105 | 303 | 47 | 4.112 | 18,7 → 19,8 |
+
+A atualização do store fica em até 2,3 ms no p95 em todos os cenários.
+
+- Recebimento até pintura: p95 de 157 a 232 ms, abaixo da meta de 250 ms nos quatro cenários.
+- Heap: sobe de 0,5 a 1,1 MB entre o fim do aquecimento e o fim, em 25 lotes.
+- Gatilho de virtualização (ADR 0005): em "Todas as estações" com 1.000 estações, cada lote gera uma long task de até 105 ms e o render fica em 22,9 ms no p95. A long task vem da lista: com a fila de prioridades e o mesmo mapa, o cenário de 1.000 estações tem uma long task só, de 51 ms. Com a CPU 4× mais lenta, o gatilho do ADR 0005 (long task acima de 50 ms atribuída à lista ou render acima de 16 ms no p95) foi atingido. Em Oslo, com 267 estações todas mudando no mesmo lote, a lista completa dá long tasks de até 82 ms.
+- Experimento sem adoção: `content-visibility: auto` nas linhas de "Todas as estações" (`data/frontend-load-content-visibility.json`, mesmo commit com a mudança local, só o cenário de 1.000 estações). As long tasks caíram para 8, com máximo de 57 ms, mas o recebimento até pintura teve picos de 2,3 s (p95 de 552 ms). A mudança foi revertida.
+
+## Web Vitals
+
+Três execuções com cache desligado, rede emulada com 150 ms de latência, 1,6 Mbps de download e 750 kbps de upload, viewport de 1440×900. LCP e CLS vêm do PerformanceObserver até o fim do roteiro. O INP é a maior duração entre os eventos com `interactionId` no roteiro: Todas as estações, busca "sintetica 01", Prioridades, Ir para o incidente, Fechar.
+
+| Execução | LCP (ms) | CLS | INP (ms) |
+|---|---|---|---|
+| 1 | 3.060 | 0,069 | 184 |
+| 2 | 3.096 | 0,069 | 176 |
+| 3 | 3.056 | 0,069 | 176 |
+| Mediana | 3.060 | 0,069 | 176 |
+
+O maior evento nas três execuções é o clique em "Todas as estações", que monta as 267 linhas. As metas de campo (LCP até 2,5 s, INP até 200 ms e CLS até 0,1, no p75) só valem com visitas reais e não se comparam com estes números.
+
+## Bundle
+
+`corepack pnpm check:bundle` no build do commit 5794b7a: 116.775 bytes em gzip para o chunk de entrada, os imports estáticos dele e o CSS, contra o orçamento de 127.026 bytes (primeiro build, 115.478 bytes, mais 10%). O mapa, o worker do MapLibre e o gerador de carga ficam fora, em imports dinâmicos.

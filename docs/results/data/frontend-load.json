@@ -1,0 +1,1357 @@
+{
+  "environment": {
+    "cpu": "AMD Ryzen 7 5700X3D 8-Core Processor",
+    "cores": 16,
+    "memoryGb": 31.9,
+    "os": "win32 10.0.26300",
+    "browser": "chromium 156.0.8078.4 (Playwright, headless)",
+    "commit": "5794b7a",
+    "date": "2026-10-08T02:24:37.936Z"
+  },
+  "method": {
+    "batches": 30,
+    "warmupBatches": 5,
+    "intervalMs": 1000,
+    "cpuSlowdown": 4,
+    "network": "none (events injected in the page)",
+    "seed": 7,
+    "notes": "applyMs: store update for the batch; renderMs: store update plus the React render and commit (the list); the map updates in its own animation frame and is not in renderMs; receiveToPaintMs: from the batch leaving the generator to the first task after the next frame (100 ms coalescing window included)."
+  },
+  "results": [
+    {
+      "scenario": "267 estações, todas mudando a cada lote",
+      "view": "priorities",
+      "stations": 267,
+      "fraction": 1,
+      "batchesMeasured": 25,
+      "changedPerBatch": 267,
+      "applyMs": {
+        "p50": 0.4,
+        "p95": 0.6,
+        "max": 1
+      },
+      "renderMs": {
+        "p50": 6.4,
+        "p95": 8.3,
+        "max": 8.9
+      },
+      "receiveToPaintMs": {
+        "p50": 137.9,
+        "p95": 157.2,
+        "max": 161.4
+      },
+      "rowRendersPerBatch": {
+        "p50": 11,
+        "max": 21
+      },
+      "longTasks": {
+        "count": 0,
+        "maxMs": 0
+      },
+      "framesPerSecond": 56,
+      "domNodes": 208,
+      "heapMb": {
+        "afterWarmup": 11.8,
+        "end": 12.3
+      },
+      "raw": {
+        "samples": [
+          {
+            "sequence": 1,
+            "changed": 267,
+            "applyMs": 2.0999999940395355,
+            "renderMs": 41.599999994039536,
+            "paintMs": 348.1000000089407,
+            "rowRenders": 7
+          },
+          {
+            "sequence": 2,
+            "changed": 267,
+            "applyMs": 0.6000000089406967,
+            "renderMs": 12.700000002980232,
+            "paintMs": 147.59999999403954,
+            "rowRenders": 18
+          },
+          {
+            "sequence": 3,
+            "changed": 267,
+            "applyMs": 0.6000000089406967,
+            "renderMs": 8.700000002980232,
+            "paintMs": 155.1000000089407,
+            "rowRenders": 15
+          },
+          {
+            "sequence": 4,
+            "changed": 267,
+            "applyMs": 0.5999999940395355,
+            "renderMs": 10.399999991059303,
+            "paintMs": 139.8999999910593,
+            "rowRenders": 10
+          },
+          {
+            "sequence": 5,
+            "changed": 267,
+            "applyMs": 0.7000000029802322,
+            "renderMs": 10.300000011920929,
+            "paintMs": 161.79999999701977,
+            "rowRenders": 18
+          },
+          {
+            "sequence": 6,
+            "changed": 267,
+            "applyMs": 0.6000000089406967,
+            "renderMs": 8.300000011920929,
+            "paintMs": 138.90000000596046,
+            "rowRenders": 12
+          },
+          {
+            "sequence": 7,
+            "changed": 267,
+            "applyMs": 0.5,
+            "renderMs": 6.9000000059604645,
+            "paintMs": 140.19999998807907,
+            "rowRenders": 14
+          },
+          {
+            "sequence": 8,
+            "changed": 267,
+            "applyMs": 0.5,
+            "renderMs": 8,
+            "paintMs": 138.59999999403954,
+            "rowRenders": 14
+          },
+          {
+            "sequence": 9,
+            "changed": 267,
+            "applyMs": 1,
+            "renderMs": 6.600000008940697,
+            "paintMs": 135.09999999403954,
+            "rowRenders": 10
+          },
+          {
+            "sequence": 10,
+            "changed": 267,
+            "applyMs": 0.4000000059604645,
+            "renderMs": 6.4000000059604645,
+            "paintMs": 154.59999999403954,
+            "rowRenders": 17
+          },
+          {
+            "sequence": 11,
+            "changed": 267,
+            "applyMs": 0.5999999940395355,
+            "renderMs": 7.399999991059303,
+            "paintMs": 136.90000000596046,
+            "rowRenders": 11
+          },
+          {
+            "sequence": 12,
+            "changed": 267,
+            "applyMs": 0.4000000059604645,
+            "renderMs": 6.200000002980232,
+            "paintMs": 137.30000001192093,
+            "rowRenders": 13
+          },
+          {
+            "sequence": 13,
+            "changed": 267,
+            "applyMs": 0.6000000089406967,
+            "renderMs": 5.4000000059604645,
+            "paintMs": 134.70000000298023,
+            "rowRenders": 9
+          },
+          {
+            "sequence": 14,
+            "changed": 267,
+            "applyMs": 0.3999999910593033,
+            "renderMs": 6.899999991059303,
+            "paintMs": 139.09999999403954,
+            "rowRenders": 14
+          },
+          {
+            "sequence": 15,
+            "changed": 267,
+            "applyMs": 0.5,
+            "renderMs": 5.799999997019768,
+            "paintMs": 137.70000000298023,
+            "rowRenders": 11
+          },
+          {
+            "sequence": 16,
+            "changed": 267,
+            "applyMs": 0.5,
+            "renderMs": 6.5999999940395355,
+            "paintMs": 136.29999999701977,
+            "rowRenders": 11
+          },
+          {
+            "sequence": 17,
+            "changed": 267,
+            "applyMs": 0.3999999910593033,
+            "renderMs": 5.799999997019768,
+            "paintMs": 134.29999999701977,
+            "rowRenders": 11
+          },
+          {
+            "sequence": 18,
+            "changed": 267,
+            "applyMs": 0.4000000059604645,
+            "renderMs": 4.299999997019768,
+            "paintMs": 138.3999999910593,
+            "rowRenders": 8
+          },
+          {
+            "sequence": 19,
+            "changed": 267,
+            "applyMs": 0.29999999701976776,
+            "renderMs": 7,
+            "paintMs": 140,
+            "rowRenders": 17
+          },
+          {
+            "sequence": 20,
+            "changed": 267,
+            "applyMs": 0.3999999910593033,
+            "renderMs": 7,
+            "paintMs": 157.20000000298023,
+            "rowRenders": 16
+          },
+          {
+            "sequence": 21,
+            "changed": 267,
+            "applyMs": 0.3999999910593033,
+            "renderMs": 5,
+            "paintMs": 150.70000000298023,
+            "rowRenders": 11
+          },
+          {
+            "sequence": 22,
+            "changed": 267,
+            "applyMs": 0.29999999701976776,
+            "renderMs": 5.0999999940395355,
+            "paintMs": 157.19999998807907,
+            "rowRenders": 8
+          },
+          {
+            "sequence": 23,
+            "changed": 267,
+            "applyMs": 0.5,
+            "renderMs": 6.4000000059604645,
+            "paintMs": 136.40000000596046,
+            "rowRenders": 14
+          },
+          {
+            "sequence": 24,
+            "changed": 267,
+            "applyMs": 0.3999999910593033,
+            "renderMs": 5.799999997019768,
+            "paintMs": 134.40000000596046,
+            "rowRenders": 10
+          },
+          {
+            "sequence": 25,
+            "changed": 267,
+            "applyMs": 0.29999999701976776,
+            "renderMs": 5.399999991059303,
+            "paintMs": 137.8999999910593,
+            "rowRenders": 16
+          },
+          {
+            "sequence": 26,
+            "changed": 267,
+            "applyMs": 0.6000000089406967,
+            "renderMs": 6.200000002980232,
+            "paintMs": 135.70000000298023,
+            "rowRenders": 10
+          },
+          {
+            "sequence": 27,
+            "changed": 267,
+            "applyMs": 0.5,
+            "renderMs": 8.299999997019768,
+            "paintMs": 161.40000000596046,
+            "rowRenders": 21
+          },
+          {
+            "sequence": 28,
+            "changed": 267,
+            "applyMs": 0.3999999910593033,
+            "renderMs": 5.399999991059303,
+            "paintMs": 133.5,
+            "rowRenders": 8
+          },
+          {
+            "sequence": 29,
+            "changed": 267,
+            "applyMs": 0.29999999701976776,
+            "renderMs": 8.899999991059303,
+            "paintMs": 143.5,
+            "rowRenders": 14
+          },
+          {
+            "sequence": 30,
+            "changed": 267,
+            "applyMs": 0.3999999910593033,
+            "renderMs": 5.5999999940395355,
+            "paintMs": 137.8999999910593,
+            "rowRenders": 11
+          }
+        ],
+        "longtasks": []
+      }
+    },
+    {
+      "scenario": "267 estações, todas mudando a cada lote",
+      "view": "all",
+      "stations": 267,
+      "fraction": 1,
+      "batchesMeasured": 25,
+      "changedPerBatch": 267,
+      "applyMs": {
+        "p50": 0.6,
+        "p95": 0.9,
+        "max": 1
+      },
+      "renderMs": {
+        "p50": 13.6,
+        "p95": 16.2,
+        "max": 16.7
+      },
+      "receiveToPaintMs": {
+        "p50": 188.2,
+        "p95": 209.6,
+        "max": 211.8
+      },
+      "rowRendersPerBatch": {
+        "p50": 267,
+        "max": 267
+      },
+      "longTasks": {
+        "count": 25,
+        "maxMs": 82
+      },
+      "framesPerSecond": 53,
+      "domNodes": 1180,
+      "heapMb": {
+        "afterWarmup": 13.4,
+        "end": 13.9
+      },
+      "raw": {
+        "samples": [
+          {
+            "sequence": 1,
+            "changed": 267,
+            "applyMs": 1.7999999970197678,
+            "renderMs": 70.70000000298023,
+            "paintMs": 443.5,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 2,
+            "changed": 267,
+            "applyMs": 1.5999999940395355,
+            "renderMs": 21.5,
+            "paintMs": 175.90000000596046,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 3,
+            "changed": 267,
+            "applyMs": 1,
+            "renderMs": 13.799999997019768,
+            "paintMs": 196.8999999910593,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 4,
+            "changed": 267,
+            "applyMs": 0.7999999970197678,
+            "renderMs": 16.599999994039536,
+            "paintMs": 198.79999999701977,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 5,
+            "changed": 267,
+            "applyMs": 0.7999999970197678,
+            "renderMs": 16.599999994039536,
+            "paintMs": 215.6000000089407,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 6,
+            "changed": 267,
+            "applyMs": 0.800000011920929,
+            "renderMs": 16.200000002980232,
+            "paintMs": 187.70000000298023,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 7,
+            "changed": 267,
+            "applyMs": 0.6000000089406967,
+            "renderMs": 16,
+            "paintMs": 207,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 8,
+            "changed": 267,
+            "applyMs": 0.9000000059604645,
+            "renderMs": 16.700000002980232,
+            "paintMs": 206.59999999403954,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 9,
+            "changed": 267,
+            "applyMs": 0.6000000089406967,
+            "renderMs": 14,
+            "paintMs": 204,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 10,
+            "changed": 267,
+            "applyMs": 0.7999999970197678,
+            "renderMs": 16,
+            "paintMs": 210.30000001192093,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 11,
+            "changed": 267,
+            "applyMs": 0.7000000029802322,
+            "renderMs": 13.600000008940697,
+            "paintMs": 201.59999999403954,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 12,
+            "changed": 267,
+            "applyMs": 0.6000000089406967,
+            "renderMs": 15.600000008940697,
+            "paintMs": 211.79999999701977,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 13,
+            "changed": 267,
+            "applyMs": 1,
+            "renderMs": 13.400000005960464,
+            "paintMs": 187.09999999403954,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 14,
+            "changed": 267,
+            "applyMs": 0.5999999940395355,
+            "renderMs": 15.299999997019768,
+            "paintMs": 191.70000000298023,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 15,
+            "changed": 267,
+            "applyMs": 0.5999999940395355,
+            "renderMs": 15,
+            "paintMs": 197.09999999403954,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 16,
+            "changed": 267,
+            "applyMs": 0.6000000089406967,
+            "renderMs": 14.799999997019768,
+            "paintMs": 184.69999998807907,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 17,
+            "changed": 267,
+            "applyMs": 0.6000000089406967,
+            "renderMs": 13.400000005960464,
+            "paintMs": 188.20000000298023,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 18,
+            "changed": 267,
+            "applyMs": 0.699999988079071,
+            "renderMs": 12.699999988079071,
+            "paintMs": 200.8999999910593,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 19,
+            "changed": 267,
+            "applyMs": 0.6000000089406967,
+            "renderMs": 12.5,
+            "paintMs": 199.8999999910593,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 20,
+            "changed": 267,
+            "applyMs": 0.4000000059604645,
+            "renderMs": 13.599999994039536,
+            "paintMs": 191,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 21,
+            "changed": 267,
+            "applyMs": 0.7999999970197678,
+            "renderMs": 14.5,
+            "paintMs": 183.30000001192093,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 22,
+            "changed": 267,
+            "applyMs": 0.6000000089406967,
+            "renderMs": 12.600000008940697,
+            "paintMs": 181.79999999701977,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 23,
+            "changed": 267,
+            "applyMs": 0.6000000089406967,
+            "renderMs": 15,
+            "paintMs": 190.1000000089407,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 24,
+            "changed": 267,
+            "applyMs": 0.7999999970197678,
+            "renderMs": 13,
+            "paintMs": 186.79999999701977,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 25,
+            "changed": 267,
+            "applyMs": 0.5,
+            "renderMs": 11.5,
+            "paintMs": 179.30000001192093,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 26,
+            "changed": 267,
+            "applyMs": 0.6000000089406967,
+            "renderMs": 11.5,
+            "paintMs": 183.90000000596046,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 27,
+            "changed": 267,
+            "applyMs": 0.7000000029802322,
+            "renderMs": 11.099999994039536,
+            "paintMs": 178.70000000298023,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 28,
+            "changed": 267,
+            "applyMs": 0.4000000059604645,
+            "renderMs": 12.100000008940697,
+            "paintMs": 179.5,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 29,
+            "changed": 267,
+            "applyMs": 0.5,
+            "renderMs": 11.899999991059303,
+            "paintMs": 183.1000000089407,
+            "rowRenders": 267
+          },
+          {
+            "sequence": 30,
+            "changed": 267,
+            "applyMs": 0.7000000029802322,
+            "renderMs": 12,
+            "paintMs": 183.09999999403954,
+            "rowRenders": 267
+          }
+        ],
+        "longtasks": [
+          {
+            "start": 5756.29999999702,
+            "duration": 68
+          },
+          {
+            "start": 6774.20000000298,
+            "duration": 70
+          },
+          {
+            "start": 7773.5,
+            "duration": 71
+          },
+          {
+            "start": 8774.20000000298,
+            "duration": 68
+          },
+          {
+            "start": 9773.5,
+            "duration": 74
+          },
+          {
+            "start": 10756.70000000298,
+            "duration": 82
+          },
+          {
+            "start": 11773.29999999702,
+            "duration": 74
+          },
+          {
+            "start": 12757.09999999404,
+            "duration": 70
+          },
+          {
+            "start": 13756.70000000298,
+            "duration": 73
+          },
+          {
+            "start": 14756.59999999404,
+            "duration": 76
+          },
+          {
+            "start": 15756.59999999404,
+            "duration": 66
+          },
+          {
+            "start": 16756.79999999702,
+            "duration": 69
+          },
+          {
+            "start": 17772.79999999702,
+            "duration": 64
+          },
+          {
+            "start": 18789.29999999702,
+            "duration": 64
+          },
+          {
+            "start": 19756.29999999702,
+            "duration": 72
+          },
+          {
+            "start": 20755.90000000596,
+            "duration": 65
+          },
+          {
+            "start": 21773.20000000298,
+            "duration": 63
+          },
+          {
+            "start": 22756.59999999404,
+            "duration": 71
+          },
+          {
+            "start": 23755.70000000298,
+            "duration": 69
+          },
+          {
+            "start": 24756.79999999702,
+            "duration": 61
+          },
+          {
+            "start": 25755.79999999702,
+            "duration": 66
+          },
+          {
+            "start": 26755.70000000298,
+            "duration": 60
+          },
+          {
+            "start": 27755.59999999404,
+            "duration": 61
+          },
+          {
+            "start": 28771.90000000596,
+            "duration": 63
+          },
+          {
+            "start": 29755.29999999702,
+            "duration": 65
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "1.000 estações, 30% mudando a cada lote",
+      "view": "priorities",
+      "stations": 1000,
+      "fraction": 0.3,
+      "batchesMeasured": 25,
+      "changedPerBatch": 303,
+      "applyMs": {
+        "p50": 0.9,
+        "p95": 1.2,
+        "max": 1.2
+      },
+      "renderMs": {
+        "p50": 13.4,
+        "p95": 16.7,
+        "max": 18
+      },
+      "receiveToPaintMs": {
+        "p50": 162.1,
+        "p95": 170.9,
+        "max": 172.9
+      },
+      "rowRendersPerBatch": {
+        "p50": 49,
+        "max": 64
+      },
+      "longTasks": {
+        "count": 1,
+        "maxMs": 51
+      },
+      "framesPerSecond": 52,
+      "domNodes": 550,
+      "heapMb": {
+        "afterWarmup": 13.2,
+        "end": 13.9
+      },
+      "raw": {
+        "samples": [
+          {
+            "sequence": 1,
+            "changed": 1000,
+            "applyMs": 1.800000011920929,
+            "renderMs": 60.400000005960464,
+            "paintMs": 392.8999999910593,
+            "rowRenders": 59
+          },
+          {
+            "sequence": 2,
+            "changed": 307,
+            "applyMs": 1.199999988079071,
+            "renderMs": 23.099999994039536,
+            "paintMs": 199.29999999701977,
+            "rowRenders": 55
+          },
+          {
+            "sequence": 3,
+            "changed": 320,
+            "applyMs": 1.1000000089406967,
+            "renderMs": 16.600000008940697,
+            "paintMs": 151.59999999403954,
+            "rowRenders": 51
+          },
+          {
+            "sequence": 4,
+            "changed": 314,
+            "applyMs": 1.199999988079071,
+            "renderMs": 15.699999988079071,
+            "paintMs": 155.20000000298023,
+            "rowRenders": 51
+          },
+          {
+            "sequence": 5,
+            "changed": 293,
+            "applyMs": 1.7000000029802322,
+            "renderMs": 15.299999997019768,
+            "paintMs": 155.40000000596046,
+            "rowRenders": 41
+          },
+          {
+            "sequence": 6,
+            "changed": 303,
+            "applyMs": 0.9000000059604645,
+            "renderMs": 11.400000005960464,
+            "paintMs": 146.79999999701977,
+            "rowRenders": 36
+          },
+          {
+            "sequence": 7,
+            "changed": 306,
+            "applyMs": 0.7999999970197678,
+            "renderMs": 11.899999991059303,
+            "paintMs": 167.20000000298023,
+            "rowRenders": 43
+          },
+          {
+            "sequence": 8,
+            "changed": 286,
+            "applyMs": 0.5999999940395355,
+            "renderMs": 11,
+            "paintMs": 145.90000000596046,
+            "rowRenders": 37
+          },
+          {
+            "sequence": 9,
+            "changed": 336,
+            "applyMs": 0.7999999970197678,
+            "renderMs": 13.599999994039536,
+            "paintMs": 156.40000000596046,
+            "rowRenders": 47
+          },
+          {
+            "sequence": 10,
+            "changed": 299,
+            "applyMs": 0.8999999910593033,
+            "renderMs": 12.599999994039536,
+            "paintMs": 151.19999998807907,
+            "rowRenders": 41
+          },
+          {
+            "sequence": 11,
+            "changed": 293,
+            "applyMs": 0.7000000029802322,
+            "renderMs": 13,
+            "paintMs": 155.79999999701977,
+            "rowRenders": 52
+          },
+          {
+            "sequence": 12,
+            "changed": 299,
+            "applyMs": 1.2000000029802322,
+            "renderMs": 15.799999997019768,
+            "paintMs": 166.20000000298023,
+            "rowRenders": 64
+          },
+          {
+            "sequence": 13,
+            "changed": 288,
+            "applyMs": 0.6000000089406967,
+            "renderMs": 14.5,
+            "paintMs": 155.5,
+            "rowRenders": 56
+          },
+          {
+            "sequence": 14,
+            "changed": 294,
+            "applyMs": 1.0999999940395355,
+            "renderMs": 14.900000005960464,
+            "paintMs": 157.19999998807907,
+            "rowRenders": 54
+          },
+          {
+            "sequence": 15,
+            "changed": 295,
+            "applyMs": 0.6000000089406967,
+            "renderMs": 13.400000005960464,
+            "paintMs": 153,
+            "rowRenders": 55
+          },
+          {
+            "sequence": 16,
+            "changed": 272,
+            "applyMs": 1.1000000089406967,
+            "renderMs": 16.900000005960464,
+            "paintMs": 170.1000000089407,
+            "rowRenders": 56
+          },
+          {
+            "sequence": 17,
+            "changed": 308,
+            "applyMs": 1,
+            "renderMs": 18,
+            "paintMs": 167,
+            "rowRenders": 59
+          },
+          {
+            "sequence": 18,
+            "changed": 291,
+            "applyMs": 1.1000000089406967,
+            "renderMs": 15.900000005960464,
+            "paintMs": 162.59999999403954,
+            "rowRenders": 58
+          },
+          {
+            "sequence": 19,
+            "changed": 303,
+            "applyMs": 0.9000000059604645,
+            "renderMs": 14.400000005960464,
+            "paintMs": 161.29999999701977,
+            "rowRenders": 60
+          },
+          {
+            "sequence": 20,
+            "changed": 312,
+            "applyMs": 1.0999999940395355,
+            "renderMs": 14.599999994039536,
+            "paintMs": 159.09999999403954,
+            "rowRenders": 59
+          },
+          {
+            "sequence": 21,
+            "changed": 286,
+            "applyMs": 1,
+            "renderMs": 15,
+            "paintMs": 163.70000000298023,
+            "rowRenders": 60
+          },
+          {
+            "sequence": 22,
+            "changed": 297,
+            "applyMs": 1.199999988079071,
+            "renderMs": 14.099999994039536,
+            "paintMs": 172.90000000596046,
+            "rowRenders": 49
+          },
+          {
+            "sequence": 23,
+            "changed": 309,
+            "applyMs": 0.9000000059604645,
+            "renderMs": 13,
+            "paintMs": 171.09999999403954,
+            "rowRenders": 45
+          },
+          {
+            "sequence": 24,
+            "changed": 312,
+            "applyMs": 0.699999988079071,
+            "renderMs": 11.199999988079071,
+            "paintMs": 153.29999999701977,
+            "rowRenders": 49
+          },
+          {
+            "sequence": 25,
+            "changed": 327,
+            "applyMs": 0.7999999970197678,
+            "renderMs": 12.400000005960464,
+            "paintMs": 169.70000000298023,
+            "rowRenders": 45
+          },
+          {
+            "sequence": 26,
+            "changed": 317,
+            "applyMs": 0.7999999970197678,
+            "renderMs": 15,
+            "paintMs": 170,
+            "rowRenders": 49
+          },
+          {
+            "sequence": 27,
+            "changed": 300,
+            "applyMs": 1,
+            "renderMs": 11.5,
+            "paintMs": 167.6000000089407,
+            "rowRenders": 46
+          },
+          {
+            "sequence": 28,
+            "changed": 306,
+            "applyMs": 0.9000000059604645,
+            "renderMs": 11.5,
+            "paintMs": 167.6000000089407,
+            "rowRenders": 39
+          },
+          {
+            "sequence": 29,
+            "changed": 308,
+            "applyMs": 0.4000000059604645,
+            "renderMs": 12,
+            "paintMs": 162.1000000089407,
+            "rowRenders": 51
+          },
+          {
+            "sequence": 30,
+            "changed": 318,
+            "applyMs": 0.7000000029802322,
+            "renderMs": 11.599999994039536,
+            "paintMs": 151.09999999403954,
+            "rowRenders": 49
+          }
+        ],
+        "longtasks": [
+          {
+            "start": 25720.59999999404,
+            "duration": 51
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "1.000 estações, 30% mudando a cada lote",
+      "view": "all",
+      "stations": 1000,
+      "fraction": 0.3,
+      "batchesMeasured": 25,
+      "changedPerBatch": 303,
+      "applyMs": {
+        "p50": 1.9,
+        "p95": 2.3,
+        "max": 2.6
+      },
+      "renderMs": {
+        "p50": 19.7,
+        "p95": 22.9,
+        "max": 23.7
+      },
+      "receiveToPaintMs": {
+        "p50": 218.3,
+        "p95": 231.7,
+        "max": 234.2
+      },
+      "rowRendersPerBatch": {
+        "p50": 303,
+        "max": 336
+      },
+      "longTasks": {
+        "count": 25,
+        "maxMs": 105
+      },
+      "framesPerSecond": 47,
+      "domNodes": 4112,
+      "heapMb": {
+        "afterWarmup": 18.7,
+        "end": 19.8
+      },
+      "raw": {
+        "samples": [
+          {
+            "sequence": 1,
+            "changed": 1000,
+            "applyMs": 2.5,
+            "renderMs": 126.3999999910593,
+            "paintMs": 646.1000000089407,
+            "rowRenders": 1000
+          },
+          {
+            "sequence": 2,
+            "changed": 307,
+            "applyMs": 1.0999999940395355,
+            "renderMs": 25.399999991059303,
+            "paintMs": 429.20000000298023,
+            "rowRenders": 307
+          },
+          {
+            "sequence": 3,
+            "changed": 320,
+            "applyMs": 1.7999999970197678,
+            "renderMs": 17.899999991059303,
+            "paintMs": 216,
+            "rowRenders": 320
+          },
+          {
+            "sequence": 4,
+            "changed": 314,
+            "applyMs": 2.300000011920929,
+            "renderMs": 21,
+            "paintMs": 221.79999999701977,
+            "rowRenders": 314
+          },
+          {
+            "sequence": 5,
+            "changed": 293,
+            "applyMs": 1.7000000029802322,
+            "renderMs": 20.299999997019768,
+            "paintMs": 198.80000001192093,
+            "rowRenders": 293
+          },
+          {
+            "sequence": 6,
+            "changed": 303,
+            "applyMs": 1.7999999970197678,
+            "renderMs": 21.299999997019768,
+            "paintMs": 220.5,
+            "rowRenders": 303
+          },
+          {
+            "sequence": 7,
+            "changed": 306,
+            "applyMs": 2.5999999940395355,
+            "renderMs": 23,
+            "paintMs": 212.5,
+            "rowRenders": 306
+          },
+          {
+            "sequence": 8,
+            "changed": 286,
+            "applyMs": 2.1000000089406967,
+            "renderMs": 20.5,
+            "paintMs": 212.09999999403954,
+            "rowRenders": 286
+          },
+          {
+            "sequence": 9,
+            "changed": 336,
+            "applyMs": 2.1000000089406967,
+            "renderMs": 23.700000002980232,
+            "paintMs": 232.1000000089407,
+            "rowRenders": 336
+          },
+          {
+            "sequence": 10,
+            "changed": 299,
+            "applyMs": 2,
+            "renderMs": 22.599999994039536,
+            "paintMs": 215.5,
+            "rowRenders": 299
+          },
+          {
+            "sequence": 11,
+            "changed": 293,
+            "applyMs": 2,
+            "renderMs": 21.30000001192093,
+            "paintMs": 221.29999999701977,
+            "rowRenders": 293
+          },
+          {
+            "sequence": 12,
+            "changed": 299,
+            "applyMs": 2.2000000029802322,
+            "renderMs": 20.400000005960464,
+            "paintMs": 210.20000000298023,
+            "rowRenders": 299
+          },
+          {
+            "sequence": 13,
+            "changed": 288,
+            "applyMs": 1.5,
+            "renderMs": 19.700000002980232,
+            "paintMs": 220.40000000596046,
+            "rowRenders": 288
+          },
+          {
+            "sequence": 14,
+            "changed": 294,
+            "applyMs": 1.8999999910593033,
+            "renderMs": 20.799999997019768,
+            "paintMs": 215.20000000298023,
+            "rowRenders": 294
+          },
+          {
+            "sequence": 15,
+            "changed": 295,
+            "applyMs": 2.300000011920929,
+            "renderMs": 19.5,
+            "paintMs": 208.09999999403954,
+            "rowRenders": 295
+          },
+          {
+            "sequence": 16,
+            "changed": 272,
+            "applyMs": 1.7999999970197678,
+            "renderMs": 17.599999994039536,
+            "paintMs": 218.30000001192093,
+            "rowRenders": 272
+          },
+          {
+            "sequence": 17,
+            "changed": 308,
+            "applyMs": 1.7999999970197678,
+            "renderMs": 21.100000008940697,
+            "paintMs": 219.1000000089407,
+            "rowRenders": 308
+          },
+          {
+            "sequence": 18,
+            "changed": 291,
+            "applyMs": 2,
+            "renderMs": 21.30000001192093,
+            "paintMs": 218.59999999403954,
+            "rowRenders": 291
+          },
+          {
+            "sequence": 19,
+            "changed": 303,
+            "applyMs": 1.8999999910593033,
+            "renderMs": 20.700000002980232,
+            "paintMs": 212.79999999701977,
+            "rowRenders": 303
+          },
+          {
+            "sequence": 20,
+            "changed": 312,
+            "applyMs": 1.9000000059604645,
+            "renderMs": 19.5,
+            "paintMs": 216.19999998807907,
+            "rowRenders": 312
+          },
+          {
+            "sequence": 21,
+            "changed": 286,
+            "applyMs": 1.7999999970197678,
+            "renderMs": 18.5,
+            "paintMs": 234.20000000298023,
+            "rowRenders": 286
+          },
+          {
+            "sequence": 22,
+            "changed": 297,
+            "applyMs": 1.9000000059604645,
+            "renderMs": 18.799999997019768,
+            "paintMs": 209,
+            "rowRenders": 297
+          },
+          {
+            "sequence": 23,
+            "changed": 309,
+            "applyMs": 1.6000000089406967,
+            "renderMs": 18.5,
+            "paintMs": 222.09999999403954,
+            "rowRenders": 309
+          },
+          {
+            "sequence": 24,
+            "changed": 312,
+            "applyMs": 1.6000000089406967,
+            "renderMs": 19.299999997019768,
+            "paintMs": 230.29999999701977,
+            "rowRenders": 312
+          },
+          {
+            "sequence": 25,
+            "changed": 327,
+            "applyMs": 1.9000000059604645,
+            "renderMs": 20.900000005960464,
+            "paintMs": 226.29999999701977,
+            "rowRenders": 327
+          },
+          {
+            "sequence": 26,
+            "changed": 317,
+            "applyMs": 2.2000000029802322,
+            "renderMs": 19.399999991059303,
+            "paintMs": 204.09999999403954,
+            "rowRenders": 317
+          },
+          {
+            "sequence": 27,
+            "changed": 300,
+            "applyMs": 1.800000011920929,
+            "renderMs": 18.400000005960464,
+            "paintMs": 217.70000000298023,
+            "rowRenders": 300
+          },
+          {
+            "sequence": 28,
+            "changed": 306,
+            "applyMs": 1.8999999910593033,
+            "renderMs": 18.5,
+            "paintMs": 206.29999999701977,
+            "rowRenders": 306
+          },
+          {
+            "sequence": 29,
+            "changed": 308,
+            "applyMs": 1.5999999940395355,
+            "renderMs": 17.899999991059303,
+            "paintMs": 221.5,
+            "rowRenders": 308
+          },
+          {
+            "sequence": 30,
+            "changed": 318,
+            "applyMs": 1.7999999970197678,
+            "renderMs": 18.299999997019768,
+            "paintMs": 219.09999999403954,
+            "rowRenders": 318
+          }
+        ],
+        "longtasks": [
+          {
+            "start": 5754.29999999702,
+            "duration": 86
+          },
+          {
+            "start": 6721.20000000298,
+            "duration": 92
+          },
+          {
+            "start": 7720.4000000059605,
+            "duration": 87
+          },
+          {
+            "start": 8720.29999999702,
+            "duration": 100
+          },
+          {
+            "start": 9721,
+            "duration": 95
+          },
+          {
+            "start": 10720,
+            "duration": 95
+          },
+          {
+            "start": 11720.20000000298,
+            "duration": 91
+          },
+          {
+            "start": 12720.5,
+            "duration": 93
+          },
+          {
+            "start": 13720.29999999702,
+            "duration": 88
+          },
+          {
+            "start": 14720.5,
+            "duration": 88
+          },
+          {
+            "start": 15736.90000000596,
+            "duration": 82
+          },
+          {
+            "start": 16720.70000000298,
+            "duration": 99
+          },
+          {
+            "start": 17720.40000000596,
+            "duration": 93
+          },
+          {
+            "start": 18720,
+            "duration": 94
+          },
+          {
+            "start": 19721.09999999404,
+            "duration": 96
+          },
+          {
+            "start": 20720,
+            "duration": 105
+          },
+          {
+            "start": 21719.5,
+            "duration": 91
+          },
+          {
+            "start": 22719.79999999702,
+            "duration": 90
+          },
+          {
+            "start": 23736.70000000298,
+            "duration": 94
+          },
+          {
+            "start": 24719.59999999404,
+            "duration": 96
+          },
+          {
+            "start": 25719.20000000298,
+            "duration": 85
+          },
+          {
+            "start": 26719.40000000596,
+            "duration": 87
+          },
+          {
+            "start": 27719.70000000298,
+            "duration": 82
+          },
+          {
+            "start": 28736.09999999404,
+            "duration": 86
+          },
+          {
+            "start": 29735.90000000596,
+            "duration": 83
+          }
+        ]
+      }
+    }
+  ]
+}

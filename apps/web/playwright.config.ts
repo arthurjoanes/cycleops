@@ -17,10 +17,11 @@ export default defineConfig({
     viewport: { width: 1440, height: 900 },
     launchOptions: { args: ["--enable-unsafe-swiftshader"] },
   },
-  // e2e runs in CI; perf takes minutes and writes docs/results/data/, so it runs by hand.
+  // e2e runs in CI; perf and media write to docs/, so they run by hand.
   projects: [
     { name: "e2e", testMatch: "e2e/**/*.spec.ts" },
     { name: "perf", testMatch: "performance/**/*.spec.ts" },
+    { name: "media", testMatch: "media/**/*.spec.ts" },
   ],
   webServer: {
     command: "corepack pnpm build:pages && node scripts/serve-pages.mjs",

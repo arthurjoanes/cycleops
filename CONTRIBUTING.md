@@ -72,9 +72,10 @@ corepack pnpm build:pages && corepack pnpm check:bundle
 corepack pnpm preview:pages       # http://127.0.0.1:4173/cycleops/
 corepack pnpm generate:contracts  # types.ts and validators from packages/contracts/schemas
 corepack pnpm perf                # frontend load and lab Web Vitals, writes docs/results/data/
+corepack pnpm exec playwright test --project=media  # captures in docs/media/
 ```
 
-`e2e` and `perf` reuse a server already on port 4173; stop `preview:pages` first or the run tests the old `dist/`.
+`e2e`, `perf` and `media` reuse a server already on port 4173; stop `preview:pages` first or the run tests the old `dist/`.
 
 Text check for the pt-BR Markdown (must print nothing):
 
