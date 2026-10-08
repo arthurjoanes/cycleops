@@ -1,4 +1,4 @@
-import type { SourceState } from "../../lib/contracts";
+import type { Interval, SourceState, StationHistory } from "../../lib/contracts";
 import type { HistoryPoint, SourcePoint } from "./store";
 
 export type SpanKind = "data" | "gap" | "closed";
@@ -49,6 +49,39 @@ export function spans(
     }
   }
   return result;
+}
+
+/**
+ * Worker modes: the series comes from GET /history, where the server already applied the
+ * gap rule. Its intervals become a source timeline (a gap as "stale") so the spans are cut
+ * the same way as in the artifact modes. Points sit at their commit instant, like the
+ * events in the store; the station-unverifiable gaps come only from the server's
+ * intervals, since an unverifiable point keeps an older sourceUpdatedAt.
+ */
+export function historySpans(history: StationHistory, to: number): Span[] {
+  const points: HistoryPoint[] = history.points.map((p) => ({
+    // Payloads from before `at` existed only have sourceUpdatedAt.
+    at: p.at ?? p.sourceUpdatedAt,
+    bikes: p.bikesAvailable,
+    docks: p.docksAvailable,
+    condition: p.primaryCondition,
+    unverifiable: false,
+  }));
+  const from = Date.parse(history.windowStart);
+  const inside = (list: readonly Interval[], t: number) =>
+    list.some((i) => Date.parse(i.start) <= t && (i.end === null || t < Date.parse(i.end)));
+  const cuts = new Set([from]);
+  for (const i of [...history.gaps, ...history.closed]) {
+    cuts.add(Date.parse(i.start));
+    if (i.end !== null) cuts.add(Date.parse(i.end));
+  }
+  const sources: SourcePoint[] = [...cuts]
+    .sort((a, b) => a - b)
+    .map((t) => ({
+      at: new Date(t).toISOString(),
+      state: inside(history.closed, t) ? "closed" : inside(history.gaps, t) ? "stale" : "fresh",
+    }));
+  return spans(points, sources, from, to);
 }
 
 function latest<T extends { at: string }>(items: readonly T[], at: number): T | undefined {

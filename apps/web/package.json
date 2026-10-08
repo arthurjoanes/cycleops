@@ -16,6 +16,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
     "e2e": "playwright test --project=e2e",
+    "e2e:compose": "playwright test -c playwright.compose.config.ts",
     "perf": "playwright test --project=perf",
     "check:bundle": "node scripts/check-bundle.mjs",
     "generate:contracts": "node scripts/generate-contracts.mjs"
@@ -31,7 +32,7 @@
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
     "@eslint/js": "9.39.5",
-    "@playwright/test": "1.64.0",
+    "@playwright/test": "1.63.0",
     "@testing-library/jest-dom": "7.0.1",
     "@testing-library/react": "16.3.3",
     "@testing-library/user-event": "14.6.7",

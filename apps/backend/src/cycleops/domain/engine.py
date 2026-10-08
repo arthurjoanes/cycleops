@@ -80,6 +80,8 @@ def step(
         # Before the first accepted publication the source is unknown; no 60 s wait here,
         # that rule is for openings.
         state.in_service = in_service(now, policy.provider.service_hours)
+    # Before a publication moves last_source_updated_at or a tick moves last_tick_at.
+    crossing = _stale_crossing(state, policy)
 
     if isinstance(entry, PublicationFailed):
         _failed(state, entry)
@@ -88,7 +90,9 @@ def step(
         observed = _receive(state, entry.publication, entry.received_at, now, policy)
         if observed is None:
             return state, []
-        return state, _evaluate(state, now, policy, "publication", entry.received_at, observed)
+        return state, _evaluate(
+            state, now, policy, "publication", crossing, entry.received_at, observed
+        )
     if isinstance(entry, CatalogReceived):
         before = state.catalog_version
         removed = _reconcile(state, entry, now)
@@ -97,21 +101,29 @@ def step(
         state.quarantined_feeds.discard("station_information")
         changed = bool(removed) or state.catalog_version != before
         return state, _evaluate(
-            state, now, policy, "catalog", entry.received_at, force=changed, removed=removed
+            state,
+            now,
+            policy,
+            "catalog",
+            crossing,
+            entry.received_at,
+            force=changed,
+            removed=removed,
         )
     if isinstance(entry, ClockTick):
         # Collection state that only the source knows comes in on the tick.
+        state.last_tick_at = entry.at
         state.ingestion_suspended = entry.ingestion_suspended
         if entry.ingestion_suspended:
             state.last_outcome = "db_quota_exceeded"
         state.quarantined_feeds = set(entry.quarantined_feeds)
-        return state, _evaluate(state, now, policy, "clock")
+        return state, _evaluate(state, now, policy, "clock", crossing)
     # PolicyChanged: open incidents keep their state and follow the new rules from here.
     state.policy_version = entry.policy_version
     for st in state.stations.values():
         for inc in st.incidents.values():
             inc.policy_version = entry.policy_version
-    return state, _evaluate(state, now, policy, "policy", force=True)
+    return state, _evaluate(state, now, policy, "policy", crossing, force=True)
 
 
 def policy_change(state: StreamState, policy: Policy, at: datetime) -> PolicyChanged | None:
@@ -167,6 +179,8 @@ def _receive(
     state.last_attempt_at = received_at
     # Any valid response closes the breaker and ends the quarantine in the collection module.
     state.breaker_open_until = None
+    if state.quarantined_since is not None:
+        state.quarantine_ended_at = now
     state.quarantined_since = None
     updated = pub.envelope.last_updated
     last = state.last_source_updated_at
@@ -314,6 +328,7 @@ def _evaluate(
     now: datetime,
     policy: Policy,
     cause: EventCause,
+    crossing: datetime | None,
     received_at: datetime | None = None,
     observed: set[str] | None = None,
     force: bool = False,
@@ -325,7 +340,21 @@ def _evaluate(
     # start or an opening sets it by age, without hysteresis.
     if observed is not None and state.in_service:
         state.awaiting_since = None
+    previous = state.source_state
     _source_state(state, now, policy)
+    if (
+        crossing is not None
+        and now > crossing
+        and (state.source_state == "stale" or cause != "clock")
+    ):
+        # The stale limit passed before this step. Stale starts at the crossing, whether
+        # this is the next tick or the first entry after a worker outage. A publication that
+        # comes first after an outage starts its state now: the API showed stale meanwhile.
+        # A tick that finds the state unchanged leaves it alone.
+        state.source_state_since = crossing if state.source_state == "stale" else now
+    elif state.source_state != previous:
+        # Breaker, quota, quarantine, closing and the rest start at the step that sees them.
+        state.source_state_since = now
     usable = state.source_state in ("fresh", "late")
     changed: list[tuple[Station, StationState, tuple[object, ...]]] = []
     for sid, st in sorted((state.stations | (removed or {})).items()):
@@ -407,6 +436,26 @@ def _service_boundaries(state: StreamState, now: datetime, policy: Policy) -> No
                 st.seen_without.clear()
     state.service_checked_at = now
     state.in_service = in_service(now, policy.provider.service_hours)
+
+
+def _stale_crossing(state: StreamState, policy: Policy) -> datetime | None:
+    """When the current state turns stale by age, None where age does not decide it.
+    Fresh or late: the last publication or the last tick, whichever is older, plus the
+    limit. That is the API's stale rule while the worker is stopped (worker_seen_at is
+    last_tick_at), so the start the page showed during an outage holds after the restart;
+    with the worker running a tick is never that old. Quarantine held after its end: the
+    source age. Unknown: the wait for the first publication after an opening."""
+    limit = timedelta(seconds=policy.priority.source_stale_after_seconds)
+    last = state.last_source_updated_at
+    if state.source_state in ("fresh", "late") and last:
+        return min(last, state.last_tick_at or last) + limit
+    if state.source_state == "quarantined" and not state.quarantined_since and last:
+        # Never inside the quarantine: a refused publication (duplicate, out of order) can
+        # end it while the last accepted one is older than the limit.
+        return max(last + limit, state.quarantine_ended_at or last)
+    if state.source_state == "unknown" and state.awaiting_since:
+        return state.awaiting_since + limit
+    return None
 
 
 def _source_state(state: StreamState, now: datetime, policy: Policy) -> None:
@@ -671,6 +720,7 @@ def _feed_health(state: StreamState, now: datetime) -> FeedHealth:
     valid = sum(1 for st in state.stations.values() if st.presence == "valid")
     return FeedHealth(
         state=state.source_state,
+        state_since=state.source_state_since,
         last_source_updated_at=state.last_source_updated_at,
         last_attempt_at=state.last_attempt_at,
         last_outcome=state.last_outcome,
@@ -682,7 +732,9 @@ def _feed_health(state: StreamState, now: datetime) -> FeedHealth:
 
 def state_hash(state: StreamState) -> str:
     """Engine state for golden tests and determinism checks. Leaves out last_updated,
-    last_reported, receivedAt and tick instants; incident instants stay in."""
+    last_reported, receivedAt and tick instants; incident instants stay in.
+    source_state_since and last_tick_at are entry instants (or a stale limit crossing derived
+    from one), so they stay out too."""
     return sha256_hex(
         {
             "source": state.source_state,

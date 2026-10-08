@@ -24,11 +24,20 @@ updates:
       actions:
         patterns: ["*"]
 
-  # No Dockerfiles yet; they arrive in phase 3.
+  # infra/*.Dockerfile, then the postgres image of the Compose files. The same postgres
+  # image in the CI service container is not covered: update it by hand with these.
   - package-ecosystem: docker
-    directory: /
+    directory: /infra
     schedule:
       interval: weekly
     groups:
       docker:
+        patterns: ["*"]
+
+  - package-ecosystem: docker-compose
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      docker-compose:
         patterns: ["*"]

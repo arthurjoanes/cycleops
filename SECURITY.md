@@ -6,9 +6,11 @@ Use o relato privado do GitHub, em Security > Report a vulnerability, no reposit
 
 ## O que é guardado
 
-A web é estática e só lê. Não tem login, cookie, analytics nem armazenamento no navegador; o estado da tela fica no hash da URL. A CSP limita as conexões à própria origem (`connect-src 'self'`).
+A web só lê. Não tem login, cookie, analytics nem armazenamento no navegador; o estado da tela fica no hash da URL. A CSP limita as conexões à própria origem (`connect-src 'self'`).
 
-Quando a API e o worker existirem, eles guardam só logs técnicos em JSON, sem payload inteiro e com retenção definida.
+No Compose, a API e o worker guardam só logs técnicos em JSON (rota, status, duração, ids de evento, contagens, erro por categoria), sem payload, no driver `local` do Docker, que faz rotação. O banco guarda dados do feed e o que o motor calcula: eventos por 24 h, observações e tentativas de coleta por 7 dias, e o arquivo bruto do feed no live por 48 h, com teto de 500 MB. Não há dado de visitante: a API não grava IP nem user agent, e os limites por IP ficam só na memória do processo.
+
+A API é somente leitura e conecta com um papel que só tem SELECT. O PostgreSQL não publica porta, e a senha do superusuário fica só nos containers do banco e do `migrate`.
 
 ## CSP
 

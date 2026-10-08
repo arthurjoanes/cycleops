@@ -3,7 +3,7 @@ import ui from "../../components/ui/ui.module.css";
 import type { IncidentItem } from "../../lib/contracts";
 import { incidentLine, openingLabels, REASON_LABEL } from "../../lib/labels";
 import { formatAge, formatDuration, formatTime, type Zone, zoneLabel } from "../../lib/time";
-import { queueDimmed, stateSince } from "../../app/screenState";
+import { queueDimmed } from "../../app/screenState";
 import { countRowRender } from "../../lib/renderCount";
 import { useStations } from "../stations/store";
 import { dataReview, disabledStations, frozenView, leadIncident, liveOrder, sameOrder } from "./queue";
@@ -105,9 +105,7 @@ export function StationPriorityList(props: {
   const stations = useStations((s) => s.stations);
   const feed = useStations((s) => s.feedHealth);
   const connection = useStations((s) => s.connection);
-  const timeline = useStations((s) => s.sourceTimeline);
   const status = useStations((s) => s.status);
-  const now = useStations((s) => s.now);
   // Before the first event the queue is unknown, not empty.
   const started = useStations((s) => s.lastSequence > 0);
   const live = useMemo(() => liveOrder(stations), [stations]);
@@ -159,13 +157,16 @@ export function StationPriorityList(props: {
 
   const source = feed?.state ?? null;
   const dimmed = queueDimmed(source, connection);
+  // null when the payload has no start: it is left out.
+  const since = feed?.stateSince ?? null;
 
   return (
     <div className={styles.panel}>
       {dimmed && source && (source === "stale" || source === "quarantined") && (
         <p className={`${ui.notice} ${ui.warning}`} role="status">
-          Dados vencidos desde {formatTime(stateSince(timeline) ?? now, props.zone, true)} (
-          {zoneLabel(stateSince(timeline) ?? now, props.zone)}). A fila é do último dado válido.
+          Dados vencidos
+          {since && ` desde ${formatTime(since, props.zone, true)} (${zoneLabel(since, props.zone)})`}. A fila é do
+          último dado válido.
         </p>
       )}
       <div

@@ -129,10 +129,16 @@ class StreamState:
     policy_version: str | None = None
     head_sequence: int = 0
     clock_now: datetime | None = None
+    # Instant of the last ClockTick. The worker stores it as worker_seen_at, which the API's
+    # stale rule reads while the worker is stopped.
+    last_tick_at: datetime | None = None
     # Service boundaries are applied up to this instant.
     service_checked_at: datetime | None = None
     in_service: bool = True
     source_state: SourceState = "unknown"
+    # When source_state began: the step that changed it, or the crossing of the stale limit
+    # for stale by age (see engine._evaluate). None until the first change.
+    source_state_since: datetime | None = None
     # Set while leaving stale or quarantined: the state holds until freshAgainAfterPublications.
     latched: Literal["stale", "quarantined"] | None = None
     fresh_again_count: int = 0
@@ -147,6 +153,8 @@ class StreamState:
     last_outcome: str | None = None
     breaker_open_until: datetime | None = None
     quarantined_since: datetime | None = None
+    # When the last station_status quarantine ended: the held state never goes stale before it.
+    quarantine_ended_at: datetime | None = None
     quarantined_feeds: set[str] = field(default_factory=set)
     ingestion_suspended: bool = False
     catalog_version: str = ""

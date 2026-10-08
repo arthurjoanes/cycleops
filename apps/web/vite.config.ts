@@ -23,7 +23,11 @@ function cspMeta(): Plugin {
   };
 }
 
-export default defineConfig(({ mode }) => ({
+// Dev server only: the API behind the local Compose edge, on the same origin as the page
+// (no CORS).
+const EDGE = "http://127.0.0.1:8080";
+
+export default defineConfig(({ mode, command }) => ({
   // GitHub Pages serves the project under /cycleops/; Caddy serves it at the root.
   base: mode === "pages" ? "/cycleops/" : "/",
   // Hash routing: no SPA fallback, so a missing file is a 404 as on GitHub Pages.
@@ -34,7 +38,10 @@ export default defineConfig(({ mode }) => ({
       "@contracts": fileURLToPath(new URL("../../packages/contracts", import.meta.url)),
     },
   },
-  server: { fs: { allow: ["../.."] } },
+  server: {
+    fs: { allow: ["../.."] },
+    proxy: command === "serve" ? { "/api": EDGE, "/health": EDGE } : undefined,
+  },
   build: { manifest: true, target: "es2022" },
   test: {
     environment: "jsdom",

@@ -4,6 +4,8 @@ import type {
   Condition,
   DataMode,
   FeedHealth,
+  Heartbeat,
+  Snapshot,
   SourceState,
   StationBatchEvent,
   StationState,
@@ -32,7 +34,17 @@ export interface SourcePoint {
   state: SourceState;
 }
 
-export type Connection = "file" | "connected" | "reconnecting" | "suspect" | "offline";
+/** "file" for the artifacts; the others for the server stream. superseded and ended
+ * (invalid payload or failed bootstrap) are terminal. */
+export type Connection =
+  | "file"
+  | "connecting"
+  | "connected"
+  | "reconnecting"
+  | "suspect"
+  | "offline"
+  | "superseded"
+  | "ended";
 export type ApplyResult = "applied" | "duplicate" | "gap" | "foreign";
 
 /** Everything that comes from the event stream. */
@@ -179,11 +191,22 @@ export interface StationsStore extends StreamData {
     connection: Connection,
     keepHistory: boolean,
   ): void;
+  /**
+   * Server stream: the snapshot replaces everything, cursor included. basis is the streamId
+   * the store had when the snapshot was requested; if the store moved on meanwhile (another
+   * stream or mode), the snapshot is late and is dropped. Returns whether it went in.
+   */
+  beginSnapshot(snapshot: Snapshot, basis: string | null): boolean;
+  /** Heartbeat of the same stream: source state, its start and last publication. */
+  applyHeartbeat(heartbeat: Heartbeat): boolean;
+  /** Mode or stream switch: nothing of the previous session stays. */
+  clear(): void;
   apply(events: readonly StationBatchEvent[]): ApplyResult[];
   setNow(now: number): void;
   setEnded(ended: boolean): void;
   setStatus(status: StationsStore["status"], error?: StationsStore["error"]): void;
   setConnection(connection: Connection): void;
+  setResyncing(resyncing: boolean): void;
 }
 
 export const useStations = create<StationsStore>()((set, get) => ({
@@ -209,6 +232,68 @@ export const useStations = create<StationsStore>()((set, get) => ({
       now: Date.parse(session.periodStart),
     });
   },
+  beginSnapshot(snapshot, basis) {
+    if (get().streamId !== basis) return false;
+    const now = Date.now();
+    const at = new Date(now).toISOString();
+    // The cursor was checked against streamId when the snapshot was received.
+    const lastSequence = Number(snapshot.cursor.slice(snapshot.cursor.lastIndexOf("@") + 1));
+    set({
+      ...emptyData(snapshot.streamId, new Map([[snapshot.catalogVersion, snapshot.catalog]])),
+      lastSequence,
+      // Joined mid-stream: the first publication is unknown, and the next event is not it.
+      // "" never equals an observedSince and is not replaced by applyEvents (only null is).
+      monitoringStart: lastSequence > 0 ? "" : null,
+      catalogVersion: snapshot.catalogVersion,
+      catalog: new Map(snapshot.catalog.map((s) => [s.stationId, s])),
+      stations: new Map(snapshot.stations.map((s) => [s.decision.stationId, s])),
+      feedHealth: snapshot.feedHealth,
+      // Without stateSince the cut is this page's start; the messages leave it out.
+      sourceTimeline: [{ at: snapshot.feedHealth.stateSince ?? at, state: snapshot.feedHealth.state }],
+      // periodStart: start of what this page holds. The timeline comes from /history.
+      session: { mode: snapshot.mode, streamId: snapshot.streamId, seed: snapshot.seed, periodStart: at, recordedOn: null },
+      keepHistory: false,
+      status: "ready",
+      // A payload that failed its schema still asks for a reload after a resync.
+      error: get().error === "new_version" ? "new_version" : null,
+      resyncing: false,
+      ended: false,
+      now,
+    });
+    return true;
+  },
+  applyHeartbeat(heartbeat) {
+    const { streamId, feedHealth, sourceTimeline } = get();
+    if (heartbeat.streamId !== streamId || !feedHealth) return false;
+    const same = feedHealth.state === heartbeat.feedState;
+    // A heartbeat without stateSince (older server) keeps the start only while the state holds.
+    const stateSince = heartbeat.stateSince ?? (same ? (feedHealth.stateSince ?? null) : null);
+    if (
+      !same ||
+      feedHealth.lastSourceUpdatedAt !== heartbeat.lastSourceUpdatedAt ||
+      (feedHealth.stateSince ?? null) !== stateSince
+    ) {
+      set({
+        feedHealth: { ...feedHealth, state: heartbeat.feedState, lastSourceUpdatedAt: heartbeat.lastSourceUpdatedAt, stateSince },
+        sourceTimeline: same
+          ? sourceTimeline
+          : [...sourceTimeline, { at: stateSince ?? heartbeat.serverTime, state: heartbeat.feedState }],
+      });
+    }
+    return true;
+  },
+  clear() {
+    set({
+      ...emptyData(null),
+      session: null,
+      status: "loading",
+      error: null,
+      connection: "file",
+      resyncing: false,
+      ended: false,
+      now: 0,
+    });
+  },
   apply(events) {
     const { data, results } = applyEvents(get(), events, get().keepHistory);
     if (results.includes("applied")) set(data);
@@ -218,6 +303,7 @@ export const useStations = create<StationsStore>()((set, get) => ({
   setEnded: (ended) => set({ ended }),
   setStatus: (status, error = null) => set({ status, error }),
   setConnection: (connection) => set({ connection }),
+  setResyncing: (resyncing) => set({ resyncing }),
 }));
 
 /**

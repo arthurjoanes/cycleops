@@ -1,14 +1,44 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ui from "../../components/ui/ui.module.css";
+import { InvalidPayloadError, type StationHistory, type StationState } from "../../lib/contracts";
 import { CONDITION_LABEL, incidentLine, openingLabels, QUALITY_LABEL, REASON_LABEL } from "../../lib/labels";
 import { formatDuration, formatTime, type Zone, zoneLabel } from "../../lib/time";
 import { AvailabilityStepChart } from "./AvailabilityStepChart";
 import { useStations } from "./store";
-import { spans } from "./timeline";
+import { historySpans, spans } from "./timeline";
 import styles from "./StationDetails.module.css";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const EMPTY: never[] = [];
+// Compile-time constant: the Pages build has no API to ask.
+const SERVER = import.meta.env.MODE !== "pages";
+
+/**
+ * Worker modes: the timeline comes from GET /history (last 6 h), asked again when the
+ * station changes. undefined while loading, null when it failed. A response for another
+ * stream or station is dropped, and a switch aborts the request.
+ */
+function useServerHistory(id: string, streamId: string | null, state: StationState | undefined) {
+  const enabled = useStations((s) => s.connection !== "file");
+  const [result, setResult] = useState<{ key: string; history: StationHistory | null }>();
+  const key = `${streamId}/${id}`;
+  useEffect(() => {
+    if (!SERVER || !enabled || !streamId) return;
+    const abort = new AbortController();
+    import("../../streams/api")
+      .then(({ fetchHistory }) => fetchHistory(id, streamId, abort.signal))
+      .then((history) => {
+        if (!abort.signal.aborted && history) setResult({ key: `${streamId}/${id}`, history });
+      })
+      .catch((error: unknown) => {
+        if (abort.signal.aborted) return;
+        if (error instanceof InvalidPayloadError) useStations.getState().setStatus("ready", "new_version");
+        setResult({ key: `${streamId}/${id}`, history: null });
+      });
+    return () => abort.abort();
+  }, [enabled, id, streamId, state]);
+  return { enabled, history: result?.key === key ? result.history : undefined };
+}
 
 /** Details of one station. The decision is shown as the backend sent it, even when it
  * looks odd next to the counts: the rules live in the engine, not here. */
@@ -22,9 +52,18 @@ export function StationDetails(props: { id: string; zone: Zone }) {
   const periodStart = useStations((s) => s.session?.periodStart ?? null);
   const lastEvent = useStations((s) => s.lastEvent);
   const published = useStations((s) => s.feedHealth?.lastSourceUpdatedAt ?? null);
+  const streamId = useStations((s) => s.streamId);
+  const server = useServerHistory(id, streamId, state);
+  const remote = server.history;
 
-  const from = Math.max(periodStart ? Date.parse(periodStart) : now - DAY_MS, now - DAY_MS);
-  const list = useMemo(() => spans(points, sources, from, now), [points, sources, from, now]);
+  const to = remote ? Math.max(now, Date.parse(remote.windowEnd)) : now;
+  const from = remote
+    ? Date.parse(remote.windowStart)
+    : Math.max(periodStart ? Date.parse(periodStart) : now - DAY_MS, now - DAY_MS);
+  const list = useMemo(
+    () => (remote ? historySpans(remote, to) : spans(points, sources, from, to)),
+    [remote, points, sources, from, to],
+  );
 
   if (!state) return <p className={ui.notice}>Sem dado desta estação ainda.</p>;
   const { availability: a, decision: d } = state;
@@ -130,7 +169,13 @@ export function StationDetails(props: { id: string; zone: Zone }) {
         <h3 id={`timeline-${id}`} className={styles.subtitle}>
           Linha do tempo
         </h3>
-        <AvailabilityStepChart spans={list} from={from} to={now} capacity={capacity} zone={zone} />
+        {server.enabled && !remote ? (
+          <p className={ui.notice}>
+            {server.history === null ? "Linha do tempo indisponível agora." : "Carregando a linha do tempo."}
+          </p>
+        ) : (
+          <AvailabilityStepChart spans={list} from={from} to={to} capacity={capacity} zone={zone} />
+        )}
       </section>
     </div>
   );

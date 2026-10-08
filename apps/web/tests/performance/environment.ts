@@ -16,12 +16,12 @@ export function percentile(values: number[], p: number): number {
 
 export const round = (value: number, digits = 1) => Math.round(value * 10 ** digits) / 10 ** digits;
 
-/** Where and on what the numbers were taken. */
-export function environment(browser: Browser) {
+/** Where and on what the numbers were taken. `dirty`: the paths whose local changes count. */
+export function environment(browser: Browser, dirty = "../../apps/web/src") {
   let commit = "unknown";
   try {
     commit = execSync("git rev-parse --short HEAD", { encoding: "utf8" }).trim();
-    if (execSync("git status --porcelain -- ../../apps/web/src", { encoding: "utf8" }).trim()) commit += " + local changes";
+    if (execSync(`git status --porcelain -- ${dirty}`, { encoding: "utf8" }).trim()) commit += " + local changes";
   } catch {
     // not a git checkout
   }

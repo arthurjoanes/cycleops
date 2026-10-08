@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# Smoke test of the Compose stack, everything through the edge on 127.0.0.1:8080:
+# - /health/ready answers 200 with the api's JSON;
+# - the snapshot is in synthetic mode;
+# - a station_batch arrives on the SSE stream within 30 s, without Content-Encoding.
+# Run with the stack up (docker compose up -d --wait). Needs curl and node.
+# No file paths go to curl or node, so it works with MSYS_NO_PATHCONV=1 in Git Bash.
+set -euo pipefail
+
+base=http://127.0.0.1:8080
+
+fail() {
+    echo "smoke: $*" >&2
+    exit 1
+}
+
+# Splits curl's output when called with -w '\n%{http_code} %{content_type}'.
+body() { printf '%s' "${1%$'\n'*}"; }
+meta() { printf '%s' "${1##*$'\n'}"; }
+
+ready=$(curl -sS --max-time 10 -w '\n%{http_code} %{content_type}' "$base/health/ready") ||
+    fail "edge unreachable at $base"
+[[ $(meta "$ready") == "200 application/json"* ]] || fail "/health/ready: $(meta "$ready")"
+body "$ready" | node -e 'JSON.parse(require("fs").readFileSync(0, "utf8"))' ||
+    fail "/health/ready: body is not JSON"
+
+# The worker may still be creating the stream right after `up --wait`.
+for _ in $(seq 30); do
+    snapshot=$(curl -sS --max-time 10 -w '\n%{http_code} %{content_type}' \
+        "$base/api/v1/stations/snapshot") || fail "snapshot request failed"
+    [[ $(meta "$snapshot") == 200* ]] && break
+    sleep 1
+done
+[[ $(meta "$snapshot") == "200 application/json"* ]] || fail "snapshot: $(meta "$snapshot")"
+parsed=$(body "$snapshot" | node -e '
+    const s = JSON.parse(require("fs").readFileSync(0, "utf8"));
+    console.log(s.mode, encodeURIComponent(s.cursor));') || fail "snapshot: body is not JSON"
+mode=${parsed%% *}
+after=${parsed#* }
+[[ $mode == synthetic ]] || fail "snapshot mode is '$mode', expected synthetic"
+
+# awk stops at the first station_batch; curl then fails writing to the closed pipe, so
+# pipefail stays off for this one pipeline. SSE lines may end in \r\n.
+set +o pipefail
+sse=$(curl -sSN --max-time 30 -D - -H 'Accept-Encoding: gzip, zstd, br' \
+    "$base/api/v1/stream/stations?after=$after" 2>/dev/null |
+    awk 'tolower($0) ~ /^content-encoding:/ { print "encoded"; exit }
+         /^event: station_batch\r?$/ { print "ok"; exit }')
+set -o pipefail
+case $sse in
+    ok) ;;
+    encoded) fail "SSE through the edge came with Content-Encoding" ;;
+    *) fail "no station_batch on the SSE within 30 s" ;;
+esac
+
+echo "smoke: ok"

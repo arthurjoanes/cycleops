@@ -4,8 +4,8 @@ With --recording, prints the same report over saved recordings, without network.
 """
 
 import argparse
-import asyncio
 import logging
+import os
 import sys
 from collections import Counter, defaultdict
 from collections.abc import Iterable
@@ -18,7 +18,9 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 import httpx
+from sqlalchemy.exc import DBAPIError
 
+from cycleops import aio
 from cycleops.adapters.gbfs import (
     INFO_FIELDS,
     STATUS_FIELDS,
@@ -29,6 +31,7 @@ from cycleops.adapters.gbfs import (
     parse_station_status,
     parse_system_information,
 )
+from cycleops.cli.record_feed import LockHeld, LockLost, lock_refused, with_collector_lock
 from cycleops.collection.client import (
     DEFAULT_URLS,
     FEEDS,
@@ -75,7 +78,13 @@ def main(argv: list[str] | None = None) -> int:
         stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
         out = args.out or Path("fixtures/recorded") / f"inspect-{stamp}.ndjson.gz"
         deadline = args.deadline_seconds or provider.collection.request_deadline_seconds
-        lines = asyncio.run(collect(provider, identifier, deadline, out))
+        url = os.environ.get("DATABASE_URL") or None
+        try:
+            lines = aio.run(
+                with_collector_lock(url, lambda: collect(provider, identifier, deadline, out))
+            )
+        except (LockHeld, LockLost, DBAPIError) as exc:
+            return lock_refused(exc)
         print(f"saved {out}\n")
     print("\n".join(report(lines, provider)))
     return 0

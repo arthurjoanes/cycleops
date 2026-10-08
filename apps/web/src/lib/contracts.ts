@@ -2,19 +2,30 @@
 export type {
   CatalogStation,
   FeedHealth,
+  Heartbeat,
   IncidentItem,
+  Interval,
   ManifestIncident,
   PriorityDecision,
   ReplayCatalog,
   ReplayManifest,
+  ResyncRequired,
+  Snapshot,
   StationAvailability,
   StationBatchEvent,
+  StationHistory,
   StationState,
+  StreamClosed,
 } from "@contracts/types";
 export {
+  validateHeartbeat,
   validateReplayCatalog,
   validateReplayManifest,
+  validateResyncRequired,
+  validateSnapshot,
   validateStationBatchEvent,
+  validateStationHistory,
+  validateStreamClosed,
 } from "@contracts/validators.js";
 
 import type { PriorityDecision, StationBatchEvent } from "@contracts/types";

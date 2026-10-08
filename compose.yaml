@@ -1,0 +1,148 @@
+# Local stack. `docker compose up` runs the simulation and needs no .env.
+# Live: docker compose -p cycleops-live --env-file .env.live up
+# Without internet after the build: add -f compose.offline.yaml.
+# The default passwords below are insecure on purpose and only for local use.
+
+x-logging: &logging
+  driver: local
+
+x-backend: &backend
+  image: cycleops-backend:local
+  build:
+    context: .
+    dockerfile: infra/backend.Dockerfile
+  logging: *logging
+  networks: [app]
+
+services:
+  postgres:
+    image: postgres:18.6-alpine@sha256:77f585114c32fbca283dc835b0596f4e52b51b4c6662d7810b2f4084f60a1873
+    environment:
+      POSTGRES_USER: postgres
+      # Only used when the volume is created; changing it later needs `down -v`.
+      POSTGRES_PASSWORD: ${CYCLEOPS_POSTGRES_PASSWORD:-local-only-postgres}
+      POSTGRES_DB: cycleops
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      # Over TCP: during init the entrypoint runs a temporary server on the socket only.
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U postgres -d cycleops"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+    logging: *logging
+    networks: [app]
+
+  # One-shot: roles as superuser, then the migrations as cycleops_migrator. Idempotent.
+  migrate:
+    <<: *backend
+    command: ["migrate"]
+    environment:
+      SUPERUSER_DATABASE_URL: postgresql://postgres:${CYCLEOPS_POSTGRES_PASSWORD:-local-only-postgres}@postgres:5432/cycleops
+      MIGRATOR_DATABASE_URL: postgresql://cycleops_migrator:${CYCLEOPS_MIGRATOR_DB_PASSWORD:-local-only-migrator}@postgres:5432/cycleops
+      CYCLEOPS_MIGRATOR_DB_PASSWORD: ${CYCLEOPS_MIGRATOR_DB_PASSWORD:-local-only-migrator}
+      CYCLEOPS_WORKER_DB_PASSWORD: ${CYCLEOPS_WORKER_DB_PASSWORD:-local-only-worker}
+      CYCLEOPS_API_DB_PASSWORD: ${CYCLEOPS_API_DB_PASSWORD:-local-only-api}
+      CYCLEOPS_LOG_LEVEL:
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  worker:
+    <<: *backend
+    command: ["python", "-m", "cycleops.worker"]
+    # Variables without a value pass through only when set in the shell or the env file.
+    environment:
+      DATABASE_URL: postgresql://cycleops_worker:${CYCLEOPS_WORKER_DB_PASSWORD:-local-only-worker}@postgres:5432/cycleops
+      CYCLEOPS_SOURCE: ${CYCLEOPS_SOURCE:-synthetic}
+      CYCLEOPS_CLIENT_IDENTIFIER:
+      CYCLEOPS_SYNTHETIC_SEED:
+      CYCLEOPS_SYNTHETIC_SCENARIO:
+      CYCLEOPS_DB_QUOTA_MB:
+      CYCLEOPS_LOG_LEVEL:
+    volumes:
+      - archive:/data/archive
+    healthcheck:
+      # The watchdog rewrites the heartbeat every 5 s while every critical loop progresses.
+      test:
+        - CMD
+        - python
+        - -c
+        - import os, sys, time; sys.exit(time.time() - os.path.getmtime('/tmp/cycleops-worker.heartbeat') > 30)
+      interval: 5s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  api:
+    <<: *backend
+    command: ["python", "-m", "cycleops.api"]
+    environment:
+      DATABASE_URL: postgresql://cycleops_api:${CYCLEOPS_API_DB_PASSWORD:-local-only-api}@postgres:5432/cycleops
+      # Proxy headers only from the edge, so X-Forwarded-For sent by a browser is ignored.
+      FORWARDED_ALLOW_IPS: ${CYCLEOPS_NET:-10.89.0}.10
+      CYCLEOPS_SSE_PER_IP:
+      CYCLEOPS_SSE_PER_INSTANCE:
+      CYCLEOPS_REST_PER_MINUTE_PER_IP:
+      CYCLEOPS_LOG_LEVEL:
+    healthcheck:
+      # urlopen raises on anything but 2xx.
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready', timeout=3)
+      interval: 5s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    # Above uvicorn's graceful timeout (10 s), so open streams get stream_closed first.
+    stop_grace_period: 20s
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  edge:
+    image: cycleops-edge:local
+    build:
+      context: .
+      dockerfile: infra/edge.Dockerfile
+    ports:
+      - "127.0.0.1:8080:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+    logging: *logging
+    networks:
+      app:
+        # The api trusts proxy headers from this address only.
+        ipv4_address: ${CYCLEOPS_NET:-10.89.0}.10
+      public: {}
+
+networks:
+  # One /24 per project (CYCLEOPS_NET is its first three octets), so a stopped stack of
+  # another project does not block this one: the simulation 10.89.0, live 10.89.1, e2e 10.89.2.
+  app:
+    ipam:
+      config:
+        - subnet: ${CYCLEOPS_NET:-10.89.0}.0/24
+  # Only the edge is here; it is the network that publishes the port.
+  public: {}
+
+volumes:
+  pgdata: {}
+  # Raw archive of the live feed, mounted only in the worker.
+  archive: {}

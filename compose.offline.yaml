@@ -1,0 +1,6 @@
+# No internet after the build: only the edge, also on the public network, keeps its port.
+#   docker compose -f compose.yaml -f compose.offline.yaml build
+#   docker compose -f compose.yaml -f compose.offline.yaml up -d --wait
+networks:
+  app:
+    internal: true
