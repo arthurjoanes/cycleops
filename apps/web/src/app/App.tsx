@@ -7,6 +7,8 @@ import { ReplayControls } from "../features/replay/ReplayControls";
 import { AllStationsList } from "../features/stations/AllStationsList";
 import { StationDetails } from "../features/stations/StationDetails";
 import { useStations } from "../features/stations/store";
+import { MODE_LABEL } from "../lib/labels";
+import { formatDate } from "../lib/time";
 import { Footer } from "./Footer";
 import { Header } from "./Header";
 import { LiveAnnouncer } from "./LiveAnnouncer";
@@ -77,6 +79,12 @@ export function App() {
   const showMap = !narrow || hash.tab === "map";
 
   const details = hash.station ? <StationDetails id={hash.station} zone={hash.zone} /> : null;
+  // The mobile drawer covers the page header, so it carries the source identity too.
+  const detailsContext = data
+    ? `${MODE_LABEL[data.mode]}${data.mode === "synthetic"
+      ? `, seed ${data.seed ?? "?"}`
+      : data.recordedOn ? `, ${formatDate(data.recordedOn, hash.zone)}` : ""}`
+    : null;
 
   return (
     <div className={styles.app}>
@@ -237,7 +245,10 @@ export function App() {
             <Dialog.Overlay className={styles.overlay} />
             <Dialog.Content className={styles.drawer} aria-describedby={undefined}>
               <div className={styles.detailsHead}>
-                <Dialog.Title>{selectedName}</Dialog.Title>
+                <div className={styles.detailsIdentity}>
+                  <Dialog.Title>{selectedName}</Dialog.Title>
+                  {detailsContext && <p className={styles.detailsContext}>{detailsContext}</p>}
+                </div>
                 <Dialog.Close className={ui.button}>Fechar</Dialog.Close>
               </div>
               {details}

@@ -40,7 +40,7 @@ test("lab Web Vitals", async ({ browser }) => {
         }
       }).observe({ type: "event", buffered: true, durationThreshold: 16 } as PerformanceObserverInit);
     });
-    await page.goto("./");
+    await page.goto("./#/?mode=synthetic");
     await page.getByText(/^Evento \d+ de \d+/).waitFor({ timeout: 60_000 });
     await page.waitForTimeout(3_000);
     // Scripted interaction: switch lists, search, back to the queue, open and close details.
@@ -64,7 +64,7 @@ test("lab Web Vitals", async ({ browser }) => {
   save("web-vitals.json", {
     environment: environment(browser),
     method: {
-      url: "build do Pages servido sob /cycleops/ (serve-pages.mjs)",
+      url: "build do Pages servido sob /cycleops/#/?mode=synthetic (serve-pages.mjs)",
       viewport: "1440x900",
       cpuSlowdown: CPU_SLOWDOWN,
       network: { latencyMs: NETWORK.latency, downloadKbps: 1600, uploadKbps: 750 },

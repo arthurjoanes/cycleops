@@ -41,15 +41,15 @@ export function ReplayControls(props: {
 
   return (
     <section className={styles.controls} aria-label="Controles do replay">
-      <div className={ui.group}>
+      <div className={`${ui.group} ${styles.transport}`}>
         {player.ended ? (
-          <button type="button" className={ui.button} onClick={() => player.start(player.speed)}>
+          <button type="button" className={`${ui.button} ${ui.primary}`} onClick={() => player.start(player.speed)}>
             Recomeçar
           </button>
         ) : (
           <button
             type="button"
-            className={ui.button}
+            className={`${ui.button} ${ui.primary}`}
             onClick={() => (player.playing ? player.pause() : player.play())}
           >
             {player.playing ? "Pausar" : "Continuar"}
@@ -59,7 +59,7 @@ export function ReplayControls(props: {
           Passo
         </button>
       </div>
-      <div className={ui.group} role="group" aria-label="Velocidade">
+      <div className={`${ui.group} ${styles.speed}`} role="group" aria-label="Velocidade">
         {SPEEDS.map((speed) => (
           <button
             key={speed}

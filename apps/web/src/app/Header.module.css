@@ -1,48 +1,140 @@
 .header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2) var(--space-6);
-  padding: var(--space-2) var(--space-4);
   background: var(--surface);
   border-bottom: 1px solid var(--border);
 }
 
+.brandBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-6);
+  padding: var(--space-3) var(--space-4);
+  color: var(--surface);
+  background: var(--navy);
+  border-bottom: 3px solid var(--accent);
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.mark {
+  display: block;
+  flex: none;
+  width: 48px;
+  height: 32px;
+}
+
 .title {
-  font-size: var(--size-l);
-  font-weight: 700;
+  font-size: 1.375rem;
+  font-weight: 720;
+  letter-spacing: -0.045em;
+}
+
+.context {
+  margin: 2px 0 0;
+  color: var(--border);
+  font-size: var(--size-xs);
+}
+
+.switches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-left: auto;
+}
+
+.sourceSwitch,
+.zoneSwitch {
+  gap: var(--space-1);
+}
+
+.switches button {
+  padding: var(--space-1) var(--space-2);
+  color: var(--surface);
+  background: transparent;
+  border-color: var(--border-control);
+  font-size: var(--size-xs);
+}
+
+.switches button:hover {
+  background: var(--brand);
+  border-color: var(--surface);
+}
+
+.switches button[aria-pressed="true"] {
+  color: var(--navy);
+  background: var(--surface);
+  border-color: var(--surface);
+}
+
+.switches button:focus-visible {
+  outline-color: var(--surface);
+  outline-offset: 3px;
 }
 
 .items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-6);
+  display: grid;
+  /* Reserve the second metadata line before the manifest arrives. */
+  min-height: 4.5rem;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr) minmax(0, 1.55fr) minmax(0, 1.25fr);
+  gap: var(--space-2) var(--space-4);
   margin: 0;
+  padding: var(--space-2) var(--space-4);
   font-size: var(--size-s);
 }
 
+.item {
+  min-width: 0;
+}
+
 .item dt {
+  margin-bottom: 2px;
   color: var(--muted);
   font-size: var(--size-xs);
 }
 
 .item dd {
   margin: 0;
+  overflow-wrap: anywhere;
 }
 
+.modeDetail,
+.publicationNote,
 .block {
   display: block;
+  color: var(--muted);
+  font-size: var(--size-xs);
 }
 
-.switches {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-left: auto;
+@media (min-width: 1200px) {
+  /* Source choices arrive with the manifest; keep their group in the same area. */
+  .switches {
+    flex: 1;
+    justify-content: flex-end;
+  }
 }
 
 @media (max-width: 767px) {
+  .brandBar {
+    gap: var(--space-2);
+  }
+
+  .identity {
+    width: 100%;
+  }
+
   .switches {
+    gap: var(--space-2);
     margin-left: 0;
+  }
+
+  .items {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2) var(--space-3);
   }
 }
