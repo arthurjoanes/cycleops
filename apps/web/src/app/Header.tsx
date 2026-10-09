@@ -54,7 +54,7 @@ export function Header(props: {
     session?.mode === "synthetic"
       ? `seed ${session.seed ?? "?"}`
       : session?.recordedOn
-        ? `gravado em ${formatDate(session.recordedOn, zone)}`
+        ? formatDate(session.recordedOn, zone)
         : null;
   const connectionText =
     connection !== "file"
@@ -80,13 +80,62 @@ export function Header(props: {
 
   return (
     <header className={styles.header}>
-      <h1 className={styles.title}>CycleOps</h1>
+      <div className={styles.brandBar}>
+        <div className={styles.identity}>
+          <img
+            className={styles.mark}
+            src={`${import.meta.env.BASE_URL}brand/cycleops-mark-light.svg`}
+            width="48"
+            height="32"
+            alt=""
+          />
+          <div>
+            <h1 className={styles.title}>CycleOps</h1>
+            <p className={styles.context}>Oslo, Noruega</p>
+          </div>
+        </div>
+        <div className={styles.switches}>
+          {props.available.length > 1 && (
+            <div className={`${ui.group} ${styles.sourceSwitch}`} role="group" aria-label="Fonte dos dados">
+              {props.available.map((kind) => (
+                <button
+                  key={kind}
+                  type="button"
+                  className={ui.button}
+                  aria-pressed={props.kind === kind}
+                  onClick={() => props.onKind(kind)}
+                >
+                  {kindLabel(kind, props.available.includes("stream"))}
+                </button>
+              ))}
+            </div>
+          )}
+          <div className={`${ui.group} ${styles.zoneSwitch}`} role="group" aria-label="Fuso dos horários">
+            <button
+              type="button"
+              className={ui.button}
+              aria-pressed={zone === "oslo"}
+              onClick={() => props.onZone("oslo")}
+            >
+              Horário de Oslo
+            </button>
+            <button
+              type="button"
+              className={ui.button}
+              aria-pressed={zone === "local"}
+              onClick={() => props.onZone("local")}
+            >
+              Horário local
+            </button>
+          </div>
+        </div>
+      </div>
       <dl className={styles.items}>
         <div className={styles.item}>
           <dt>Modo</dt>
           <dd data-testid="mode">
             <strong>{mode}</strong>
-            {modeDetail && <span className={ui.muted}> {modeDetail}</span>}
+            {modeDetail && <span className={styles.modeDetail}> {modeDetail}</span>}
           </dd>
         </div>
         <div className={styles.item}>
@@ -99,7 +148,7 @@ export function Header(props: {
             {published ? (
               <>
                 {formatTime(published, zone, true)}{" "}
-                <span className={ui.muted}>
+                <span className={styles.publicationNote}>
                   ({zoneLabel(published, zone)}; {publicationNote})
                 </span>
               </>
@@ -127,41 +176,6 @@ export function Header(props: {
           </dd>
         </div>
       </dl>
-      <div className={styles.switches}>
-        {props.available.length > 1 && (
-          <div className={ui.group} role="group" aria-label="Fonte dos dados">
-            {props.available.map((kind) => (
-              <button
-                key={kind}
-                type="button"
-                className={ui.button}
-                aria-pressed={props.kind === kind}
-                onClick={() => props.onKind(kind)}
-              >
-                {kindLabel(kind, props.available.includes("stream"))}
-              </button>
-            ))}
-          </div>
-        )}
-        <div className={ui.group} role="group" aria-label="Fuso dos horários">
-          <button
-            type="button"
-            className={ui.button}
-            aria-pressed={zone === "oslo"}
-            onClick={() => props.onZone("oslo")}
-          >
-            Horário de Oslo
-          </button>
-          <button
-            type="button"
-            className={ui.button}
-            aria-pressed={zone === "local"}
-            onClick={() => props.onZone("local")}
-          >
-            Horário local
-          </button>
-        </div>
-      </div>
     </header>
   );
 }

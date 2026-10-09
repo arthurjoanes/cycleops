@@ -6,22 +6,35 @@
   min-height: 32px;
   min-width: 32px;
   padding: var(--space-1) var(--space-3);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-control);
   border-radius: var(--radius);
   background: var(--surface);
   cursor: pointer;
   font-size: var(--size-s);
+  font-weight: 550;
 }
 
 .button:hover {
-  border-color: var(--muted);
+  border-color: var(--brand);
+  background: var(--brand-soft);
 }
 
 .button[aria-pressed="true"],
 .button[aria-selected="true"] {
-  background: var(--text);
-  border-color: var(--text);
+  background: var(--brand);
+  border-color: var(--brand);
   color: var(--surface);
+}
+
+.button.primary {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: var(--surface);
+}
+
+.button.primary:hover {
+  background: var(--navy);
+  border-color: var(--navy);
 }
 
 .button:disabled {

@@ -23,14 +23,19 @@
 
   --radius: 6px;
 
-  /* Neutral, light theme. Text contrast on --surface: --text 16:1, --muted 6.3:1. */
-  --bg: #f4f5f7;
+  /* Brand colors stay separate from the operational states below. */
+  --navy: #123e4a;
+  --brand: #086978;
+  --brand-soft: #e3f0f2;
+  --accent: #56bdc4;
+  --bg: #f1f6f7;
   --surface: #ffffff;
-  --text: #1b1f24;
-  --muted: #57606a;
-  --border: #d0d7de;
-  --focus: #0b5cad;
-  --link: #0b5cad;
+  --text: #19333d;
+  --muted: #526c77;
+  --border: #cbdce0;
+  --border-control: #78919a;
+  --focus: #086978;
+  --link: #086978;
 
   /* State colors, at least 4.5:1 on --surface for text and 3:1 for marks. */
   --empty: #b42318;
@@ -51,9 +56,9 @@
   --simulation-bg: #f1edfa;
 
   /* Base map. */
-  --map-land: #eef0ec;
-  --map-water: #b9d3e6;
-  --map-park: #d4e6cc;
+  --map-land: #e7eef0;
+  --map-water: #c5dde2;
+  --map-park: #dce7de;
   --map-road: #ffffff;
-  --map-road-edge: #c9cdd2;
+  --map-road-edge: #cbdce0;
 }

@@ -1,51 +1,102 @@
 # CycleOps
 
-Lista as estações do Oslo Bysykkel sem bicicleta ou sem vaga, em ordem de prioridade, com o motivo e os dados usados no cálculo. Os dados vêm do feed GBFS aberto do operador.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/brand/cycleops-lockup-light.svg">
+  <img src="docs/brand/cycleops-lockup.svg" alt="Marca CycleOps" width="288" height="64">
+</picture>
 
-![Tela do CycleOps no replay gravado de 10/10/2026 em Oslo: fila de prioridades à esquerda, mapa com as estações à direita e controles do replay acima](docs/media/recorded-1440.png)
+Estações do Oslo Bysykkel sem bicicleta ou sem vaga, em ordem de prioridade, com o motivo e os dados usados no cálculo. Feed GBFS aberto, mapa de Oslo e replay de uma gravação real.
 
-Um vídeo de 27 s, [docs/media/demo.webm](docs/media/demo.webm), mostra a simulação pelo stream do servidor no Compose: um incidente confirmado no topo da fila e o motivo nos detalhes, a API reiniciando (conexão em "reconectando" e de volta a "conectada") e a troca para o replay em arquivo, pausado.
+[Read in English](README.en.md)
 
-## Como rodar
+<p>
+  <a href="#demonstração"><img src="docs/readme/badges/demo.svg" alt="Demonstração" width="139" height="28"></a>
+  <a href="#arquitetura"><img src="docs/readme/badges/architecture.svg" alt="Arquitetura" width="126" height="28"></a>
+  <a href="#executar-localmente"><img src="docs/readme/badges/run.svg" alt="Executar" width="107" height="28"></a>
+  <a href="#testes-e-resultados"><img src="docs/readme/badges/results.svg" alt="Resultados" width="119" height="28"></a>
+  <a href="https://www.linkedin.com/in/arthur-joanes-6a2967373/"><img src="docs/readme/badges/linkedin.svg" alt="Arthur Joanes no LinkedIn" width="108" height="28"></a>
+</p>
 
-Precisa só de Docker. Da raiz do repositório:
+## Visão geral
+
+O CycleOps acompanha a falta de bicicletas e de vagas físicas nas estações. O motor confirma os incidentes ao longo de publicações do feed, calcula a prioridade e acompanha a recuperação. Cada linha da fila explica a decisão; os detalhes mostram contagens, horários e histórico.
+
+O mesmo motor Python processa o feed ao vivo, as gravações e a simulação. A interface mantém o modo visível, distingue falha da conexão de dado vencido e mostra o fechamento noturno do serviço.
+
+| Modo | Como funciona |
+|---|---|
+| Replay gravado | A gravação real é processada offline e reproduzida no navegador. É o modo inicial do build do Pages. |
+| Simulação | Estações e contagens geradas com seed, sempre identificadas como “Simulação”. No Compose passam pelo worker e pela API; no replay vêm de um arquivo. |
+| Ao vivo | O worker coleta o feed de Oslo na cadência do TTL e entrega os eventos pela API. Roda no Compose local. |
+
+## Demonstração
+
+![CycleOps com a nova identidade no replay gravado: fila de prioridades, mapa de Oslo e controles para acompanhar os incidentes](docs/media/identity-desktop.png)
+
+Captura de 09/10/2026 (UTC), feita com Playwright no build do Pages, reproduzindo dados reais gravados. O período e os horários exibidos pertencem à gravação. [Visualização no celular](docs/media/identity-mobile.png) · [Gravação e aceite](docs/results/feed-validation.md).
+
+No replay, pause, escolha 5× ou 20×, avance com “Passo” ou use “Ir para o incidente”. A gravação inclui confirmação e resolução de falta de vagas em St. Olavs gate. A simulação continua disponível no seletor.
+
+O [vídeo de 27 s da versão anterior](docs/media/demo.webm) mostra o modo Simulação no Compose, um incidente confirmado, a reconexão após reiniciar a API e a troca para o replay em arquivo. Ele conserva a aparência anterior da interface.
+
+## Arquitetura
+
+```mermaid
+flowchart LR
+    Oslo["GBFS de Oslo"] --> Worker["Worker Python"]
+    Synthetic["Simulação"] --> Worker
+    Worker --> DB[("PostgreSQL")]
+    DB --> API["FastAPI · SSE"]
+    API --> Web["React · MapLibre"]
+    Recording["Gravação + motor Python"] --> Files["Artefatos de replay"]
+    Files --> Web
+```
+
+No Compose, o worker é o único escritor; o PostgreSQL guarda o estado e os eventos, e a API atende somente leitura. O Caddy serve a interface e encaminha as requisições à API. O build do Pages usa os artefatos de replay no navegador.
+
+[Processos, conexões e testes](docs/architecture.md) · [Decisões de arquitetura](docs/adr/).
+
+## Stack e decisões
+
+| Parte | Escolha |
+|---|---|
+| Interface | React, TypeScript, Vite e Zustand. A interface aplica os eventos e exibe as decisões do motor. |
+| Mapa e histórico | MapLibre com base local do OpenStreetMap; gráfico de degraus em SVG e tabela alternativa. |
+| Motor e API | Python, Pydantic e FastAPI. As regras de incidente são compartilhadas pelo live e pelo replay. |
+| Eventos e execução | PostgreSQL, SSE, Docker Compose e Caddy. O PostgreSQL também entrega os avisos de novos eventos. |
+
+## Executar localmente
+
+Para a aplicação inteira, precisa só de Docker. Da raiz do repositório:
 
 ```bash
 docker compose up --build
 ```
 
-Abre em http://127.0.0.1:8080, na simulação: um worker gera estações com seed e passa pelo mesmo motor do feed real, a API entrega os eventos por SSE e o Caddy serve a interface. O banco é um PostgreSQL sem porta publicada. As senhas que o `compose.yaml` usa sem `.env` são inseguras de propósito e só servem para uso local; o `.env.example` mostra como trocar.
+Abra [127.0.0.1:8080](http://127.0.0.1:8080). O Compose começa na simulação. O banco fica sem porta publicada; as senhas padrão servem apenas para uso local. O [.env.example](.env.example) mostra como trocá-las.
 
-Para o feed real de Oslo, copie `.env.live.example` para `.env.live`, ponha o seu identificador no formato `<organização>-<aplicação>` e suba com outro nome de projeto, que separa o banco da simulação:
+Para o feed real, copie [.env.live.example](.env.live.example) para `.env.live`, defina `CYCLEOPS_CLIENT_IDENTIFIER` como `<organização>-<aplicação>` e use outro projeto:
 
 ```bash
 docker compose -p cycleops-live --env-file .env.live up --build
 ```
 
-Depois de mudar o código, suba com `--build`: as imagens têm tag local fixa e um `up` simples reaproveita o build antigo. Só uma pilha publica a porta 8080 por vez; para trocar entre simulação, live e `scripts/checks`, pare a outra com `docker compose down` (ou `docker compose -p cycleops-live down`).
+Só uma pilha publica a porta 8080 por vez. Pare a anterior antes de trocar: `docker compose down` para a simulação ou `docker compose -p cycleops-live down` para o live. Use `--build` depois de mudar o código.
 
-## Como rodar só a web
-
-Precisa de Node 24 com corepack. Da raiz do repositório:
+Para abrir só o replay, precisa de Node 24 com corepack:
 
 ```bash
 cd apps/web
 corepack pnpm install
-corepack pnpm dev
-```
-
-Abre em http://localhost:5173 e tenta primeiro o stream do servidor, pelo proxy para o edge do Compose em 127.0.0.1:8080. Sem a pilha no ar, a página mostra o erro de carga com o botão para abrir o replay em arquivo. Para ver o build do GitHub Pages, que só tem o replay, servido sob `/cycleops/` como no Pages:
-
-```bash
 corepack pnpm build:pages
 corepack pnpm preview:pages
 ```
 
-Abre em http://127.0.0.1:4173/cycleops/.
+Abra [127.0.0.1:4173/cycleops/](http://127.0.0.1:4173/cycleops/). Para desenvolver, `corepack pnpm dev` abre em [localhost:5173](http://localhost:5173) e tenta o stream do Compose primeiro; sem a pilha, oferece o replay em arquivo.
 
-## Como testar
+## Testes e resultados
 
-O que o CI roda, menos o gitleaks, localmente (Docker, git, uv, Node 24 com corepack e o Chromium do Playwright):
+O script usa Bash, Docker, git, uv, Node 24 com corepack e o Chromium do Playwright. Ele executa as verificações locais do CI, exceto gitleaks:
 
 ```bash
 scripts/checks
@@ -62,32 +113,36 @@ corepack pnpm e2e
 corepack pnpm check:bundle
 ```
 
-O `e2e` gera o build do Pages e roda o Playwright contra ele. O `check:bundle` lê o build que já existe em `dist/`. Os comandos do backend Python, dos testes de integração com PostgreSQL e do E2E contra o Compose (`corepack pnpm e2e:compose`, que no fim apaga o banco do projeto `cycleops-e2e`) estão no `CONTRIBUTING.md`.
+O `e2e` gera o build do Pages sob `/cycleops/`; `check:bundle` confere esse build. Os comandos do backend e do E2E contra o Compose estão no [CONTRIBUTING.md](CONTRIBUTING.md). O `e2e:compose` usa o projeto isolado `cycleops-e2e` e apaga seu banco no último teste.
 
-## Modos de dados
+| Registro | Resultado |
+|---|---|
+| [Coleta real](docs/results/feed-validation.md) | 249 respostas em 60 min, todas 200. O replay tem 218 eventos e dois incidentes resolvidos. |
+| [Verificação do replay e do Compose](docs/results/validacao-20261009.md) | Testes do motor, persistência, SSE, reconexão e navegador, com comandos e resultados registrados. |
+| [Desempenho](docs/results/performance.md) | Carga do frontend, Web Vitals de laboratório e latência do Compose, com ambiente e dados de cada execução. |
 
-- Ao vivo: o worker lê o feed de Oslo a cada 15 s e a API manda os eventos por SSE. Roda só no Compose local.
-- Simulação: estações e contagens geradas com seed, com a faixa "Simulação" sempre visível. No Compose vem do worker, pelo mesmo caminho do ao vivo; no Pages e no botão "Simulação (arquivo)", de um artefato gerado offline.
-- Replay gravado: uma gravação real do feed passada pelo motor, com um incidente confirmado e resolvido em St. Olavs gate. É o modo inicial do build do Pages; a simulação continua disponível no seletor. Período, aceite e comandos em [docs/results/feed-validation.md](docs/results/feed-validation.md).
+O [índice de resultados](docs/results/index.md) relaciona cada execução ao comando, commit e data. As amostras diurnas adicionais e o [checklist manual de acessibilidade](docs/results/a11y-manual.md) continuam pendentes.
 
-O modo fica no cabeçalho o tempo todo, com a data no replay gravado, a seed na simulação e o estado da conexão. Com a fonte fora, a tela mostra o erro e oferece o replay em arquivo; ela nunca troca sozinha. O replay tem pausa, 1×, 5×, 20×, passo e "ir para o incidente".
+## Limitações e segurança
 
-## Limitações
-
-- Não é serviço oficial do Oslo Bysykkel.
-- Só leitura, sem reserva nem despacho de equipe.
-- O feed não tem SLA.
-- O live roda só no Compose local.
-- No Compose em HTTP/1.1, o navegador abre no máximo 6 conexões por origem, e cada aba segura uma para o SSE. A API também limita a 4 streams por IP: a quinta aba derruba a mais antiga.
+- Projeto independente, sem vínculo com Oslo Bysykkel; somente leitura, sem reserva nem despacho de equipe.
+- O feed não tem SLA. O live roda só no Compose local.
 - A base do mapa é simplificada e não serve para navegação.
-- A CSP do Pages vai por meta e é mais fraca que a do Caddy (ver `SECURITY.md`).
+- No Compose, cada aba usa uma conexão SSE. A API permite quatro por IP e encerra a mais antiga ao abrir a quinta.
+- A CSP do Pages vai por meta e é mais limitada que a enviada pelo Caddy. Controles e retenção estão em [SECURITY.md](SECURITY.md).
 
-## Fontes e licenças
+## Documentação
 
-- Dados do Oslo Bysykkel sob NLOD 2.0 e base do mapa do OpenStreetMap sob ODbL: [DATA_SOURCES.md](DATA_SOURCES.md).
-- Software de terceiros: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
-- Código sob a licença MIT: [LICENSE](LICENSE).
+| Para consultar | Documento |
+|---|---|
+| Fonte, licença e coleta | [Fontes de dados](DATA_SOURCES.md) · [Validação do feed](docs/results/feed-validation.md) |
+| Implementação e decisões | [Arquitetura](docs/architecture.md) · [ADRs](docs/adr/) · [Comandos](CONTRIBUTING.md) |
+| Execuções e medições | [Resultados](docs/results/index.md) · [Desempenho](docs/results/performance.md) |
+| Publicação e revisão manual | [Checklist de publicação](docs/results/publicacao.md) · [Acessibilidade](docs/results/a11y-manual.md) |
+| Marca e cores | [Identidade visual](docs/brand/README.md) |
 
-## Arquitetura
+## Autor e licença
 
-Processos, ligações e o teste que cobre cada uma em [docs/architecture.md](docs/architecture.md). Decisões em [docs/adr/](docs/adr/). Resultados de execução, com commit e comando, em [docs/results/](docs/results/).
+Desenvolvido por Arthur Joanes. [LinkedIn](https://www.linkedin.com/in/arthur-joanes-6a2967373/).
+
+Código sob [licença MIT](LICENSE). Dados do Oslo Bysykkel sob NLOD 2.0 e base do OpenStreetMap sob ODbL: [fontes e atribuições](DATA_SOURCES.md). Bibliotecas e demais licenças em [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

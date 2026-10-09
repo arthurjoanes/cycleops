@@ -39,11 +39,11 @@ export function mapColors(element: Element) {
   const css = getComputedStyle(element);
   const v = (name: string, fallback: string) => css.getPropertyValue(name).trim() || fallback;
   return {
-    land: v("--map-land", "#eef0ec"),
-    water: v("--map-water", "#b9d3e6"),
-    park: v("--map-park", "#d4e6cc"),
+    land: v("--map-land", "#e7eef0"),
+    water: v("--map-water", "#c5dde2"),
+    park: v("--map-park", "#dce7de"),
     road: v("--map-road", "#ffffff"),
-    focus: v("--focus", "#0b5cad"),
+    focus: v("--focus", "#086978"),
     ok: v("--ok", "#1a7f37"),
     empty: v("--empty", "#b42318"),
     full: v("--full", "#8a4b00"),

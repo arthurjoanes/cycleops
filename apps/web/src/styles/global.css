@@ -32,6 +32,12 @@ select {
 
 a {
   color: var(--link);
+  text-underline-offset: 3px;
+}
+
+::selection {
+  color: var(--surface);
+  background: var(--brand);
 }
 
 :focus-visible {
