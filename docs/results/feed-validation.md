@@ -43,6 +43,10 @@ A leitura que bate com os dados: o arquivo é gerado a cada 16 s, mais ou menos,
 
 ## Coleta pendente
 
+A gravação iniciada em 2026-10-09 às 09:38 UTC foi interrompida às 09:43, antes de fechar o gzip e escrever o manifesto. Foram recuperadas as 25 linhas JSON inteiras em `fixtures/recorded/recovered-20261009T093810Z.ndjson.gz`. O manifesto registra o hash do arquivo original, preservado em `data/recordings/`, e a recuperação; nenhum byte de uma linha incompleta foi aproveitado.
+
+O trecho cobre 11:38:17 a 11:43:25 em Oslo: 25 respostas 200, sem falhas, 21 delas de `station_status`, com 267 estações válidas. O relatório offline mostrou 49 mudanças de contagem em 315 s, um `last_reported` por publicação e download p50 de 0,6 s, p95 de 0,9 s e p99 de 1,7 s. O prazo era 12 s; esse trecho não substitui uma amostra de 10 min com prazo de 30 s. O `compile-replay` gerou 21 eventos em memória, com 79 incidentes confirmados e nenhum resolvido: saída 3, sem artefato gravado.
+
 Falta coletar em horário de movimento e de outras redes ou horários, para as premissas 6, 9 e 12, e fazer a gravação longa da demo. Os comandos rodam da raiz do repositório, em bash (Git Bash ou WSL). No PowerShell, troque o `export` por `$env:CYCLEOPS_CLIENT_IDENTIFIER = "arthurjoanes-cycleops"`, escreva o carimbo do nome à mão e, no passo 3, passe os arquivos com `(Get-ChildItem fixtures/recorded/sample-*.ndjson.gz).FullName`, porque o PowerShell não expande o `*`. Se o `uv` não estiver no PATH, use `python -m uv`.
 
 ```bash
