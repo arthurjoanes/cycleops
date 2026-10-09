@@ -1,0 +1,235 @@
+{
+  "environment": {
+    "cpu": "AMD Ryzen 7 5700X3D 8-Core Processor",
+    "cores": 16,
+    "memoryGb": 31.9,
+    "os": "win32 10.0.26300",
+    "browser": "chromium 153.0.8010.12 (Playwright, headless)",
+    "commit": "c830eaa",
+    "date": "2026-10-09T23:49:57.238Z"
+  },
+  "method": {
+    "url": "build do Pages servido sob /cycleops/#/?mode=synthetic (serve-pages.mjs)",
+    "viewport": "1440x900",
+    "cpuSlowdown": 4,
+    "network": {
+      "latencyMs": 150,
+      "downloadKbps": 1600,
+      "uploadKbps": 750
+    },
+    "cache": "disabled",
+    "runs": 3,
+    "interaction": "Todas as estações, busca 'sintetica 01', Prioridades, Ir para o incidente, Fechar. INP = maior duração entre os eventos com interactionId."
+  },
+  "median": {
+    "lcpMs": 3248,
+    "cls": 0.004,
+    "inpMs": 240
+  },
+  "runs": [
+    {
+      "lcpMs": 3416,
+      "cls": 0.03,
+      "inpMs": 264,
+      "interactions": 12,
+      "events": [
+        {
+          "name": "pointerdown",
+          "duration": 264,
+          "interactionId": 7842
+        },
+        {
+          "name": "pointerup",
+          "duration": 264,
+          "interactionId": 7842
+        },
+        {
+          "name": "click",
+          "duration": 264,
+          "interactionId": 7842
+        },
+        {
+          "name": "pointerdown",
+          "duration": 40,
+          "interactionId": 7849
+        },
+        {
+          "name": "pointerup",
+          "duration": 40,
+          "interactionId": 7849
+        },
+        {
+          "name": "click",
+          "duration": 40,
+          "interactionId": 7849
+        },
+        {
+          "name": "pointerdown",
+          "duration": 136,
+          "interactionId": 7856
+        },
+        {
+          "name": "pointerup",
+          "duration": 136,
+          "interactionId": 7856
+        },
+        {
+          "name": "click",
+          "duration": 136,
+          "interactionId": 7856
+        },
+        {
+          "name": "pointerdown",
+          "duration": 64,
+          "interactionId": 7863
+        },
+        {
+          "name": "pointerup",
+          "duration": 64,
+          "interactionId": 7863
+        },
+        {
+          "name": "click",
+          "duration": 64,
+          "interactionId": 7863
+        }
+      ]
+    },
+    {
+      "lcpMs": 3232,
+      "cls": 0.004,
+      "inpMs": 232,
+      "interactions": 12,
+      "events": [
+        {
+          "name": "pointerdown",
+          "duration": 232,
+          "interactionId": 450
+        },
+        {
+          "name": "pointerup",
+          "duration": 232,
+          "interactionId": 450
+        },
+        {
+          "name": "click",
+          "duration": 232,
+          "interactionId": 450
+        },
+        {
+          "name": "pointerdown",
+          "duration": 48,
+          "interactionId": 457
+        },
+        {
+          "name": "pointerup",
+          "duration": 48,
+          "interactionId": 457
+        },
+        {
+          "name": "click",
+          "duration": 48,
+          "interactionId": 457
+        },
+        {
+          "name": "pointerdown",
+          "duration": 144,
+          "interactionId": 464
+        },
+        {
+          "name": "pointerup",
+          "duration": 144,
+          "interactionId": 464
+        },
+        {
+          "name": "click",
+          "duration": 144,
+          "interactionId": 464
+        },
+        {
+          "name": "pointerdown",
+          "duration": 56,
+          "interactionId": 471
+        },
+        {
+          "name": "pointerup",
+          "duration": 56,
+          "interactionId": 471
+        },
+        {
+          "name": "click",
+          "duration": 56,
+          "interactionId": 471
+        }
+      ]
+    },
+    {
+      "lcpMs": 3248,
+      "cls": 0.004,
+      "inpMs": 240,
+      "interactions": 12,
+      "events": [
+        {
+          "name": "pointerdown",
+          "duration": 240,
+          "interactionId": 3642
+        },
+        {
+          "name": "pointerup",
+          "duration": 240,
+          "interactionId": 3642
+        },
+        {
+          "name": "click",
+          "duration": 240,
+          "interactionId": 3642
+        },
+        {
+          "name": "pointerdown",
+          "duration": 40,
+          "interactionId": 3649
+        },
+        {
+          "name": "pointerup",
+          "duration": 40,
+          "interactionId": 3649
+        },
+        {
+          "name": "click",
+          "duration": 40,
+          "interactionId": 3649
+        },
+        {
+          "name": "pointerdown",
+          "duration": 136,
+          "interactionId": 3656
+        },
+        {
+          "name": "pointerup",
+          "duration": 136,
+          "interactionId": 3656
+        },
+        {
+          "name": "click",
+          "duration": 136,
+          "interactionId": 3656
+        },
+        {
+          "name": "pointerdown",
+          "duration": 56,
+          "interactionId": 3663
+        },
+        {
+          "name": "pointerup",
+          "duration": 56,
+          "interactionId": 3663
+        },
+        {
+          "name": "click",
+          "duration": 56,
+          "interactionId": 3663
+        }
+      ]
+    }
+  ]
+}

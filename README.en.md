@@ -119,6 +119,7 @@ The `e2e` command builds Pages under `/cycleops/`; `check:bundle` checks that bu
 |---|---|
 | [Real feed collection](docs/results/feed-validation.md) | 249 responses over 60 min, all HTTP 200. The replay contains 218 events and two resolved incidents. |
 | [Replay and Compose checks](docs/results/validacao-20261009.md) | Engine, persistence, SSE, reconnection and browser tests, with commands and recorded results. |
+| [Visual identity](docs/results/identity-20261009.md) | 69 unit tests, 14 Pages E2E tests, desktop and mobile captures, and lab Web Vitals with the environment and comparison limits. |
 | [Performance](docs/results/performance.md) | Frontend load, lab Web Vitals and Compose latency, with the environment and data for each run. |
 
 The [results index](docs/results/index.md) links runs to commands, commits and dates. Additional daytime samples and the [manual accessibility checklist](docs/results/a11y-manual.md) remain pending.

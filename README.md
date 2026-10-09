@@ -119,6 +119,7 @@ O `e2e` gera o build do Pages sob `/cycleops/`; `check:bundle` confere esse buil
 |---|---|
 | [Coleta real](docs/results/feed-validation.md) | 249 respostas em 60 min, todas 200. O replay tem 218 eventos e dois incidentes resolvidos. |
 | [Verificação do replay e do Compose](docs/results/validacao-20261009.md) | Testes do motor, persistência, SSE, reconexão e navegador, com comandos e resultados registrados. |
+| [Identidade visual](docs/results/identity-20261009.md) | 69 testes unitários, 14 E2E Pages, capturas desktop e celular e Web Vitals com ambiente e limites de comparação. |
 | [Desempenho](docs/results/performance.md) | Carga do frontend, Web Vitals de laboratório e latência do Compose, com ambiente e dados de cada execução. |
 
 O [índice de resultados](docs/results/index.md) relaciona cada execução ao comando, commit e data. As amostras diurnas adicionais e o [checklist manual de acessibilidade](docs/results/a11y-manual.md) continuam pendentes.

@@ -10,7 +10,7 @@ Nenhum deles precisa de secret.
 
 ## Checklist
 
-Os itens marcados já foram executados localmente. A publicação no GitHub e os testes que pedem uma pessoa continuam pendentes. A ordem importa só onde um passo depende do anterior.
+Os itens marcados já foram executados no ambiente local ou no GitHub. Os testes que pedem uma pessoa continuam pendentes. A ordem importa só onde um passo depende do anterior.
 
 ### Dados da demo
 
@@ -36,11 +36,11 @@ Uma gravação futura que substitua a demo precisa passar no aceite e caber no l
 
 ### GitHub
 
-- [ ] Criar o repositório público `arthurjoanes/cycleops`, vazio (sem README, licença ou `.gitignore` do GitHub).
-- [ ] Em Settings > Actions > General, deixar "Workflow permissions" em "Read repository contents and packages permissions". Os workflows pedem só o que usam.
-- [ ] Em Settings > Pages, "Build and deployment", Source: GitHub Actions.
-- [ ] Em Settings > Security, ligar "Private vulnerability reporting" (o `SECURITY.md` aponta para ele) e os alertas do Dependabot.
-- [ ] Push da `main`:
+- [x] Criar o repositório público `arthurjoanes/cycleops`, vazio (sem README, licença ou `.gitignore` do GitHub).
+- [x] Em Settings > Actions > General, deixar "Workflow permissions" em "Read repository contents and packages permissions". Os workflows pedem só o que usam.
+- [x] Em Settings > Pages, "Build and deployment", Source: GitHub Actions.
+- [x] Em Settings > Security, ligar "Private vulnerability reporting" (o `SECURITY.md` aponta para ele) e os alertas do Dependabot.
+- [x] Push da `main`:
 
   ```bash
   git remote add origin https://github.com/arthurjoanes/cycleops.git
@@ -57,7 +57,7 @@ Uma gravação futura que substitua a demo precisa passar no aceite e caber no l
   Demo: https://arthurjoanes.github.io/cycleops/
   ```
 
-- [ ] Preencher o About: "Bike-share station dashboard for Oslo built on open GBFS data, with a priority queue and replay of recorded feeds." Tópicos: `react`, `typescript`, `fastapi`, `real-time`, `sse`, `gbfs`, `maplibre`, `data-visualization`, `postgresql`.
+- [x] Preencher o About: "Bike-share station dashboard for Oslo built on open GBFS data, with a priority queue and replay of recorded feeds." Tópicos: `react`, `typescript`, `fastapi`, `real-time`, `sse`, `gbfs`, `maplibre`, `data-visualization`, `postgresql`, `oslo`.
 - [ ] Rodar uma vez o `feed-check` em Actions > feed-check > Run workflow e conferir que fez 5 requisições.
 - [ ] Aceitar a atualização do Playwright para 1.64 quando o Dependabot abrir: ele ficou em 1.63.0 porque o pnpm recusa pacote com menos de um dia de publicado.
 
