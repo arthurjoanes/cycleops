@@ -10,21 +10,24 @@ Nenhum deles precisa de secret.
 
 ## Checklist
 
-Nada abaixo foi executado ainda. A ordem importa só onde um passo depende do anterior.
+Os itens marcados já foram executados localmente. A publicação no GitHub e os testes que pedem uma pessoa continuam pendentes. A ordem importa só onde um passo depende do anterior.
 
 ### Dados da demo
 
-- [ ] Rodar as gravações pendentes (`feed-validation.md`, "Coleta pendente") e, sobre a gravação longa, o aceite e o `compile-replay`. Sem gravação aceita, a demo abre na simulação. Duas formas:
-  - pelas CLIs, com `CYCLEOPS_CLIENT_IDENTIFIER` e sem o live no ar (os comandos estão no `feed-validation.md`);
-  - pelo live no Compose: deixar o `cycleops-live` rodando o tempo da gravação e exportar o intervalo do arquivo bruto, sem requisição nova:
+- [x] Gravação longa da demo em `fixtures/recorded/`, com manifesto e SHA256 conferido.
+- [x] Aceite com um incidente confirmado e resolvido na gravação real: falta de vagas em St. Olavs gate (estação 537). Resultado em [feed-validation.md](feed-validation.md).
+- [x] Artefatos do replay gravado gerados a partir de `fixtures/recorded/demo.yaml`, contratos conferidos e resultados registrados em [index.md](index.md).
+- [ ] Rodar as amostras diurnas adicionais e, quando possível, de outras redes para avaliar as premissas de valet, download e mudanças de contagem. Elas estão em "Coleta pendente", no [feed-validation.md](feed-validation.md); o aceite da demo já foi atendido.
 
-    ```bash
-    MSYS_NO_PATHCONV=1 docker compose -p cycleops-live --env-file .env.live run --rm -v ./export:/export worker record-feed --from-archive --from <utc> --to <utc> --out /export/<nome>.ndjson.gz
-    ```
+Para novas gravações, use as CLIs com `CYCLEOPS_CLIENT_IDENTIFIER` e sem o live no ar (comandos no `feed-validation.md`). Com o live no Compose, exporte o intervalo do arquivo bruto, sem requisição nova:
 
-    O `MSYS_NO_PATHCONV=1` é para o Git Bash, que senão troca o `/export/...` por um caminho do Windows; no WSL ele não muda nada.
+```bash
+MSYS_NO_PATHCONV=1 docker compose -p cycleops-live --env-file .env.live run --rm -v ./export:/export worker record-feed --from-archive --from <utc> --to <utc> --out /export/<nome>.ndjson.gz
+```
 
-- [ ] Se a gravação passar no aceite e tiver até 5 MB: copiar a gravação e o manifesto para `fixtures/recorded/`, criar `fixtures/recorded/demo.yaml` com `recording: <arquivo>`, rodar `generate-artifacts`, atualizar `docs/results/feed-validation.md`, o ADR 0002 e `docs/results/index.md`, e commitar. Acima de 5 MB, o recorte ainda não existe. Esses passos também podem ficar com o agente, numa tarefa só para a gravação.
+O `MSYS_NO_PATHCONV=1` é para o Git Bash, que senão troca o `/export/...` por um caminho do Windows; no WSL ele não muda nada.
+
+Uma gravação futura que substitua a demo precisa passar no aceite e caber no limite de 5 MiB, somando `.ndjson.gz` e manifesto. Acima do limite, faça um recorte que comece pelo menos 5 min antes da confirmação e termine depois da resolução, registre o hash da gravação original no manifesto e repita o aceite. Depois atualize `fixtures/recorded/demo.yaml`, rode `generate-artifacts` e registre o resultado em `feed-validation.md`, no ADR 0002 e em `index.md`.
 
 ### Decisões
 

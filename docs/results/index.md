@@ -34,6 +34,18 @@ Cada execução registrada no repositório, com o commit do código usado. Coman
 | Vídeo da aplicação: 26,5 s, 1280×720, VP8, 2,4 MB | `docs/media/demo.webm` | com a pilha recém-criada: em `apps/web`, `CYCLEOPS_DEMO=1 corepack pnpm exec playwright test --project=media demo` | 60706cb | 2026-10-08 22:06 |
 | gitleaks 8.30.1 no histórico: 13 commits, nenhum vazamento; actionlint sem achado | | imagem do `ci.yml`; `rhysd/actionlint` | 60706cb | 2026-10-08 22:07 |
 
+## Revisão de 2026-10-09
+
+| Resultado | Arquivo | Comando | Commit | Data (UTC) |
+|---|---|---|---|---|
+| Lacunas do motor, relógio do replay, histórico com heartbeat e limites de gravação; 353 testes Python com PostgreSQL, 69 unitários web, 13 E2E Pages e 11 E2E Compose | `docs/results/validacao-20261009.md` | comandos registrados no relatório | 6249cf6 | 2026-10-09 |
+| Recuperação de 25 respostas da coleta interrompida: sha256 conferido, nenhum incidente resolvido, aceite com saída 3 | `fixtures/recorded/recovered-20261009T093810Z.ndjson.gz`, `docs/results/feed-validation.md` | `apps/backend/.venv/Scripts/inspect-feed.exe --recording fixtures/recorded/recovered-20261009T093810Z.ndjson.gz`; `apps/backend/.venv/Scripts/compile-replay.exe --recording fixtures/recorded/recovered-20261009T093810Z.ndjson.gz --out data/recovered-check` | d7ad657 | 2026-10-09 |
+| Latência da versão corrigida, 40 eventos em 10 min: recebimento até pintura p95 141,3 ms; commit até escrita p95 106,2 ms | `docs/results/performance.md`, `docs/results/data/compose-latency-20261009.json`, `docs/results/data/compose-commit-to-write-20261009.json` | em `apps/web`: `CYCLEOPS_MEASURE=1 corepack pnpm e2e:compose latency` | d7ad657, mesma aplicação de 6249cf6, com documentação em edição | 2026-10-09 22:43 a 22:53 |
+| Gravação de 60 min: 249 respostas 200, sem falhas; hash conferido e par de 782.028 bytes | `fixtures/recorded/record-20261009T222527Z.ndjson.gz`, `docs/results/data/feed-20261009.txt` | `CYCLEOPS_CLIENT_IDENTIFIER=arthurjoanes-cycleops uv run --project apps/backend record-feed --minutes 60 --out data/recordings/record-20261009T222700Z.ndjson.gz`; `inspect-feed --recording fixtures/recorded/record-20261009T222527Z.ndjson.gz` (cópia renomeada conforme primeiro requestedAt) | f64943d, mesmo coletor de 6249cf6 | 2026-10-09 22:25 a 23:25 |
+| Replay real aceito: 218 eventos, 40 incidentes confirmados, 2 resolvidos, fechamento à 01:00 de Oslo; eventos gzip de 29.451 bytes | `apps/web/public/replay/recorded/`, `docs/results/feed-validation.md` | `uv run --project apps/backend compile-replay --recording fixtures/recorded/record-20261009T222527Z.ndjson.gz --out data/replay-check`; `generate-artifacts`; `generate-artifacts --check`; em `apps/web`: `corepack pnpm generate:contracts` | f64943d | 2026-10-09 23:25 |
+| Verificação final com replay real: 21 testes Python do replay, 14 E2E Pages; bundle de 118.063 bytes gzip | `docs/results/validacao-20261009.md` | `uv run --project apps/backend pytest apps/backend/tests/test_replay.py -q`; em `apps/web`: `corepack pnpm e2e`, `corepack pnpm check:bundle` | f64943d | 2026-10-09 23:26 |
+| Replay real no Caddy em 1440, 768 e 320 px: modo, data, mapa e nove verificações de overflow; nenhum erro de console ou CSP | `docs/results/validacao-20261009.md`, `docs/media/recorded-1440.png`, `docs/media/recorded-320.png` | Playwright: `page.goto`, pausa, salto para Jakob kirke e `page.screenshot({ fullPage: true })`, conforme sequência no relatório | f64943d (mesmo artefato, ainda sem commit durante a captura) | 2026-10-09 23:27 |
+
 ## Pendente
 
-- A coleta de dia, de outras redes e a gravação de 60 a 90 min estão em "Coleta pendente", em `feed-validation.md`.
+- A coleta de dia e de outras redes está em "Coleta pendente", em `feed-validation.md`. A gravação longa da demo passou no aceite e já tem artefato.

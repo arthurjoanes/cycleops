@@ -1,0 +1,54 @@
+# Feed report, 249 requests
+
+Period: 2026-10-09 22:25:27 to 23:25:15 UTC (2026-10-10 00:25 to 01:25 Oslo)
+
+## Requests per feed
+
+| feed | n | status | errors | version | ttl | content-encoding | duration ms |
+|---|---|---|---|---|---|---|---|
+| gbfs | 1 | 200: 1 |  | 2.3: 1 | 15: 1 | gzip: 1 | n=1 min=1072.0 p50=1072.0 p95=1072.0 p99=1072.0 max=1072.0 |
+| system_information | 1 | 200: 1 |  | 2.3: 1 | 15: 1 | gzip: 1 | n=1 min=938.0 p50=938.0 p95=938.0 p99=938.0 max=938.0 |
+| vehicle_types | 1 | 200: 1 |  | 2.3: 1 | 15: 1 | gzip: 1 | n=1 min=929.0 p50=929.0 p95=929.0 p99=929.0 max=929.0 |
+| station_information | 6 | 200: 6 |  | 2.3: 6 | 15: 6 | gzip: 6 | n=6 min=831.0 p50=844.5 p95=1071.2 p99=1130.2 max=1145.0 |
+| station_status | 240 | 200: 240 |  | 2.3: 240 | 15: 240 | gzip: 240 | n=240 min=210.0 p50=634.0 p95=716.4 p99=1079.3 max=1195.0 |
+
+## Timing (station_status)
+
+- download: n=240 min=0.2s p50=0.6s p95=0.7s p99=1.1s max=1.2s; timeouts 0/240
+- last_updated steps: 15: 191, 30: 24
+- age at receipt (receivedAt - last_updated): n=240 min=13.6s p50=14.8s p95=29.8s p99=30.4s max=30.6s
+- availability delay, upper bound min(requestedAt - last_updated): 12.9s
+- availability delay, lower bound max(requestedAt - next last_updated) over responses still carrying the previous publication: 14.7s (19 responses)
+- local clock - server clock: between 0.62s and 0.93s (249 responses)
+
+## last_reported
+
+- distinct values per response: 1: 240
+- last_reported - last_updated: n=64080 min=0.0s p50=8.0s p95=14.0s p99=14.0s max=14.0s
+- per station between consecutive publications: counts changed, last_reported changed: 479, counts same, last_reported changed: 56926
+- count changes: 479 station changes over 216 publications in 1 series, 3585s (481/h)
+- last publication: 267 valid of 267, invalid 0, 0 bikes 20, 0 docks 11, not installed 0, not renting 0, not returning 0, quality valid: 267
+
+## Fields
+
+- station_status fields (records with it, of 267): is_installed: 267, is_renting: 267, is_returning: 267, last_reported: 267, num_bikes_available: 267, num_docks_available: 267, num_vehicles_available: 267, station_id: 267, vehicle_types_available: 267
+  - outside GBFS 2.3: ['num_vehicles_available']
+  - GBFS 2.3 fields absent: ['num_bikes_disabled', 'num_docks_disabled', 'vehicle_docks_available']
+- station_information fields (records with it, of 267): address: 267, capacity: 267, cross_street: 267, is_virtual_station: 267, lat: 267, lon: 267, name: 267, rental_uris: 267, station_id: 267
+  - outside GBFS 2.3: none
+  - GBFS 2.3 fields absent: ['contact_phone', 'is_charging_station', 'is_valet_station', 'parking_hoop', 'parking_type', 'post_code', 'region_id', 'rental_methods', 'short_name', 'vehicle_capacity', 'vehicle_type_capacity']
+- ids: status 267, catalog 267, only in status 0, only in catalog 0
+- capacity - (bikes + docks): zero 73, positive 194, negative 0; n=267 min=0.0 p50=1.0 p95=4.0 p99=7.3 max=15.0
+- valet signals over 240 responses: stations with docks missing 0, with bikes + docks > capacity 0, is_valet_station present 0, true 0, is_virtual true 0, capacity flags none
+
+## ETag
+
+- station_information: 6 responses, 6 distinct ETags, 6 distinct bodies, 6 distinct last_updated
+- station_status: 240 responses, 216 distinct ETags, 216 distinct bodies, 216 distinct last_updated
+
+## system_information
+
+- system_id oslobysykkel, name 'Oslo Bysykkel'
+- operator 'UIP Bauer Media Outdoor Norge AS'
+- timezone Europe/Oslo (provider file: Europe/Oslo, match)
+- fields: email, language, name, operator, phone_number, rental_apps, system_id, timezone

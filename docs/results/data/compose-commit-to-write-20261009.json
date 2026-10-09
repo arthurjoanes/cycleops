@@ -1,0 +1,95 @@
+{
+  "method": "api restarted before the window, then only the measuring tab connected. For each station_batch written live to a socket the api keeps write instant minus committedAt (database clock, same host) and logs count/p50/p95/max of everything since the restart every 60 s. 'covering' is the first line after the tab closed, so it holds the whole window; catch-up events are not measured.",
+  "apiRestartedAt": "2026-10-09T22:43:01.884Z",
+  "window": {
+    "start": "2026-10-09T22:43:08.896Z",
+    "end": "2026-10-09T22:53:09.059Z",
+    "minutes": 10
+  },
+  "covering": {
+    "time": "2026-10-09T22:54:04.037Z",
+    "count": 40,
+    "p50": 25.2,
+    "p95": 106.2,
+    "max": 191.1
+  },
+  "summaries": [
+    {
+      "time": "2026-10-09T22:44:04.189Z",
+      "count": 4,
+      "p50": 18.6,
+      "p95": 72.4,
+      "max": 81.2
+    },
+    {
+      "time": "2026-10-09T22:45:03.995Z",
+      "count": 8,
+      "p50": 20.7,
+      "p95": 82.8,
+      "max": 83.4
+    },
+    {
+      "time": "2026-10-09T22:46:04.146Z",
+      "count": 12,
+      "p50": 74.4,
+      "p95": 140.5,
+      "max": 191.1
+    },
+    {
+      "time": "2026-10-09T22:47:04.136Z",
+      "count": 16,
+      "p50": 81.5,
+      "p95": 145.3,
+      "max": 191.1
+    },
+    {
+      "time": "2026-10-09T22:48:04.130Z",
+      "count": 20,
+      "p50": 69.2,
+      "p95": 133.1,
+      "max": 191.1
+    },
+    {
+      "time": "2026-10-09T22:49:04.104Z",
+      "count": 24,
+      "p50": 45.2,
+      "p95": 126.3,
+      "max": 191.1
+    },
+    {
+      "time": "2026-10-09T22:50:04.095Z",
+      "count": 28,
+      "p50": 41.1,
+      "p95": 121.3,
+      "max": 191.1
+    },
+    {
+      "time": "2026-10-09T22:51:04.077Z",
+      "count": 32,
+      "p50": 41.1,
+      "p95": 116.3,
+      "max": 191.1
+    },
+    {
+      "time": "2026-10-09T22:52:04.063Z",
+      "count": 36,
+      "p50": 30.9,
+      "p95": 111.2,
+      "max": 191.1
+    },
+    {
+      "time": "2026-10-09T22:53:04.049Z",
+      "count": 40,
+      "p50": 25.2,
+      "p95": 106.2,
+      "max": 191.1
+    },
+    {
+      "time": "2026-10-09T22:54:04.037Z",
+      "count": 40,
+      "p50": 25.2,
+      "p95": 106.2,
+      "max": 191.1
+    }
+  ]
+}

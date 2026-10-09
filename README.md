@@ -2,7 +2,7 @@
 
 Lista as estações do Oslo Bysykkel sem bicicleta ou sem vaga, em ordem de prioridade, com o motivo e os dados usados no cálculo. Os dados vêm do feed GBFS aberto do operador.
 
-![Tela do CycleOps no modo Simulação: fila de prioridades à esquerda, mapa de Oslo com as estações à direita e os detalhes de uma estação sem bicicletas abertos sobre o mapa](docs/media/desktop-1440.png)
+![Tela do CycleOps no replay gravado de 10/10/2026 em Oslo: fila de prioridades à esquerda, mapa com as estações à direita e controles do replay acima](docs/media/recorded-1440.png)
 
 Um vídeo de 27 s, [docs/media/demo.webm](docs/media/demo.webm), mostra a simulação pelo stream do servidor no Compose: um incidente confirmado no topo da fila e o motivo nos detalhes, a API reiniciando (conexão em "reconectando" e de volta a "conectada") e a troca para o replay em arquivo, pausado.
 
@@ -68,9 +68,9 @@ O `e2e` gera o build do Pages e roda o Playwright contra ele. O `check:bundle` l
 
 - Ao vivo: o worker lê o feed de Oslo a cada 15 s e a API manda os eventos por SSE. Roda só no Compose local.
 - Simulação: estações e contagens geradas com seed, com a faixa "Simulação" sempre visível. No Compose vem do worker, pelo mesmo caminho do ao vivo; no Pages e no botão "Simulação (arquivo)", de um artefato gerado offline.
-- Replay gravado: uma gravação real do feed passada pelo motor, reproduzida no navegador. Só existe quando uma gravação tem pelo menos um incidente confirmado e resolvido; ainda não há nenhuma.
+- Replay gravado: uma gravação real do feed passada pelo motor, com um incidente confirmado e resolvido em St. Olavs gate. É o modo inicial do build do Pages; a simulação continua disponível no seletor. Período, aceite e comandos em [docs/results/feed-validation.md](docs/results/feed-validation.md).
 
-O modo fica no cabeçalho o tempo todo, com a seed na simulação e o estado da conexão. Com a fonte fora, a tela mostra o erro e oferece o replay em arquivo; ela nunca troca sozinha. O replay tem pausa, 1×, 5×, 20×, passo e "ir para o incidente".
+O modo fica no cabeçalho o tempo todo, com a data no replay gravado, a seed na simulação e o estado da conexão. Com a fonte fora, a tela mostra o erro e oferece o replay em arquivo; ela nunca troca sozinha. O replay tem pausa, 1×, 5×, 20×, passo e "ir para o incidente".
 
 ## Limitações
 
