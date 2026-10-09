@@ -1,0 +1,2151 @@
+{
+  "schemaVersion": 1,
+  "systemId": "oslobysykkel",
+  "versions": [
+    {
+      "catalogVersion": "4f53cda18c2baa0c",
+      "stations": []
+    },
+    {
+      "catalogVersion": "cccdb5e77afef5aa",
+      "stations": [
+        {
+          "capacity": 10,
+          "isVirtual": false,
+          "lat": 59.942742106473666,
+          "lon": 10.703833031254021,
+          "name": "Borgenveien",
+          "stationId": "1009"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.9147672,
+          "lon": 10.740971,
+          "name": "Professor Aschehougs plass",
+          "stationId": "1023"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.91065301806209,
+          "lon": 10.737365277561025,
+          "name": "Stortingstunnelen",
+          "stationId": "1101"
+        },
+        {
+          "capacity": 33,
+          "isVirtual": false,
+          "lat": 59.91119901776625,
+          "lon": 10.73008965925888,
+          "name": "Aker Brygge 1 mot Nasjonalmuseet",
+          "stationId": "1755"
+        },
+        {
+          "capacity": 6,
+          "isVirtual": false,
+          "lat": 59.90591104488692,
+          "lon": 10.778658835781357,
+          "name": "Kværnerveien",
+          "stationId": "1919"
+        },
+        {
+          "capacity": 20,
+          "isVirtual": false,
+          "lat": 59.928710966693274,
+          "lon": 10.799914801820819,
+          "name": "Lørenporten",
+          "stationId": "2270"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.913150534075015,
+          "lon": 10.732281291700133,
+          "name": "Klingenberggata",
+          "stationId": "2280"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.91178403655783,
+          "lon": 10.783884345957915,
+          "name": "Hedmarksgata",
+          "stationId": "2304"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.927777943193746,
+          "lon": 10.761256419316368,
+          "name": "Hesselbergs Gate",
+          "stationId": "2305"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.930903961728745,
+          "lon": 10.80193969590286,
+          "name": "Økern Portal",
+          "stationId": "2306"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.946219381760216,
+          "lon": 10.724626314653563,
+          "name": "Domus Athletica",
+          "stationId": "2307"
+        },
+        {
+          "capacity": 12,
+          "isVirtual": false,
+          "lat": 59.91459878869395,
+          "lon": 10.753398500006654,
+          "name": "Gunerius",
+          "stationId": "2308"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.90691970255054,
+          "lon": 10.760311802881915,
+          "name": "Rostockgata",
+          "stationId": "2315"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.912471643428546,
+          "lon": 10.750847496059066,
+          "name": "The Hub",
+          "stationId": "2328"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.91271286014364,
+          "lon": 10.727170827087008,
+          "name": "Via Vika",
+          "stationId": "2329"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.91323316606503,
+          "lon": 10.749958763650312,
+          "name": "Stjerneplassen",
+          "stationId": "2330"
+        },
+        {
+          "capacity": 12,
+          "isVirtual": false,
+          "lat": 59.91629601075576,
+          "lon": 10.757376666842816,
+          "name": "Krohgstøtten hospital",
+          "stationId": "2332"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.90725889890288,
+          "lon": 10.754884663589621,
+          "name": "Akerselvallmenningen",
+          "stationId": "2333"
+        },
+        {
+          "capacity": 12,
+          "isVirtual": false,
+          "lat": 59.916544926082935,
+          "lon": 10.757428972017067,
+          "name": "Nybrua holdeplass",
+          "stationId": "2334"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.91591543378553,
+          "lon": 10.737834990277321,
+          "name": "Universitetsgata",
+          "stationId": "2337"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.91564920880896,
+          "lon": 10.761724502548105,
+          "name": "Elgsletta",
+          "stationId": "2339"
+        },
+        {
+          "capacity": 25,
+          "isVirtual": false,
+          "lat": 59.92024767905539,
+          "lon": 10.793540704010042,
+          "name": "Tiedemannsparken",
+          "stationId": "2340"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.89843953196814,
+          "lon": 10.674396692263628,
+          "name": "Huk 2",
+          "stationId": "2347"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.90291159389537,
+          "lon": 10.698019009343994,
+          "name": "Maritimt Museum",
+          "stationId": "2349"
+        },
+        {
+          "capacity": 25,
+          "isVirtual": false,
+          "lat": 59.940228559500554,
+          "lon": 10.716552385179028,
+          "name": "Blindern T-Bane",
+          "stationId": "2350"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.95208441268443,
+          "lon": 10.727852791011173,
+          "name": "Sogn Studentby",
+          "stationId": "2351"
+        },
+        {
+          "capacity": 12,
+          "isVirtual": false,
+          "lat": 59.928894918817605,
+          "lon": 10.806234776281599,
+          "name": "Økern T-bane",
+          "stationId": "2355"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.91113081194453,
+          "lon": 10.730409170393784,
+          "name": "Aker Brygge 2 mot Rådhusplassen",
+          "stationId": "2357"
+        },
+        {
+          "capacity": 14,
+          "isVirtual": false,
+          "lat": 59.91084649016395,
+          "lon": 10.729732454567795,
+          "name": "Aker Brygge 3 mot Fergene",
+          "stationId": "2358"
+        },
+        {
+          "capacity": 19,
+          "isVirtual": false,
+          "lat": 59.936006155097004,
+          "lon": 10.73190903696522,
+          "name": "Vestre Aker Kirke",
+          "stationId": "3725"
+        },
+        {
+          "capacity": 29,
+          "isVirtual": false,
+          "lat": 59.915667,
+          "lon": 10.7775665,
+          "name": "Tøyenparken",
+          "stationId": "377"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.93923,
+          "lon": 10.75917,
+          "name": "Bentsebrugata",
+          "stationId": "380"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.91252,
+          "lon": 10.76224,
+          "name": "Grønlands torg",
+          "stationId": "381"
+        },
+        {
+          "capacity": 9,
+          "isVirtual": false,
+          "lat": 59.92958561753996,
+          "lon": 10.732839000000013,
+          "name": "Stensgata",
+          "stationId": "382"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.934936,
+          "lon": 10.749466,
+          "name": "Arkitekt Rivertz Plass",
+          "stationId": "383"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.91944043984847,
+          "lon": 10.7437646218726,
+          "name": "Vår Frelsers gravlund",
+          "stationId": "384"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.914586,
+          "lon": 10.735453,
+          "name": "Studenterlunden",
+          "stationId": "387"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.9163309,
+          "lon": 10.716349,
+          "name": "Skovveien",
+          "stationId": "388"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.9205528,
+          "lon": 10.7342854,
+          "name": "Pilestredet Studenthus",
+          "stationId": "389"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.91424026794647,
+          "lon": 10.732771354719745,
+          "name": "Saga Kino",
+          "stationId": "390"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.92683548000409,
+          "lon": 10.738352113653718,
+          "name": "Colletts gate 31",
+          "stationId": "391"
+        },
+        {
+          "capacity": 10,
+          "isVirtual": false,
+          "lat": 59.910180852633516,
+          "lon": 10.751698750995615,
+          "name": "Sjøsiden",
+          "stationId": "392"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.939244,
+          "lon": 10.774319,
+          "name": "Hans Nielsen Hauges plass",
+          "stationId": "393"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.943777539367225,
+          "lon": 10.760121127577955,
+          "name": "Bjølsen Studentby",
+          "stationId": "394"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.9261831,
+          "lon": 10.7098327,
+          "name": "Frogner Tennisklubb",
+          "stationId": "395"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.91300035973293,
+          "lon": 10.746760585982287,
+          "name": "Kirkeristen",
+          "stationId": "396"
+        },
+        {
+          "capacity": 36,
+          "isVirtual": false,
+          "lat": 59.94671044754387,
+          "lon": 10.773805285879131,
+          "name": "Storo Storsenter",
+          "stationId": "397"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.92843404417577,
+          "lon": 10.75943014633117,
+          "name": "Ringnes Park",
+          "stationId": "398"
+        },
+        {
+          "capacity": 36,
+          "isVirtual": false,
+          "lat": 59.929545,
+          "lon": 10.7489862,
+          "name": "Uelands gate",
+          "stationId": "399"
+        },
+        {
+          "capacity": 25,
+          "isVirtual": false,
+          "lat": 59.919927,
+          "lon": 10.735428,
+          "name": "OsloMet",
+          "stationId": "400"
+        },
+        {
+          "capacity": 6,
+          "isVirtual": false,
+          "lat": 59.920259,
+          "lon": 10.760629,
+          "name": "Lille Schous plass",
+          "stationId": "401"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.93087712510462,
+          "lon": 10.791823716034969,
+          "name": "Lørenveien",
+          "stationId": "402"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.921768,
+          "lon": 10.730476,
+          "name": "Parkveien",
+          "stationId": "403"
+        },
+        {
+          "capacity": 27,
+          "isVirtual": false,
+          "lat": 59.914306,
+          "lon": 10.720202,
+          "name": "Oslo Handelsgymnasium",
+          "stationId": "404"
+        },
+        {
+          "capacity": 12,
+          "isVirtual": false,
+          "lat": 59.92507,
+          "lon": 10.775996,
+          "name": "Carl Berners plass sør",
+          "stationId": "406"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.937743,
+          "lon": 10.751648,
+          "name": "Sagene bussholdeplass",
+          "stationId": "407"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.914943,
+          "lon": 10.773977,
+          "name": "Tøyen skole",
+          "stationId": "408"
+        },
+        {
+          "capacity": 25,
+          "isVirtual": false,
+          "lat": 59.940398,
+          "lon": 10.730036,
+          "name": "John Colletts plass",
+          "stationId": "409"
+        },
+        {
+          "capacity": 27,
+          "isVirtual": false,
+          "lat": 59.929005,
+          "lon": 10.7496755,
+          "name": "Landstads gate",
+          "stationId": "410"
+        },
+        {
+          "capacity": 12,
+          "isVirtual": false,
+          "lat": 59.923240042155456,
+          "lon": 10.792831438028703,
+          "name": "Hasle Torg",
+          "stationId": "411"
+        },
+        {
+          "capacity": 9,
+          "isVirtual": false,
+          "lat": 59.917866,
+          "lon": 10.754898,
+          "name": "Jakob kirke",
+          "stationId": "412"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.929045,
+          "lon": 10.716926,
+          "name": "Majorstuen",
+          "stationId": "413"
+        },
+        {
+          "capacity": 12,
+          "isVirtual": false,
+          "lat": 59.910242,
+          "lon": 10.73857,
+          "name": "Kontraskjæret",
+          "stationId": "414"
+        },
+        {
+          "capacity": 12,
+          "isVirtual": false,
+          "lat": 59.929542,
+          "lon": 10.781053,
+          "name": "Sinsenveien",
+          "stationId": "415"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.932383,
+          "lon": 10.741475,
+          "name": "Tannlegehøyskolen",
+          "stationId": "416"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.922485,
+          "lon": 10.720896,
+          "name": "Uranienborgparken",
+          "stationId": "417"
+        },
+        {
+          "capacity": 27,
+          "isVirtual": false,
+          "lat": 59.9076983512052,
+          "lon": 10.686805381168313,
+          "name": "Norsk Folkemuseum",
+          "stationId": "418"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.94032925181832,
+          "lon": 10.766136667493829,
+          "name": "Bjølsendumpa",
+          "stationId": "420"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.92806670615684,
+          "lon": 10.751202636819613,
+          "name": "Alexander Kiellands Plass",
+          "stationId": "421"
+        },
+        {
+          "capacity": 12,
+          "isVirtual": false,
+          "lat": 59.923703,
+          "lon": 10.740542,
+          "name": "St. Hanshaugen",
+          "stationId": "422"
+        },
+        {
+          "capacity": 20,
+          "isVirtual": false,
+          "lat": 59.920335,
+          "lon": 10.760804,
+          "name": "Schous plass",
+          "stationId": "423"
+        },
+        {
+          "capacity": 10,
+          "isVirtual": false,
+          "lat": 59.9256113,
+          "lon": 10.760926,
+          "name": "Birkelunden",
+          "stationId": "424"
+        },
+        {
+          "capacity": 8,
+          "isVirtual": false,
+          "lat": 59.932792,
+          "lon": 10.734457,
+          "name": "Adamstuen",
+          "stationId": "425"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.91728078292675,
+          "lon": 10.708375798767435,
+          "name": "Gimle Kino",
+          "stationId": "426"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.920218,
+          "lon": 10.717978,
+          "name": "Briskeby",
+          "stationId": "427"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.9193337,
+          "lon": 10.6968953,
+          "name": "Olav Kyrres plass",
+          "stationId": "428"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.92208,
+          "lon": 10.68588,
+          "name": "Thune",
+          "stationId": "429"
+        },
+        {
+          "capacity": 42,
+          "isVirtual": false,
+          "lat": 59.91372007130073,
+          "lon": 10.735886645853412,
+          "name": "Spikersuppa Vest",
+          "stationId": "430"
+        },
+        {
+          "capacity": 20,
+          "isVirtual": false,
+          "lat": 59.927292,
+          "lon": 10.773185,
+          "name": "Chr. Michelsens Gate",
+          "stationId": "431"
+        },
+        {
+          "capacity": 12,
+          "isVirtual": false,
+          "lat": 59.924821,
+          "lon": 10.739909,
+          "name": "St. Hanshaugen park sør",
+          "stationId": "432"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.931828,
+          "lon": 10.748745,
+          "name": "Ila",
+          "stationId": "433"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.9358883,
+          "lon": 10.7350062,
+          "name": "Lindern",
+          "stationId": "434"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.915424,
+          "lon": 10.714577,
+          "name": "Fram-gården",
+          "stationId": "435"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.9244031,
+          "lon": 10.7130691,
+          "name": "Vestkanttorvet",
+          "stationId": "436"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.91546786564256,
+          "lon": 10.751140873016311,
+          "name": "Sentrum Scene",
+          "stationId": "437"
+        },
+        {
+          "capacity": 42,
+          "isVirtual": false,
+          "lat": 59.949239,
+          "lon": 10.768576,
+          "name": "BI Nydalen",
+          "stationId": "438"
+        },
+        {
+          "capacity": 25,
+          "isVirtual": false,
+          "lat": 59.9283928,
+          "lon": 10.7559693,
+          "name": "Mølleparken",
+          "stationId": "439"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.9172088,
+          "lon": 10.7622135,
+          "name": "Lakkegata",
+          "stationId": "440"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.903989,
+          "lon": 10.741077,
+          "name": "Vippetangen øst",
+          "stationId": "441"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.92251,
+          "lon": 10.75101,
+          "name": "Vulkan",
+          "stationId": "442"
+        },
+        {
+          "capacity": 20,
+          "isVirtual": false,
+          "lat": 59.925265,
+          "lon": 10.750462,
+          "name": "AHO",
+          "stationId": "444"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.921673,
+          "lon": 10.67666,
+          "name": "Sjølyst",
+          "stationId": "445"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.925471317049954,
+          "lon": 10.73121932213806,
+          "name": "Bislett Stadion",
+          "stationId": "446"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.904473,
+          "lon": 10.786167,
+          "name": "Kværnerbyen",
+          "stationId": "447"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.91357497092093,
+          "lon": 10.726229742333288,
+          "name": "Ruseløkkgården",
+          "stationId": "449"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.919524,
+          "lon": 10.70884,
+          "name": "Elisenberg",
+          "stationId": "450"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.929419,
+          "lon": 10.726195,
+          "name": "Suhms gate",
+          "stationId": "451"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.903989,
+          "lon": 10.740627,
+          "name": "Vippetangen vest",
+          "stationId": "452"
+        },
+        {
+          "capacity": 36,
+          "isVirtual": false,
+          "lat": 59.92753764682686,
+          "lon": 10.710262803261259,
+          "name": "Frogner Stadion",
+          "stationId": "453"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.9198098,
+          "lon": 10.651118,
+          "name": "Furulund",
+          "stationId": "454"
+        },
+        {
+          "capacity": 12,
+          "isVirtual": false,
+          "lat": 59.922337,
+          "lon": 10.7617503,
+          "name": "Sofienbergparken sør",
+          "stationId": "455"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.91270214297066,
+          "lon": 10.813812726778053,
+          "name": "Bryn Brannstasjon",
+          "stationId": "4552"
+        },
+        {
+          "capacity": 35,
+          "isVirtual": false,
+          "lat": 59.9103558,
+          "lon": 10.7051061,
+          "name": "Frognerstranda",
+          "stationId": "456"
+        },
+        {
+          "capacity": 10,
+          "isVirtual": false,
+          "lat": 59.9230577,
+          "lon": 10.7717192,
+          "name": "Trondheimsveien",
+          "stationId": "457"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.928349,
+          "lon": 10.77837,
+          "name": "Jenny Braatens Plass",
+          "stationId": "458"
+        },
+        {
+          "capacity": 12,
+          "isVirtual": false,
+          "lat": 59.9281319,
+          "lon": 10.71842,
+          "name": "Valkyrieplassen",
+          "stationId": "459"
+        },
+        {
+          "capacity": 29,
+          "isVirtual": false,
+          "lat": 59.915417698024385,
+          "lon": 10.76933022142641,
+          "name": "Botanisk Hage sør",
+          "stationId": "460"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.908576,
+          "lon": 10.786856,
+          "name": "Vålerenga",
+          "stationId": "461"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.92714,
+          "lon": 10.730981,
+          "name": "Stensparken",
+          "stationId": "462"
+        },
+        {
+          "capacity": 20,
+          "isVirtual": false,
+          "lat": 59.9207284,
+          "lon": 10.7594857,
+          "name": "Schous plass trikkestopp",
+          "stationId": "463"
+        },
+        {
+          "capacity": 44,
+          "isVirtual": false,
+          "lat": 59.9051667124711,
+          "lon": 10.753782728070433,
+          "name": "Sukkerbiten",
+          "stationId": "464"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.909006,
+          "lon": 10.75618,
+          "name": "Bjørvika",
+          "stationId": "465"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.937913,
+          "lon": 10.73048,
+          "name": "Ullevålsalléen",
+          "stationId": "466"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.912793405455375,
+          "lon": 10.710103028570302,
+          "name": "Skillebekk",
+          "stationId": "468"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.91606483663281,
+          "lon": 10.807177606311825,
+          "name": "Valle Vision",
+          "stationId": "4683"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.920852,
+          "lon": 10.733357,
+          "name": "Studentparlamentet",
+          "stationId": "469"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.92981128213597,
+          "lon": 10.743587594130702,
+          "name": "St. Hanshaugen park nord",
+          "stationId": "470"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.9378,
+          "lon": 10.7541,
+          "name": "Arendalsgata",
+          "stationId": "472"
+        },
+        {
+          "capacity": 9,
+          "isVirtual": false,
+          "lat": 59.926697,
+          "lon": 10.716195,
+          "name": "Majorstuveien",
+          "stationId": "473"
+        },
+        {
+          "capacity": 42,
+          "isVirtual": false,
+          "lat": 59.940873733543725,
+          "lon": 10.720778851520523,
+          "name": "Blindern studentparkering",
+          "stationId": "474"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.9146509,
+          "lon": 10.7598719,
+          "name": "Hausmanns bru",
+          "stationId": "475"
+        },
+        {
+          "capacity": 20,
+          "isVirtual": false,
+          "lat": 59.919111,
+          "lon": 10.736179,
+          "name": "Edvard Storms gate",
+          "stationId": "476"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.91188166348664,
+          "lon": 10.749962544694341,
+          "name": "Jernbanetorget",
+          "stationId": "478"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.909467,
+          "lon": 10.722509,
+          "name": "Tjuvholmen",
+          "stationId": "479"
+        },
+        {
+          "capacity": 25,
+          "isVirtual": false,
+          "lat": 59.9121109,
+          "lon": 10.7661939,
+          "name": "Helga Helgesens plass",
+          "stationId": "480"
+        },
+        {
+          "capacity": 42,
+          "isVirtual": false,
+          "lat": 59.910924,
+          "lon": 10.736215,
+          "name": "Rådhusgata",
+          "stationId": "481"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.952868,
+          "lon": 10.766483,
+          "name": "Nydalen",
+          "stationId": "482"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.915451,
+          "lon": 10.758328,
+          "name": "Hausmanns gate",
+          "stationId": "483"
+        },
+        {
+          "capacity": 35,
+          "isVirtual": false,
+          "lat": 59.92033,
+          "lon": 10.683814,
+          "name": "Karenslyst allé",
+          "stationId": "484"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.911453,
+          "lon": 10.776072,
+          "name": "Sommerfrydhagen",
+          "stationId": "485"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.93522040770026,
+          "lon": 10.726476622250004,
+          "name": "Blindern Studenthus",
+          "stationId": "486"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.926929,
+          "lon": 10.776971,
+          "name": "Carl Berners plass nord",
+          "stationId": "487"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.93507,
+          "lon": 10.76915,
+          "name": "Torshovparken vest",
+          "stationId": "488"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.91598309274519,
+          "lon": 10.75155119076095,
+          "name": "Torggata",
+          "stationId": "489"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.91366109486603,
+          "lon": 10.75729364846211,
+          "name": "Brugata",
+          "stationId": "491"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.9243639,
+          "lon": 10.7615858,
+          "name": "Sofienbergparken nordvest",
+          "stationId": "493"
+        },
+        {
+          "capacity": 41,
+          "isVirtual": false,
+          "lat": 59.91351552854147,
+          "lon": 10.757334670552268,
+          "name": "Vaterlandsparken",
+          "stationId": "495"
+        },
+        {
+          "capacity": 45,
+          "isVirtual": false,
+          "lat": 59.937957367051965,
+          "lon": 10.719488529430388,
+          "name": "Fysikkbygningen",
+          "stationId": "496"
+        },
+        {
+          "capacity": 27,
+          "isVirtual": false,
+          "lat": 59.919252,
+          "lon": 10.774712,
+          "name": "Sirkustomta",
+          "stationId": "497"
+        },
+        {
+          "capacity": 12,
+          "isVirtual": false,
+          "lat": 59.927601526969,
+          "lon": 10.799203208176777,
+          "name": "HasleLinje",
+          "stationId": "498"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.925488,
+          "lon": 10.746058,
+          "name": "Bjerregaards gate",
+          "stationId": "499"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.9172794,
+          "lon": 10.7581553,
+          "name": "Anker Hotel",
+          "stationId": "500"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.935995,
+          "lon": 10.765413,
+          "name": "Krebs' gate",
+          "stationId": "501"
+        },
+        {
+          "capacity": 33,
+          "isVirtual": false,
+          "lat": 59.927605868377185,
+          "lon": 10.76598469881135,
+          "name": "Fagerheimgata",
+          "stationId": "503"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.93209525310027,
+          "lon": 10.723364916539367,
+          "name": "Marienlystparken",
+          "stationId": "505"
+        },
+        {
+          "capacity": 27,
+          "isVirtual": false,
+          "lat": 59.92012811804052,
+          "lon": 10.768875408563598,
+          "name": "Botanisk Hage vest",
+          "stationId": "506"
+        },
+        {
+          "capacity": 20,
+          "isVirtual": false,
+          "lat": 59.91914743024347,
+          "lon": 10.76412958416006,
+          "name": "Jens Bjelkes Gate",
+          "stationId": "507"
+        },
+        {
+          "capacity": 12,
+          "isVirtual": false,
+          "lat": 59.912711,
+          "lon": 10.735595,
+          "name": "Kjeld Stubs gate",
+          "stationId": "509"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.915088,
+          "lon": 10.7222803,
+          "name": "Henrik Ibsens gate",
+          "stationId": "511"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.919114923856284,
+          "lon": 10.757830546598228,
+          "name": "Leirfallsgata",
+          "stationId": "5113"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.9131891,
+          "lon": 10.7897605,
+          "name": "Ensjø T-bane",
+          "stationId": "512"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.9273747,
+          "lon": 10.7960147,
+          "name": "Bøkkerveien",
+          "stationId": "513"
+        },
+        {
+          "capacity": 12,
+          "isVirtual": false,
+          "lat": 59.9212063,
+          "lon": 10.7699892,
+          "name": "Sofienberggata",
+          "stationId": "514"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.922839,
+          "lon": 10.775658,
+          "name": "Finnmarksgata",
+          "stationId": "516"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.9433939,
+          "lon": 10.7482848,
+          "name": "Tåsenløkka",
+          "stationId": "517"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.92481470756533,
+          "lon": 10.739355810852345,
+          "name": "Schwensens gate",
+          "stationId": "518"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.918578143336774,
+          "lon": 10.703899530059402,
+          "name": "Thomas Heftyes plass",
+          "stationId": "519"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.9186359,
+          "lon": 10.7523939,
+          "name": "Jess Carlsens gate",
+          "stationId": "521"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.9126744968093,
+          "lon": 10.742025127034452,
+          "name": "Egertorget",
+          "stationId": "5217"
+        },
+        {
+          "capacity": 10,
+          "isVirtual": false,
+          "lat": 59.9123469,
+          "lon": 10.7638147,
+          "name": "Mandalls gate",
+          "stationId": "522"
+        },
+        {
+          "capacity": 20,
+          "isVirtual": false,
+          "lat": 59.9499087772916,
+          "lon": 10.730185223294967,
+          "name": "Blindern vgs",
+          "stationId": "5220"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.9115945,
+          "lon": 10.7617736,
+          "name": "Tøyenbekken",
+          "stationId": "523"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.93306277703957,
+          "lon": 10.7039612051301,
+          "name": "Volvat",
+          "stationId": "524"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.937205,
+          "lon": 10.7605813,
+          "name": "Myraløkka Øst",
+          "stationId": "525"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.9138973,
+          "lon": 10.7423101,
+          "name": "Lille Grensen",
+          "stationId": "526"
+        },
+        {
+          "capacity": 12,
+          "isVirtual": false,
+          "lat": 59.9123341,
+          "lon": 10.752292,
+          "name": "Biskop Gunnerus' gate",
+          "stationId": "527"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.9327726,
+          "lon": 10.7114661,
+          "name": "Friggfeltet",
+          "stationId": "529"
+        },
+        {
+          "capacity": 10,
+          "isVirtual": false,
+          "lat": 59.9193095,
+          "lon": 10.7343051,
+          "name": "Holbergs plass",
+          "stationId": "530"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.93586793735034,
+          "lon": 10.681128349723906,
+          "name": "Monolittveien",
+          "stationId": "531"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.90918420865812,
+          "lon": 10.81431433498766,
+          "name": "Brynseng T-bane",
+          "stationId": "532"
+        },
+        {
+          "capacity": 12,
+          "isVirtual": false,
+          "lat": 59.915262,
+          "lon": 10.7253157,
+          "name": "Sørvest for Slottsparken",
+          "stationId": "533"
+        },
+        {
+          "capacity": 39,
+          "isVirtual": false,
+          "lat": 59.91022708810348,
+          "lon": 10.720971630915614,
+          "name": "Filipstadveien",
+          "stationId": "534"
+        },
+        {
+          "capacity": 27,
+          "isVirtual": false,
+          "lat": 59.9200421,
+          "lon": 10.726634,
+          "name": "Uranienborgveien",
+          "stationId": "535"
+        },
+        {
+          "capacity": 10,
+          "isVirtual": false,
+          "lat": 59.936302037310725,
+          "lon": 10.705449311057379,
+          "name": "Diakonhjemmet",
+          "stationId": "536"
+        },
+        {
+          "capacity": 20,
+          "isVirtual": false,
+          "lat": 59.91780874269165,
+          "lon": 10.738664052059619,
+          "name": "St. Olavs gate",
+          "stationId": "537"
+        },
+        {
+          "capacity": 36,
+          "isVirtual": false,
+          "lat": 59.93363159074286,
+          "lon": 10.769118139881124,
+          "name": "Lilleborgbanen",
+          "stationId": "540"
+        },
+        {
+          "capacity": 12,
+          "isVirtual": false,
+          "lat": 59.9080552,
+          "lon": 10.7479977,
+          "name": "Langkaia",
+          "stationId": "541"
+        },
+        {
+          "capacity": 20,
+          "isVirtual": false,
+          "lat": 59.9224256,
+          "lon": 10.7554274,
+          "name": "Grünerhagen Nord",
+          "stationId": "542"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.94190336268767,
+          "lon": 10.674100664853142,
+          "name": "Makrellbekken T",
+          "stationId": "5424"
+        },
+        {
+          "capacity": 20,
+          "isVirtual": false,
+          "lat": 59.91381587564694,
+          "lon": 10.798093360118871,
+          "name": "Fyrstikktorget",
+          "stationId": "543"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.933349714027514,
+          "lon": 10.71960326747913,
+          "name": "NRK",
+          "stationId": "5431"
+        },
+        {
+          "capacity": 39,
+          "isVirtual": false,
+          "lat": 59.91188955934541,
+          "lon": 10.747774569135402,
+          "name": "Arkaden Sør",
+          "stationId": "545"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.9112227,
+          "lon": 10.7481976,
+          "name": "Skippergata",
+          "stationId": "547"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.91731888534716,
+          "lon": 10.716909039918278,
+          "name": "Colbjørnsens gate",
+          "stationId": "548"
+        },
+        {
+          "capacity": 9,
+          "isVirtual": false,
+          "lat": 59.9261462,
+          "lon": 10.7310355,
+          "name": "Thereses gate",
+          "stationId": "550"
+        },
+        {
+          "capacity": 35,
+          "isVirtual": false,
+          "lat": 59.922425,
+          "lon": 10.758182,
+          "name": "Olaf Ryes plass",
+          "stationId": "551"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.90792335394997,
+          "lon": 10.762664918094174,
+          "name": "Trelastgata",
+          "stationId": "552"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.952615806973114,
+          "lon": 10.751224444725295,
+          "name": "Tåsen Senter",
+          "stationId": "554"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.9337026,
+          "lon": 10.7519299,
+          "name": "Griffenfeldts gate",
+          "stationId": "555"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.9262242,
+          "lon": 10.7296246,
+          "name": "Pilestredet",
+          "stationId": "556"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.910974,
+          "lon": 10.7277001,
+          "name": "Dokkveien",
+          "stationId": "558"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.9238488076723,
+          "lon": 10.676038846936422,
+          "name": "Hoffsveien",
+          "stationId": "559"
+        },
+        {
+          "capacity": 9,
+          "isVirtual": false,
+          "lat": 59.94595873686865,
+          "lon": 10.7104318614318,
+          "name": "Gaustad T-bane",
+          "stationId": "560"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.93347989334691,
+          "lon": 10.726294394131088,
+          "name": "Kirkeveien",
+          "stationId": "561"
+        },
+        {
+          "capacity": 40,
+          "isVirtual": false,
+          "lat": 59.917485,
+          "lon": 10.732128,
+          "name": "Slottsparken Øst",
+          "stationId": "562"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.9126844,
+          "lon": 10.7229003,
+          "name": "Huitfeldts gate",
+          "stationId": "563"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.9224222,
+          "lon": 10.7272388,
+          "name": "Oscars gate",
+          "stationId": "564"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.9309181,
+          "lon": 10.7728203,
+          "name": "Mailundveien",
+          "stationId": "565"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.92735028853744,
+          "lon": 10.675358878141424,
+          "name": "Hoff terrasse holdeplass",
+          "stationId": "566"
+        },
+        {
+          "capacity": 39,
+          "isVirtual": false,
+          "lat": 59.945450633702556,
+          "lon": 10.713867957672134,
+          "name": "Forskningsveien",
+          "stationId": "567"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.9170851,
+          "lon": 10.7128796,
+          "name": "Frognerveien",
+          "stationId": "568"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.91783548782385,
+          "lon": 10.766373769557958,
+          "name": "Botanisk hage sør-vest",
+          "stationId": "569"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.9347352,
+          "lon": 10.7096985,
+          "name": "Frøen T-bane",
+          "stationId": "570"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.9101207,
+          "lon": 10.7407129,
+          "name": "Over Rådhusgata",
+          "stationId": "571"
+        },
+        {
+          "capacity": 40,
+          "isVirtual": false,
+          "lat": 59.92226850808104,
+          "lon": 10.679579749668129,
+          "name": "Skøyen",
+          "stationId": "572"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.911776299209265,
+          "lon": 10.735113005880237,
+          "name": "Tordenskiolds gate",
+          "stationId": "573"
+        },
+        {
+          "capacity": 12,
+          "isVirtual": false,
+          "lat": 59.9107393,
+          "lon": 10.7609998,
+          "name": "Annette Thommessens Plass",
+          "stationId": "574"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.94743324225673,
+          "lon": 10.732569703704815,
+          "name": "Sognsveien",
+          "stationId": "575"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.911392299457006,
+          "lon": 10.747281829592453,
+          "name": "Dronningens gate",
+          "stationId": "576"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.9121472,
+          "lon": 10.7480527,
+          "name": "Arkaden Nord",
+          "stationId": "577"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.922777,
+          "lon": 10.738655,
+          "name": "Hallings gate",
+          "stationId": "578"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.924732,
+          "lon": 10.724628,
+          "name": "Bogstadveien",
+          "stationId": "579"
+        },
+        {
+          "capacity": 45,
+          "isVirtual": false,
+          "lat": 59.939025551395765,
+          "lon": 10.723002619643406,
+          "name": "Georg Morgenstiernes hus",
+          "stationId": "580"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.908227,
+          "lon": 10.781088,
+          "name": "Jordalgata",
+          "stationId": "581"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.94114763297182,
+          "lon": 10.750775120272449,
+          "name": "Stavangergata",
+          "stationId": "582"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.90707579234818,
+          "lon": 10.779164402446728,
+          "name": "Galgeberg",
+          "stationId": "583"
+        },
+        {
+          "capacity": 35,
+          "isVirtual": false,
+          "lat": 59.9268942,
+          "lon": 10.7207894,
+          "name": "Henrik Wergelands allé",
+          "stationId": "584"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.92114988507087,
+          "lon": 10.754714015938562,
+          "name": "Nordre gate",
+          "stationId": "585"
+        },
+        {
+          "capacity": 27,
+          "isVirtual": false,
+          "lat": 59.9294565845173,
+          "lon": 10.769121495700826,
+          "name": "Københavngata busstopp",
+          "stationId": "586"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.9180141,
+          "lon": 10.7184345,
+          "name": "Meltzers gate",
+          "stationId": "588"
+        },
+        {
+          "capacity": 27,
+          "isVirtual": false,
+          "lat": 59.89851335112289,
+          "lon": 10.674409149852835,
+          "name": "Huk 1",
+          "stationId": "589"
+        },
+        {
+          "capacity": 40,
+          "isVirtual": false,
+          "lat": 59.9294351,
+          "lon": 10.7136816,
+          "name": "Majorstua skole",
+          "stationId": "590"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.92464487862039,
+          "lon": 10.781726510450724,
+          "name": "Grenseveien",
+          "stationId": "591"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.94558091179507,
+          "lon": 10.760323881579982,
+          "name": "Badebakken",
+          "stationId": "592"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.9392403070359,
+          "lon": 10.768771317790996,
+          "name": "Bjølsen mølle",
+          "stationId": "593"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.915182,
+          "lon": 10.782129,
+          "name": "Kampen park Øst",
+          "stationId": "594"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.914871,
+          "lon": 10.701037,
+          "name": "Skarpsnoparken",
+          "stationId": "595"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.931020132184614,
+          "lon": 10.736036647971048,
+          "name": "Idioten",
+          "stationId": "596"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.920995,
+          "lon": 10.750358,
+          "name": "Fredensborg",
+          "stationId": "597"
+        },
+        {
+          "capacity": 33,
+          "isVirtual": false,
+          "lat": 59.923229,
+          "lon": 10.766171,
+          "name": "Sofienbergparken nord",
+          "stationId": "598"
+        },
+        {
+          "capacity": 48,
+          "isVirtual": false,
+          "lat": 59.910319910943485,
+          "lon": 10.749992946324426,
+          "name": "Paléhaven",
+          "stationId": "599"
+        },
+        {
+          "capacity": 12,
+          "isVirtual": false,
+          "lat": 59.905323,
+          "lon": 10.7689579,
+          "name": "Dyvekes bru",
+          "stationId": "600"
+        },
+        {
+          "capacity": 20,
+          "isVirtual": false,
+          "lat": 59.9534114,
+          "lon": 10.7577241,
+          "name": "Rolf Wickstrøms vei",
+          "stationId": "601"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.930448367431495,
+          "lon": 10.675795947855363,
+          "name": "Jarlsborgveien",
+          "stationId": "602"
+        },
+        {
+          "capacity": 35,
+          "isVirtual": false,
+          "lat": 59.910499184043516,
+          "lon": 10.750505532434318,
+          "name": "Østbanehallen",
+          "stationId": "6026"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.9225392,
+          "lon": 10.7045406,
+          "name": "Frogner plass",
+          "stationId": "603"
+        },
+        {
+          "capacity": 18,
+          "isVirtual": false,
+          "lat": 59.917023632719406,
+          "lon": 10.779880090762617,
+          "name": "Økernveien",
+          "stationId": "605"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.93277225626508,
+          "lon": 10.758594919923468,
+          "name": "Marcus Thranes gate",
+          "stationId": "607"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.93068679863987,
+          "lon": 10.746273349149249,
+          "name": "Colletts gate",
+          "stationId": "608"
+        },
+        {
+          "capacity": 27,
+          "isVirtual": false,
+          "lat": 59.911097523090575,
+          "lon": 10.749409191256262,
+          "name": "Fred Olsens gate",
+          "stationId": "609"
+        },
+        {
+          "capacity": 20,
+          "isVirtual": false,
+          "lat": 59.9099822,
+          "lon": 10.7914482,
+          "name": "Sotahjørnet",
+          "stationId": "610"
+        },
+        {
+          "capacity": 39,
+          "isVirtual": false,
+          "lat": 59.908454,
+          "lon": 10.741869,
+          "name": "Bankplassen",
+          "stationId": "611"
+        },
+        {
+          "capacity": 19,
+          "isVirtual": false,
+          "lat": 59.91662195885618,
+          "lon": 10.783309055819714,
+          "name": "Ensjøveien",
+          "stationId": "612"
+        },
+        {
+          "capacity": 27,
+          "isVirtual": false,
+          "lat": 59.92095635370271,
+          "lon": 10.714055629614734,
+          "name": "Schives gate",
+          "stationId": "613"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.938863086921295,
+          "lon": 10.780603250331886,
+          "name": "Sinsen T-bane",
+          "stationId": "614"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.9135227,
+          "lon": 10.7301061,
+          "name": "Munkedamsveien",
+          "stationId": "615"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.906922167198275,
+          "lon": 10.746530272588245,
+          "name": "Salt",
+          "stationId": "616"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.92716771401357,
+          "lon": 10.749754560118863,
+          "name": "Bjerregaardsgate Øst",
+          "stationId": "617"
+        },
+        {
+          "capacity": 42,
+          "isVirtual": false,
+          "lat": 59.94247260310697,
+          "lon": 10.723715245368956,
+          "name": "Bak Niels Treschows hus sør",
+          "stationId": "618"
+        },
+        {
+          "capacity": 42,
+          "isVirtual": false,
+          "lat": 59.942780248542554,
+          "lon": 10.722993731144015,
+          "name": "Bak Niels Treschows hus nord",
+          "stationId": "619"
+        },
+        {
+          "capacity": 40,
+          "isVirtual": false,
+          "lat": 59.92377440938114,
+          "lon": 10.734712874574,
+          "name": "Bislettgata",
+          "stationId": "620"
+        },
+        {
+          "capacity": 27,
+          "isVirtual": false,
+          "lat": 59.93285662158759,
+          "lon": 10.777633472422016,
+          "name": "Torshovdalen øst",
+          "stationId": "621"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.9238826,
+          "lon": 10.7313627,
+          "name": "Pilestredet 63",
+          "stationId": "622"
+        },
+        {
+          "capacity": 21,
+          "isVirtual": false,
+          "lat": 59.915079772688216,
+          "lon": 10.730589336669283,
+          "name": "7. juni-plassen",
+          "stationId": "623"
+        },
+        {
+          "capacity": 20,
+          "isVirtual": false,
+          "lat": 59.9287502718149,
+          "lon": 10.767546377298158,
+          "name": "Dælenenggata",
+          "stationId": "624"
+        },
+        {
+          "capacity": 42,
+          "isVirtual": false,
+          "lat": 59.91336,
+          "lon": 10.737663,
+          "name": "Spikersuppa Øst",
+          "stationId": "625"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.9204038,
+          "lon": 10.691147,
+          "name": "Drammensveien",
+          "stationId": "626"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.922723981014094,
+          "lon": 10.67862514536896,
+          "name": "Skøyen Stasjon",
+          "stationId": "627"
+        },
+        {
+          "capacity": 15,
+          "isVirtual": false,
+          "lat": 59.90321254732584,
+          "lon": 10.7673442932541,
+          "name": "Oslo Hospital",
+          "stationId": "735"
+        },
+        {
+          "capacity": 24,
+          "isVirtual": false,
+          "lat": 59.908255,
+          "lon": 10.7678,
+          "name": "Munkegata",
+          "stationId": "737"
+        },
+        {
+          "capacity": 12,
+          "isVirtual": false,
+          "lat": 59.9034528,
+          "lon": 10.777958,
+          "name": "Lodalen busstopp",
+          "stationId": "738"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.924342,
+          "lon": 10.79285,
+          "name": "Hasle",
+          "stationId": "742"
+        },
+        {
+          "capacity": 10,
+          "isVirtual": false,
+          "lat": 59.9315302,
+          "lon": 10.762169,
+          "name": "Hallénparken",
+          "stationId": "744"
+        },
+        {
+          "capacity": 12,
+          "isVirtual": false,
+          "lat": 59.919001,
+          "lon": 10.692321,
+          "name": "Bygdøy allé",
+          "stationId": "746"
+        },
+        {
+          "capacity": 30,
+          "isVirtual": false,
+          "lat": 59.914145,
+          "lon": 10.715505,
+          "name": "Hydroparken",
+          "stationId": "748"
+        },
+        {
+          "capacity": 12,
+          "isVirtual": false,
+          "lat": 59.91015615055511,
+          "lon": 10.743456971511705,
+          "name": "Kirkegata 15",
+          "stationId": "787"
+        },
+        {
+          "capacity": 25,
+          "isVirtual": false,
+          "lat": 59.91320242563816,
+          "lon": 10.767579386407874,
+          "name": "Enerhaugen",
+          "stationId": "970"
+        }
+      ]
+    }
+  ]
+}

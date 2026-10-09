@@ -1,0 +1,385 @@
+{
+  "adapterVersion": "gbfs-2.3/1",
+  "catalogSha256": "96846d0dc9fe9f939d18261ae40ba3cf9d6ce86c9f5309d57986dc570e91090f",
+  "engineVersion": "0.1.0",
+  "eventCount": 218,
+  "eventSchemaVersion": 1,
+  "eventsSha256": "48e2c7d55854510f1845b9ef2950aa0274a7c0f4363f090a71032f3b0eed0031",
+  "gbfsVersion": "2.3",
+  "hashVersion": 1,
+  "incidents": [
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "94e4122733a57d95",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "1919"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "6047138f0dfb5ea0",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "2270"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "530a9282955c04e0",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "2307"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "f1fe7e636581551f",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "2328"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "dc8bc1dd9bf4aced",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "2355"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "0af51a63b9cdda42",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "383"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "48e0484ab50f6bec",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "391"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "f5d0693272792d40",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "441"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "420b7099d9ef4fa2",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "451"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "f724976cea564d31",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "452"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "e6d09c4fe395a7c3",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "468"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "1f7ca35ab2dfce1c",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "469"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "fd30a27a44600833",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "478"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "8855e9b005c25a34",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "478"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "608aefc8728dce94",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "498"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "18577f54f1e385ce",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "517"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "8e40d3a68bba57c6",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "518"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "dcbbc32a73e60c1c",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "523"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "c4dad92eba13bff6",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "524"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "b8ac4066b9f3f1bc",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "527"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "09fd8a69e4e77e1f",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "536"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "bad00a74082c8530",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "5424"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "12e7ce5c610a1ff1",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "543"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "945d5016de735224",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "552"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "1b84637712cbe69a",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "575"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "a18f1ea74d8b4b1c",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "581"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "e870de1a100a30ac",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "586"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "058d1c4f8eb8e16b",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "600"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "c12b6f43f334735c",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "614"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "03908dcd6a465cd0",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "735"
+    },
+    {
+      "confirmedOffsetSeconds": 44.708,
+      "confirmedSequence": 5,
+      "incidentId": "cfb4e296accf675b",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "737"
+    },
+    {
+      "confirmedOffsetSeconds": 194.811,
+      "confirmedSequence": 14,
+      "incidentId": "68fca86d409ec303",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "2334"
+    },
+    {
+      "confirmedOffsetSeconds": 299.875,
+      "confirmedSequence": 20,
+      "incidentId": "b74b1570cad4e3e1",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "444"
+    },
+    {
+      "confirmedOffsetSeconds": 720.148,
+      "confirmedSequence": 45,
+      "incidentId": "1e79637b11f0a724",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "482"
+    },
+    {
+      "confirmedOffsetSeconds": 1125.368,
+      "confirmedSequence": 69,
+      "incidentId": "cfbbe13737c3c75f",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "470"
+    },
+    {
+      "confirmedOffsetSeconds": 1125.368,
+      "confirmedSequence": 69,
+      "incidentId": "a1fb05a4f62f2840",
+      "kind": "return_unavailable",
+      "resolvedOffsetSeconds": 1560.568,
+      "resolvedSequence": 95,
+      "stationId": "537"
+    },
+    {
+      "confirmedOffsetSeconds": 1380.493,
+      "confirmedSequence": 85,
+      "incidentId": "6672068921633605",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "403"
+    },
+    {
+      "confirmedOffsetSeconds": 1740.683,
+      "confirmedSequence": 106,
+      "incidentId": "8f24bdf712c6a16a",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": 2040.832,
+      "resolvedSequence": 124,
+      "stationId": "412"
+    },
+    {
+      "confirmedOffsetSeconds": 1785.692,
+      "confirmedSequence": 109,
+      "incidentId": "c62beb575d152655",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "2308"
+    },
+    {
+      "confirmedOffsetSeconds": 1815.695,
+      "confirmedSequence": 111,
+      "incidentId": "84d9dcbfbaa1d9a4",
+      "kind": "pickup_unavailable",
+      "resolvedOffsetSeconds": null,
+      "resolvedSequence": null,
+      "stationId": "397"
+    }
+  ],
+  "mode": "recorded_replay",
+  "parameters": null,
+  "periodEnd": "2026-10-09T23:25:15.533Z",
+  "periodEndLocal": "2026-10-10T01:25:15+02:00",
+  "periodStart": "2026-10-09T22:25:27.795Z",
+  "periodStartLocal": "2026-10-10T00:25:27+02:00",
+  "policyVersion": "1.0.0+6265a45d",
+  "recordingHash": "a5c03364ea0bac77e08ba9f76b31c0e755117d2ad588cc1bb9fa57acd1c62acb",
+  "schemaVersion": 1,
+  "seed": null,
+  "streamId": "oslobysykkel:a5c03364",
+  "systemId": "oslobysykkel",
+  "timezone": "Europe/Oslo"
+}
