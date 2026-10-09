@@ -46,6 +46,14 @@ Cada execução registrada no repositório, com o commit do código usado. Coman
 | Verificação final com replay real: 21 testes Python do replay, 14 E2E Pages; bundle de 118.063 bytes gzip | `docs/results/validacao-20261009.md` | `uv run --project apps/backend pytest apps/backend/tests/test_replay.py -q`; em `apps/web`: `corepack pnpm e2e`, `corepack pnpm check:bundle` | f64943d | 2026-10-09 23:26 |
 | Replay real no Caddy em 1440, 768 e 320 px: modo, data, mapa e nove verificações de overflow; nenhum erro de console ou CSP | `docs/results/validacao-20261009.md`, `docs/media/recorded-1440.png`, `docs/media/recorded-320.png` | Playwright: `page.goto`, pausa, salto para Jakob kirke e `page.screenshot({ fullPage: true })`, conforme sequência no relatório | f64943d (mesmo artefato, ainda sem commit durante a captura) | 2026-10-09 23:27 |
 
+## Identidade visual
+
+| Resultado | Arquivo | Comando | Commit | Data (UTC) |
+|---|---|---|---|---|
+| Identidade visual: 69 testes unitários, 14 E2E Pages e 2 capturas; bundle de 119.270 bytes gzip; replay no Compose em três larguras sem overflow | [Relatório](identity-20261009.md), `docs/media/identity-desktop.png`, `docs/media/identity-mobile.png` | `corepack pnpm --dir apps/web exec playwright test --project=e2e --project=media tests/e2e/pages.spec.ts tests/media/identity.spec.ts`; demais comandos no relatório | c830eaa | 2026-10-09 |
+| Web Vitals antes da reserva de espaço no cabeçalho, com outros Chromium em execução: medianas LCP 3.692 ms, CLS 0,123 e INP 384 ms | `docs/results/data/web-vitals-identity-20261009.json` | `corepack pnpm --dir apps/web exec playwright test --project=perf tests/performance/vitals.spec.ts` | 9e7cf8e com alterações locais | 2026-10-09 23:44:45 |
+| Web Vitals final, isolado dos outros Chromium: medianas LCP 3.248 ms, CLS 0,004 e INP 240 ms; limites de comparação no relatório | `docs/results/data/web-vitals-identity-final-20261009.json`, [Relatório](identity-20261009.md#web-vitals) | mesmo comando da linha anterior | c830eaa | 2026-10-09 23:49:57 |
+
 ## Pendente
 
 - A coleta de dia e de outras redes está em "Coleta pendente", em `feed-validation.md`. A gravação longa da demo passou no aceite e já tem artefato.
