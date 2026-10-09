@@ -45,7 +45,10 @@ def test_sigterm_sends_stream_closed_before_the_graceful_timeout(
     env = {**os.environ, "DATABASE_URL": clean_database.api_url, "CYCLEOPS_LOG_LEVEL": "INFO"}
     env.pop("FORWARDED_ALLOW_IPS", None)
     command = [sys.executable, "-m", "cycleops.api", "--host", "127.0.0.1", "--port", str(port)]
-    flags = subprocess.CREATE_NEW_PROCESS_GROUP if sys.platform == "win32" else 0
+    if sys.platform == "win32":
+        flags = subprocess.CREATE_NEW_PROCESS_GROUP
+    else:
+        flags = 0
     log_path = tmp_path / "api.log"
 
     async def go(proc: subprocess.Popen[bytes]) -> tuple[list[tuple[str, Any, str]], float]:
