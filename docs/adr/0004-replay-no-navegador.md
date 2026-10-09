@@ -1,6 +1,6 @@
 # ADR 0004: replay no navegador com Clock e compile-replay
 
-Status: Proposto, 2026-10-08, revisto no fim do MVP.
+Status: Proposto, 2026-10-08, revisto em 2026-10-09 com a gravação real aceita.
 
 ## Contexto
 
@@ -16,7 +16,9 @@ A demo pública roda no GitHub Pages, sem servidor. Ela precisa mostrar o mesmo 
 - O navegador só reproduz: pausa, 1x, 5x, 20x, passo e "ir para o incidente" pelos offsets do manifesto. Nenhuma regra é recalculada no cliente.
 - Uma gravação só vira replay se passar no aceite: pelo menos um incidente que vai de `confirmed` a `resolved` dentro dela. Sem gravação aceita, a demo abre na simulação, rotulada como tal.
 
-Estado em 2026-10-08: o artefato sintético da demo tem 242 eventos e 85 KB em gzip. A única gravação real, a amostra de 10 min de 2026-10-07, não passa no aceite (40 incidentes confirmados e nenhum resolvido), então ainda não existe replay gravado.
+A gravação iniciada em 2026-10-09 (UTC) passou no aceite: o incidente de falta de vagas em St. Olavs gate (estação 537) foi confirmado e resolvido dentro do período gravado. O build do Pages abre no replay real e mantém a simulação disponível no seletor. O período, os hashes e o resultado do aceite estão em [feed-validation.md](../results/feed-validation.md); os comandos e o commit, em [index.md](../results/index.md).
+
+As amostras anteriores sem resolução continuam como registros da coleta, sem serem usadas como replay da demo. As amostras diurnas adicionais para avaliar movimento, valet e tempos de download continuam pendentes.
 
 O que mudou com o Compose:
 

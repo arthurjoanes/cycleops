@@ -1,6 +1,6 @@
 # ADR 0002: fonte, cadência, frescor, horário de serviço e `last_reported`
 
-Status: Proposto, 2026-10-07, revisto em 2026-10-08 com o worker e o teste do live. Os valores abaixo são os que estão em `policy/`; as propostas no fim esperam o aceite do Arthur.
+Status: Proposto, 2026-10-07, revisto em 2026-10-09 com a gravação de uma hora. Os valores abaixo são os que estão em `policy/`; as propostas no fim esperam o aceite do Arthur.
 
 ## Contexto
 
@@ -19,6 +19,16 @@ A primeira coleta reuniu 49 respostas em 2026-10-07, das 05:24 às 05:34 em Oslo
 - ETag muda a cada publicação, também em `station_information`.
 
 O teste manual do live em 2026-10-08, das 11:08 às 11:16 em Oslo, confirmou o mesmo padrão com o worker (`docs/results/live-manual.md`): 32 requisições de `station_status` a cada 15 s, 2 delas `duplicate`, idade da publicação entre 10 e 25 s na tela, nenhum timeout, warning ou erro.
+
+A gravação `fixtures/recorded/record-20261009T222527Z.ndjson.gz` cobre 2026-10-09 das 22:25:27.929 às 23:25:15.533 UTC, de 00:25 a 01:25 de 2026-10-10 em Oslo. Foram 249 respostas 200, sem falhas nem truncamentos, com prazo total de 12 s. O relatório em `docs/results/data/feed-20261009.txt` saiu de `inspect-feed --recording`, sem requisições novas:
+
+- GBFS 2.3, `ttl: 15` e gzip nas 249 respostas. Das 240 respostas de `station_status`, 216 são publicações distintas; 24 repetem a anterior. Entre publicações, 191 degraus de 15 s e 24 de 30 s no `last_updated`.
+- Um `last_reported` por resposta, entre 0 e 14 s depois do `last_updated`. Ele avançou tanto nos 479 pares estação-publicação com mudança de contagem como nos 56.926 sem mudança. O padrão continua sendo `feed_generation`.
+- Idade no recebimento: p50 14,8 s, p95 29,8 s, p99 30,4 s e máximo 30,6 s. Download de `station_status`: p50 0,6 s, p95 0,7 s, p99 1,1 s e máximo 1,2 s; nenhum timeout em 240 requisições.
+- Nenhum sinal de valet nas 240 respostas. A última publicação tem 267 estações válidas, os mesmos ids do cadastro, e nenhuma contagem acima da capacidade. As 6 respostas do cadastro têm ETags distintos.
+- Foram 479 mudanças de contagem em 3.585 s, cerca de 481 por hora nessa janela. A coleta atravessou o fechamento à 01:00; o motor passou a `closed` às 23:00 UTC pela regra de horário. O feed continuou publicando depois disso.
+
+O replay dessa gravação passou pelo aceite: 218 eventos, 40 incidentes confirmados e 2 resolvidos. A janela da madrugada, em uma rede só e com prazo de 12 s, não substitui as amostras de 10 minutos com prazo de 30 s perto de 07:30, 12:00 e 16:30 em Oslo, ainda pendentes.
 
 ## Decisão
 
@@ -41,7 +51,7 @@ Coleta (bloco `collection` de `policy/provider-oslo.yaml`, módulo `cycleops.col
 
 Frescor e horário (`policy/priority-policy.yaml` e `policy/provider-oslo.yaml`):
 
-- `sourceLateAfterSeconds` 40 e `sourceStaleAfterSeconds` 60. Ficam acima do p95 e do p99 da idade no recebimento medidos (25,9 s e 26,0 s).
+- `sourceLateAfterSeconds` 40 e `sourceStaleAfterSeconds` 60. Ficam acima do p95 e do p99 da idade no recebimento nas duas gravações: 25,9 s e 26,0 s na amostra inicial; 29,8 s e 30,4 s na gravação de uma hora. Os valores permanecem iguais.
 - A fonte vencida por idade começa no instante em que a idade passou de 60 s, e esse instante vai no `FeedHealth` (`stateSince`). Com o worker parado, a API aplica a mesma regra sobre a última publicação e o último tick gravados, e o worker, ao voltar, mantém o mesmo início.
 - Horário de serviço de 05:00 a 01:00, Europe/Oslo, conferido no FAQ do operador em 2026-10-06.
 - `stationReportSemantics: feed_generation`. O `last_reported` é guardado e mostrado como "gerado pelo provedor", sem entrar em regra.
@@ -49,10 +59,10 @@ Frescor e horário (`policy/priority-policy.yaml` e `policy/provider-oslo.yaml`)
 
 ## Propostas para aceite
 
-1. Manter `feed_generation`. A amostra confirma o comportamento e não há mudança de arquivo.
-2. Não adotar sinal de valet por enquanto. Repetir a checagem numa amostra de dia, em dia de valet.
-3. Manter a margem de publicação em 10 s. Simulei a regra de agendamento sobre as publicações da amostra, com cada arquivo visível de 1,0 s a 1,7 s depois do `last_reported` pelo relógio local; o resultado é o mesmo em toda essa faixa. Com 10 s a simulação reproduz o medido (p50 10,6 s e p95 25,6 s de idade no recebimento, contra 10,9 s e 25,9 s, e as mesmas 3 repetições). Com 15 s ela piora: p50 15,6 s, p95 30,6 s e as mesmas 3 repetições, que caem nos degraus de 30 s do `last_updated`. Repetir a conta com a gravação longa.
-4. Timeouts e prazo: ficam como estão. O p99 de 0,9 s não diz nada sobre a rede de dia nem sobre outras redes. Se as amostras pendentes mostrarem p99 acima de 15 s, decidir entre subir o piso e o prazo ou aceitar a taxa de timeout medida.
+1. Manter `feed_generation`. A amostra inicial e a gravação de uma hora mostram o mesmo comportamento; não há mudança de arquivo.
+2. Não adotar sinal de valet por enquanto. Ele não apareceu nas duas gravações. Repetir a checagem numa amostra de dia, em dia de valet.
+3. Manter a margem de publicação em 10 s. Simulei a regra de agendamento sobre as publicações da amostra inicial, com cada arquivo visível de 1,0 s a 1,7 s depois do `last_reported` pelo relógio local; o resultado é o mesmo em toda essa faixa. Com 10 s a simulação reproduz o medido (p50 10,6 s e p95 25,6 s de idade no recebimento, contra 10,9 s e 25,9 s, e as mesmas 3 repetições). Com 15 s ela piora: p50 15,6 s, p95 30,6 s e as mesmas 3 repetições, que caem nos degraus de 30 s do `last_updated`. Essa comparação ainda usa a amostra inicial; falta repeti-la sobre a gravação de uma hora e as amostras de dia.
+4. Timeouts e prazo: ficam como estão. O p99 foi de 0,9 s na amostra inicial e 1,1 s na gravação de uma hora, sem timeout. A coleta mais recente usou prazo de 12 s e a mesma rede; não mede a rede de dia nem outras redes. Se as amostras pendentes, com prazo de 30 s, mostrarem p99 acima de 15 s, decidir entre subir o piso e o prazo ou aceitar a taxa de timeout medida.
 
 ## Alternativas
 
@@ -63,17 +73,18 @@ Frescor e horário (`policy/priority-policy.yaml` e `policy/provider-oslo.yaml`)
 ## Consequências
 
 - A idade da fonte é medida a partir do `last_updated`, que chega a ficar 14 s antes da geração real do arquivo. A idade mostrada é um pouco maior que a real.
-- Parte das respostas repete a publicação anterior (3 de 41 na amostra) e vira `duplicate`.
+- Parte das respostas repete a publicação anterior (3 de 41 na amostra inicial e 24 de 240 na gravação de uma hora) e vira `duplicate`.
 - Um feed em quarentena faz no máximo uma requisição a cada 5 minutos.
 
 ## Risco
 
-- A amostra tem 10 minutos, logo depois da abertura do sistema, e vem de uma rede só. O teste do live acrescentou 8 minutos no fim da manhã, na mesma rede.
+- A amostra inicial tem 10 minutos logo depois da abertura; o teste do live acrescentou 8 minutos no fim da manhã. A gravação de uma hora cobre a madrugada e inclui cerca de 25 minutos depois do fechamento. Todas vieram de uma rede só.
+- As amostras de 10 minutos perto de 07:30, 12:00 e 16:30 em Oslo continuam pendentes, assim como a checagem de valet durante o dia. O prazo de 12 s da gravação longa limita a medição de respostas lentas.
 - Se o operador mudar para GBFS 3.x, todo feed vira erro de contrato e entra em quarentena até existir um adaptador novo.
 - O padrão de geração a cada 16 s pode mudar sem aviso; a cadência pela fórmula se ajusta, mas a margem pode precisar de revisão.
 
 ## Quando revisar
 
-- Com as amostras de dia e a gravação de 60 a 90 minutos.
+- Com as amostras de dia e a comparação de margens sobre a gravação de uma hora.
 - Se o p99 do download passar de 15 s ou aparecerem timeouts.
 - Se o feed mudar de versão, de `ttl` ou de comportamento do `last_reported`.

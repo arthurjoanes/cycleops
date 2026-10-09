@@ -2,7 +2,7 @@
 
 Lists Oslo Bysykkel stations with no bikes or no free docks, in priority order, with the reason and the data behind each decision. The data comes from the operator's open GBFS feed. The main README is in Portuguese (`README.md`).
 
-![CycleOps in simulation mode: priority queue on the left, map of Oslo with the stations on the right, and the details of an empty station open over the map](docs/media/desktop-1440.png)
+![CycleOps replaying the recording from 10 October 2026 in Oslo: priority queue on the left, station map on the right and replay controls above](docs/media/recorded-1440.png)
 
 A 27 s video, [docs/media/demo.webm](docs/media/demo.webm), shows the simulation over the server stream in Compose: a confirmed incident at the top of the queue with its reason in the details, the API restarting (connection "reconectando", then "conectada" again) and the switch to the file replay, paused.
 
@@ -55,9 +55,9 @@ Commands for each part are in `CONTRIBUTING.md`; the E2E against Compose runs fr
 
 - Live: the worker polls the Oslo feed every 15 s and the API streams the events over SSE. Local Compose only.
 - Simulation: seeded stations and counts, with a permanent "Simulação" stripe. In Compose it comes from the worker, through the same path as live; on Pages and under "Simulação (arquivo)", from an artifact generated offline.
-- Recorded replay: a real recording of the feed run through the engine and played in the browser. It exists only once a recording has an incident that is confirmed and then resolved; there is none yet.
+- Recorded replay: a real feed recording run through the engine, with an incident confirmed and resolved at St. Olavs gate. The Pages build opens in this mode; simulation remains available in the selector. Recording period, acceptance and commands are in [docs/results/feed-validation.md](docs/results/feed-validation.md) (Portuguese).
 
-The mode is always in the header, with the seed in simulation and the connection state. When the source is down, the screen says so and offers the file replay; it never switches by itself. The replay has pause, 1×, 5×, 20×, step and "go to the incident".
+The mode is always in the header, with the recording date in replay, the seed in simulation and the connection state. When the source is down, the screen says so and offers the file replay; it never switches by itself. The replay has pause, 1×, 5×, 20×, step and "go to the incident".
 
 ## Limitations
 

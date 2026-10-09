@@ -72,7 +72,18 @@ CYCLEOPS_MEASURE=1 corepack pnpm e2e:compose latency
 - Com uma publicação a cada 15 s, 10 min dão 40 eventos, e o p95 fica perto do máximo.
 - Ponta a ponta (do commit à pintura, com o offset do heartbeat) não foi medido.
 
-## Compose: repouso
+## Compose: latência em 2026-10-09
+
+Depois da correção das lacunas de observação e do replay, a mesma medição rodou por 10 min, de 22:43:08 a 22:53:09 UTC. Código `6249cf6`, executado no checkout `d7ad657`; o marcador `+ local changes` do relatório corresponde à documentação em edição. CPU Ryzen 7 5700X3D, 16 processadores lógicos, 31,9 GB de RAM, Windows 11 build 26300 e Chromium 153.0.8010.12 headless. Compose offline, seed 42, loopback e sem throttling. Havia outros containers na máquina, além da coleta pela CLI e, no início da janela, testes de integração.
+
+| Medida | Meta (p95) | Amostras | p50 | p95 | Máx. |
+|---|---|---|---|---|---|
+| Recebimento até pintura | 250 ms | 40 | 126,9 ms | 141,3 ms | 146,8 ms |
+| Commit até escrita no socket | 1 s | 40 | 25,2 ms | 106,2 ms | 191,1 ms |
+
+Comando: `CYCLEOPS_MEASURE=1 corepack pnpm e2e:compose latency`, em `apps/web`. Dados brutos em `data/compose-latency-20261009.json` e `data/compose-commit-to-write-20261009.json`; os arquivos da execução anterior foram preservados. As duas medidas ficaram abaixo das metas. A carga concorrente do host impede atribuir a diferença entre as rodadas apenas à mudança de código.
+
+## Compose: repouso em 2026-10-08
 
 `docker stats --no-stream`, 10 amostras com cerca de 7 s entre elas, de 08:55:25 a 08:56:30 UTC, depois de 5 min parado desde o `up -d --build --wait` num volume novo (às 08:50:09). Nenhum navegador ou cliente conectado; só os healthchecks dos containers. CPU em % de um núcleo, como o Docker mostra. Commit 01b4497. Dados: `data/compose-docker-stats.json`.
 
