@@ -98,6 +98,8 @@ export class ReplayPlayer implements StationEventSource {
     this.virtualAnchor = this.virtualNow();
     this.playing = false;
     this.cancel();
+    // The point announced on pause must include events still waiting in the visual buffer.
+    this.sink.applyNow([]);
     this.sink.setNow(this.virtualAnchor);
     this.notify();
   }
@@ -194,6 +196,10 @@ export class ReplayPlayer implements StationEventSource {
     this.virtualAnchor = this.times.at(-1) ?? this.virtualAnchor;
     this.playing = false;
     this.cancel();
+    // A delayed browser timer may wake after the final commit. Flush before announcing
+    // the end, and stop the displayed business clock at the recording's final instant.
+    this.sink.applyNow([]);
+    this.sink.setNow(this.virtualAnchor);
     this.sink.setEnded(true);
   }
 

@@ -46,7 +46,7 @@ test("demo: stream, confirmed incident, reconnection, file replay", async ({ bro
   // Pauses only so a person can read the screen.
   const hold = (ms: number) => page.waitForTimeout(ms);
 
-  await page.goto("./");
+  await page.goto("./#/?mode=stream");
   await expect(page.getByTestId("mode")).toContainText("Simulação");
   await expect(connection(page)).toHaveText("conectada", { timeout: 60_000 });
   const top = page.getByRole("list", { name: "Estações em prioridade" }).locator("li").first();

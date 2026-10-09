@@ -21,21 +21,21 @@ class FakeTimers implements Timers {
   clearTimeout(handle: unknown) {
     this.queue = this.queue.filter((t) => t.id !== handle);
   }
-  advance(ms: number) {
+  advance(ms: number, delayed = false) {
     const target = this.current + ms;
     for (;;) {
       this.queue.sort((a, b) => a.at - b.at);
       const first = this.queue[0];
       if (!first || first.at > target) break;
       this.queue.shift();
-      this.current = first.at;
+      this.current = delayed ? target : first.at;
       first.callback();
     }
     this.current = target;
   }
 }
 
-function setup() {
+function setup(coalesce = false) {
   const events: StationBatchEvent[] = [
     event(1, [stationState("A"), stationState("B")], { at: 0 }),
     event(2, [stationState("A", { bikes: 0 })], { at: 15 }),
@@ -61,17 +61,31 @@ function setup() {
     events,
   };
   const catalogs = new Map(artifact.catalog.versions.map((v) => [v.catalogVersion, v.stations]));
-  const state: { data: StreamData; now: number; ended: boolean } = {
+  const state: { data: StreamData; now: number; ended: boolean; endedSequence: number | null } = {
     data: emptyData("test:00000000", catalogs),
     now: 0,
     ended: false,
+    endedSequence: null,
   };
+  let pending: StationBatchEvent[] = [];
   const sink: ReplaySink = {
-    reset: () => (state.data = emptyData("test:00000000", catalogs)),
-    apply: (batch) => (state.data = applyEvents(state.data, batch).data),
-    applyNow: (batch) => (state.data = applyEvents(state.data, batch).data),
+    reset: () => {
+      pending = [];
+      state.data = emptyData("test:00000000", catalogs);
+    },
+    apply: (batch) => {
+      if (coalesce) pending.push(...batch);
+      else state.data = applyEvents(state.data, batch).data;
+    },
+    applyNow: (batch) => {
+      state.data = applyEvents(state.data, [...pending, ...batch]).data;
+      pending = [];
+    },
     setNow: (now) => (state.now = now),
-    setEnded: (ended) => (state.ended = ended),
+    setEnded: (ended) => {
+      state.ended = ended;
+      state.endedSequence = ended ? state.data.lastSequence : null;
+    },
   };
   const timers = new FakeTimers();
   return { player: new ReplayPlayer(artifact, sink, timers), state, timers, artifact };
@@ -111,6 +125,27 @@ describe("ReplayPlayer", () => {
     expect(state.data.lastSequence).toBe(2);
     expect(player.playing).toBe(false);
     expect(state.now).toBe(T0 + 15_000);
+  });
+
+  it("commits the buffered events before announcing the paused point", () => {
+    const { player, state, timers } = setup(true);
+    player.start(1);
+    timers.advance(0);
+    expect(state.data.lastSequence).toBe(0);
+    player.pause();
+    expect(state.data.lastSequence).toBe(1);
+    expect(state.now).toBe(T0);
+  });
+
+  it("flushes the final batch and bounds the clock when a browser timer wakes late", () => {
+    const { player, state, timers } = setup(true);
+    player.start(5);
+    // A busy or background page can deliver its timer after every remaining event.
+    timers.advance(60_000, true);
+    expect(state.endedSequence).toBe(4);
+    expect(state.now).toBe(T0 + 45_000);
+    expect(player.virtualNow()).toBe(state.now);
+    expect(player.playing).toBe(false);
   });
 
   it("goes to the incident with the manifest offset, replaying from the start", () => {

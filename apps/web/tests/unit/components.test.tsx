@@ -105,6 +105,42 @@ describe("details", () => {
 describe("details in the server modes", () => {
   afterEach(() => vi.unstubAllGlobals());
 
+  it("shows a heartbeat outage while the station is unchanged and its refreshed history is pending", async () => {
+    const body = {
+      streamId: "test:00000000",
+      stationId: "A",
+      windowStart: iso(0),
+      windowEnd: iso(120),
+      points: [{ sourceUpdatedAt: iso(0), bikesAvailable: 4, docksAvailable: 16, quality: "valid", primaryCondition: "ok" }],
+      incidents: [], gaps: [], closed: [],
+    };
+    const fetch = vi.fn()
+      .mockResolvedValueOnce({
+        ok: true, status: 200,
+        headers: new Headers({ "content-type": "application/json" }),
+        json: async () => body,
+      })
+      .mockImplementation(() => new Promise(() => {}));
+    vi.stubGlobal("fetch", fetch);
+    act(() => {
+      useStations.getState().beginSnapshot(snapshot(5, { feed: { ...feedHealth(), stateSince: iso(0) } }), "test:00000000");
+      useStations.getState().setConnection("connected");
+      useStations.getState().setNow(T0 + 180_000);
+    });
+    render(<StationDetails id="A" zone="oslo" />);
+    await screen.findByText(/bicicletas entre 4 e 4, 0 mudanças/);
+    const station = useStations.getState().stations.get("A");
+    act(() => {
+      useStations.getState().applyHeartbeat({
+        streamId: "test:00000000", headSequence: 5, serverTime: iso(180),
+        lastSourceUpdatedAt: iso(0), feedState: "stale", stateSince: iso(120),
+      });
+    });
+    expect(useStations.getState().stations.get("A")).toBe(station);
+    expect(screen.getByText(/sem dado por 1 min/)).toBeInTheDocument();
+    await act(() => vi.waitFor(() => expect(fetch).toHaveBeenCalledTimes(2)));
+  });
+
   it("draws the timeline from /history and drops one of another stream", async () => {
     const history = (streamId: string) => ({
       streamId,

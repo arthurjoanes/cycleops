@@ -58,10 +58,10 @@ jobs:
         run: uv run --project apps/backend pytest apps/backend
       - name: Generated contracts and replay artifacts are current
         run: uv run --project apps/backend generate-artifacts --check
-      - name: Recordings up to 5 MB
+      - name: Recording and manifest up to 5 MiB together
         run: |
-          big=$(find fixtures/recorded -type f -size +5242880c -printf '%s %p\n')
-          if [ -n "$big" ]; then echo "$big"; exit 1; fi
+          uv run --project apps/backend python -m unittest discover -s scripts/tests
+          uv run --project apps/backend python scripts/check-recordings.py
       - name: Replay events up to 2 MB
         run: |
           big=$(find apps/web/public/replay -mindepth 2 -maxdepth 2 -name events.ndjson.gz -size +2097152c -printf '%s %p\n')

@@ -192,10 +192,11 @@ def test_a_cli_that_loses_its_lock_session_stops_collecting(
     cancelled: list[bool] = []
 
     async def work() -> None:
-        # The server drops the CLI's lock session while it collects.
-        pid = await asyncio.to_thread(lock_pid, db)
-        await asyncio.to_thread(query, db, "SELECT pg_terminate_backend(%s, 5000)", pid)
         try:
+            # Cancellation may arrive before the terminating query returns to this loop.
+            # Observe it during all of the work, including that executor await.
+            pid = await asyncio.to_thread(lock_pid, db)
+            await asyncio.to_thread(query, db, "SELECT pg_terminate_backend(%s, 5000)", pid)
             await asyncio.sleep(20)
         except asyncio.CancelledError:
             cancelled.append(True)

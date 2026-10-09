@@ -205,10 +205,19 @@ def _receive(
     if outcome != "ok":
         return None
 
+    # Close overnight incidents against the previous record before the new publication
+    # can resume them. _evaluate also calls this for entries other than publications.
+    _service_boundaries(state, now, policy)
     state.last_source_updated_at = updated
     state.first_accepted_at = state.first_accepted_at or updated
     state.last_content_hash = digest
     if state.latched:
+        # Restarted before a tick could see another gap: these are not consecutive
+        # recovery publications, even though the newly received one is fresh.
+        if last is not None and updated - last > timedelta(
+            seconds=policy.priority.source_stale_after_seconds
+        ):
+            state.fresh_again_count = 0
         state.fresh_again_count += 1
     eligible = in_service(now, policy.provider.service_hours)
     per_station = policy.provider.station_report_semantics == "per_station"
@@ -220,6 +229,12 @@ def _receive(
         if record is None:
             st.presence = "invalid" if sid in invalid else "missing"
             continue
+        reason = _observation_gap(st, updated, policy)
+        if reason is not None:
+            # A returning record can arrive before a tick notices the gap. Its new
+            # timestamp must not make the missing interval count toward confirmation
+            # or recovery; the current observation starts a new stretch below.
+            incidents.suspend(st, reason, st.status_updated_at, now)
         previous = st.status.reported_at if st.status else None
         advanced = previous is None or (
             record.reported_at is not None and record.reported_at > previous
@@ -237,6 +252,20 @@ def _receive(
         state.catalog_fetch_pending = True
         state.catalog_fetch_requested_for = state.catalog_version
     return observed
+
+
+def _observation_gap(st: Station, updated: datetime, policy: Policy) -> UnverifiableReason | None:
+    """Freshness before replacing the previous record; the station's reason wins."""
+    source_limit = timedelta(seconds=policy.priority.source_stale_after_seconds)
+    missing = st.status_updated_at is not None and updated - st.status_updated_at > source_limit
+    if missing and st.presence != "valid":
+        return "invalid_record" if st.presence == "invalid" else "missing_in_status"
+    if policy.provider.station_report_semantics == "per_station" and st.status:
+        reported = st.status.reported_at
+        report_limit = timedelta(seconds=policy.priority.station_stale_after_seconds)
+        if reported is not None and updated - reported > report_limit:
+            return "report_stale"
+    return "source_stale" if missing else None
 
 
 def _reconcile(state: StreamState, entry: CatalogReceived, now: datetime) -> dict[str, Station]:
@@ -709,7 +738,10 @@ def _change_key(st: Station, view: _View, state: StreamState) -> tuple[object, .
         tuple(view.conditions),
         view.reason,
         tuple(view.codes),
-        tuple((i.id, i.state, i.suspended_from) for i in view.open_incidents),
+        tuple(
+            (i.id, i.state, i.suspended_from, i.observed_since.isoformat())
+            for i in view.open_incidents
+        ),
         view.sort_key,
         state.policy_version,
     )

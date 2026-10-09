@@ -58,7 +58,7 @@ export function spans(
  * events in the store; the station-unverifiable gaps come only from the server's
  * intervals, since an unverifiable point keeps an older sourceUpdatedAt.
  */
-export function historySpans(history: StationHistory, to: number): Span[] {
+export function historySpans(history: StationHistory, to: number, streamedSources: readonly SourcePoint[] = []): Span[] {
   const points: HistoryPoint[] = history.points.map((p) => ({
     // Payloads from before `at` existed only have sourceUpdatedAt.
     at: p.at ?? p.sourceUpdatedAt,
@@ -75,12 +75,22 @@ export function historySpans(history: StationHistory, to: number): Span[] {
     cuts.add(Date.parse(i.start));
     if (i.end !== null) cuts.add(Date.parse(i.end));
   }
+  for (const source of streamedSources) cuts.add(Date.parse(source.at));
   const sources: SourcePoint[] = [...cuts]
     .sort((a, b) => a - b)
-    .map((t) => ({
-      at: new Date(t).toISOString(),
-      state: inside(history.closed, t) ? "closed" : inside(history.gaps, t) ? "stale" : "fresh",
-    }));
+    .map((t) => {
+      // Heartbeats can report a source outage before another station observation exists.
+      // Keep the server's station gaps and add the source states received by this page.
+      const streamed = latest(streamedSources, t)?.state;
+      return {
+        at: new Date(t).toISOString(),
+        state: inside(history.closed, t) || streamed === "closed"
+          ? "closed"
+          : inside(history.gaps, t) || (streamed !== undefined && GAP_STATES.has(streamed))
+            ? "stale"
+            : "fresh",
+      };
+    });
   return spans(points, sources, from, to);
 }
 

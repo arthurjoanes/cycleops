@@ -20,6 +20,7 @@ const SERVER = import.meta.env.MODE !== "pages";
  */
 function useServerHistory(id: string, streamId: string | null, state: StationState | undefined) {
   const enabled = useStations((s) => s.connection !== "file");
+  const sourceState = useStations((s) => s.feedHealth?.state);
   const [result, setResult] = useState<{ key: string; history: StationHistory | null }>();
   const key = `${streamId}/${id}`;
   useEffect(() => {
@@ -36,7 +37,7 @@ function useServerHistory(id: string, streamId: string | null, state: StationSta
         setResult({ key: `${streamId}/${id}`, history: null });
       });
     return () => abort.abort();
-  }, [enabled, id, streamId, state]);
+  }, [enabled, id, streamId, state, sourceState]);
   return { enabled, history: result?.key === key ? result.history : undefined };
 }
 
@@ -61,7 +62,7 @@ export function StationDetails(props: { id: string; zone: Zone }) {
     ? Date.parse(remote.windowStart)
     : Math.max(periodStart ? Date.parse(periodStart) : now - DAY_MS, now - DAY_MS);
   const list = useMemo(
-    () => (remote ? historySpans(remote, to) : spans(points, sources, from, to)),
+    () => (remote ? historySpans(remote, to, sources) : spans(points, sources, from, to)),
     [remote, points, sources, from, to],
   );
 

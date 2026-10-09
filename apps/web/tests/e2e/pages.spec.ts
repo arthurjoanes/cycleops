@@ -1,6 +1,7 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, type Page, test } from "@playwright/test";
+import type { ReplayManifest } from "../../src/lib/contracts";
 
 declare global {
   interface Window {
@@ -18,13 +19,26 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
-async function open(page: Page, hash = "") {
+async function open(page: Page, hash = "#/?mode=synthetic") {
   await page.goto(`./${hash}`);
   await expect(page.getByTestId("mode")).toContainText("Simulação");
   await expect(page.getByText(/^Evento \d+ de \d+/)).toBeVisible();
 }
 
 const details = (page: Page) => page.locator("aside[aria-labelledby='details-title']");
+
+test("opens the accepted recorded replay by default, or the simulation when absent", async ({ page }) => {
+  const recorded = existsSync(new URL("../../dist/replay/recorded/manifest.json", import.meta.url));
+  await page.goto("./");
+  await expect(page.getByTestId("mode")).toContainText(recorded ? "Replay gravado" : "Simulação");
+  await expect(page.getByText(/^Evento \d+ de \d+/)).toBeVisible();
+  await expect(page.getByTestId("connection")).toContainText(recorded ? "arquivo gravado em" : "arquivo local, seed");
+  if (recorded) {
+    await page.getByRole("button", { name: "Simulação", exact: true }).click();
+    await expect(page.getByTestId("mode")).toContainText("Simulação");
+    await expect(page.getByTestId("connection")).toHaveText("arquivo local, seed 42");
+  }
+});
 
 test("opens without login, with the mode and the seed always visible", async ({ page }) => {
   // The Pages build never talks to the API: it has artifacts only.
@@ -57,6 +71,57 @@ test("pause, 5x, step and go to the incident, with confirmation and resolution",
   await page.getByRole("button", { name: "20×" }).click();
   await page.getByRole("button", { name: "Continuar" }).click();
   await expect(details(page)).toContainText("resolvido", { timeout: 45_000 });
+});
+
+test("recorded replay confirms and resolves a real incident without API calls or CSP violations", async ({ page }) => {
+  const path = new URL("../../dist/replay/recorded/manifest.json", import.meta.url);
+  test.skip(!existsSync(path), "No accepted recorded replay has been generated yet.");
+  const manifest = JSON.parse(readFileSync(path, "utf8")) as ReplayManifest;
+  expect(manifest.mode).toBe("recorded_replay");
+  const incident = manifest.incidents
+    .filter((i) => i.resolvedSequence !== null && i.resolvedOffsetSeconds !== null)
+    .sort((a, b) =>
+      ((a.resolvedOffsetSeconds ?? Infinity) - a.confirmedOffsetSeconds) -
+      ((b.resolvedOffsetSeconds ?? Infinity) - b.confirmedOffsetSeconds),
+    )[0];
+  if (!incident || incident.resolvedOffsetSeconds === null) {
+    throw new Error("The accepted recording must contain a confirmed and resolved incident.");
+  }
+  const resolutionMs = Math.ceil((incident.resolvedOffsetSeconds - incident.confirmedOffsetSeconds) * 1000 / 20);
+  const resolutionTimeout = resolutionMs + 30_000;
+  test.setTimeout(Math.max(90_000, resolutionTimeout + 60_000));
+
+  const api: string[] = [];
+  page.on("request", (request) => {
+    if (new URL(request.url()).pathname.includes("/api/")) api.push(request.url());
+  });
+  const gzipResponse = page.waitForResponse((response) =>
+    new URL(response.url()).pathname.endsWith("/replay/recorded/events.ndjson.gz"),
+  );
+  await page.goto("./#/?mode=recorded");
+  const gzip = await gzipResponse;
+  expect(gzip.status()).toBe(200);
+  expect(gzip.headers()["content-encoding"]).toBeUndefined();
+  await expect(page.getByTestId("mode")).toContainText("Replay gravado");
+  await expect(page.getByTestId("connection")).toContainText("arquivo gravado em");
+  await page.getByRole("button", { name: "Pausar" }).click();
+  await page.getByLabel("Incidente", { exact: true }).selectOption(incident.incidentId);
+  await page.getByRole("button", { name: "Ir para o incidente" }).click();
+  await expect(page.getByText(/^Evento \d+ de \d+/)).toContainText(`Evento ${incident.confirmedSequence} de`);
+
+  const kind = incident.kind === "pickup_unavailable" ? "sem bicicletas" : "sem vagas";
+  const confirmed = details(page).getByRole("listitem").filter({ hasText: new RegExp(`^${kind}, confirmado`) });
+  await expect(confirmed).toHaveCount(1);
+  // Keep the same incident in view even when this station has older resolved incidents.
+  const identity = (await confirmed.innerText()).match(/\(primeira confirmação às [^)]+\), observado desde \d{2}:\d{2}/)?.[0];
+  if (!identity) throw new Error("The confirmed incident must display its original observation and confirmation times.");
+  const row = details(page).getByRole("listitem").filter({ hasText: kind }).filter({ hasText: identity });
+  await page.getByRole("button", { name: "20×" }).click();
+  await page.getByRole("button", { name: "Continuar" }).click();
+  await expect(row).toContainText(`${kind}, resolvido`, { timeout: resolutionTimeout });
+  await page.locator("canvas.maplibregl-canvas").waitFor();
+  expect(api).toEqual([]);
+  expect(await page.evaluate(() => window.__cspViolations)).toEqual([]);
 });
 
 for (const width of [320, 768, 1440]) {

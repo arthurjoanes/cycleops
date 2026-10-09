@@ -320,6 +320,65 @@ def test_short_gap_keeps_state_and_stretch() -> None:
     assert inc is not None and inc.state == "confirmed" and inc.observed_since == feed.t(0)
 
 
+def test_first_publication_after_outage_restarts_candidate() -> None:
+    feed = Feed()
+    feed.publish(10, {"A": 0, "B": 5})
+    before = feed.incident("A")
+    feed.publish(1812, {"A": 0, "B": 5})
+    after = feed.incident("A")
+    assert before is not None and (before.state, before.close_reason) == (
+        "discarded",
+        "source_stale",
+    )
+    assert after is not None and after.id != before.id and after.state == "candidate"
+    assert after.observations == [feed.t(1802)]
+
+
+@pytest.mark.parametrize("recovering", [False, True])
+def test_first_publication_after_outage_starts_a_new_incident_stretch(recovering: bool) -> None:
+    feed = confirmed_feed()
+    bikes = 5 if recovering else 0
+    feed.publish(55, {"A": bikes, "B": 5})
+    inc = feed.incident("A")
+    assert inc is not None
+    feed.publish(1812, {"A": bikes, "B": 5})
+    assert feed.incident("A") is inc
+    assert inc.state == ("recovering" if recovering else "confirmed")
+    assert inc.first_observed_at == feed.t(0) and inc.confirmed_at == feed.t(30)
+    assert inc.observed_since == feed.t(1802)
+    assert inc.observations == ([feed.t(1802)] if recovering else [])
+    # The resumed state must go to the browser even when counts and state are unchanged.
+    shown = next(s for s in feed.events[-1].stations if s.decision.station_id == "A")
+    assert shown.decision.incidents[0].observed_since == feed.t(1802)
+
+
+def test_station_returning_after_missing_gap_restarts_candidate() -> None:
+    feed = Feed()
+    feed.publish(10, {"A": 0, "B": 5})
+    before = feed.incident("A")
+    for at in (25, 40, 55, 70):
+        feed.publish(at, {"B": 5})
+    # The last missing publication was exactly at the stale threshold. The next valid
+    # record must not make the unobserved 75 seconds count toward confirmation.
+    feed.publish(85, {"A": 0, "B": 5})
+    after = feed.incident("A")
+    assert before is not None and (before.state, before.close_reason) == (
+        "discarded",
+        "station_stale",
+    )
+    assert after is not None and after.id != before.id and after.state == "candidate"
+
+
+@pytest.mark.parametrize("invalid", [False, True])
+def test_returning_station_gap_reason_wins_over_source_gap(invalid: bool) -> None:
+    feed = Feed()
+    feed.publish(10, {"A": 0, "B": 5})
+    before = feed.incident("A")
+    feed.publish(25, {"A": -1, "B": 5} if invalid else {"B": 5})
+    feed.publish(1812, {"A": 0, "B": 5})
+    assert before is not None and before.close_reason == "station_stale"
+
+
 def test_open_breaker_makes_the_source_stale_on_the_next_tick() -> None:
     feed = Feed()
     feed.publish(10, {"A": 3, "B": 5})
@@ -572,6 +631,23 @@ def test_per_station_needs_last_reported_to_advance() -> None:
     assert feed.shown("A").decision.unverifiable_reason == "report_stale"
 
 
+@pytest.mark.parametrize("gap", [120, 135])
+def test_returning_station_report_respects_its_stale_threshold(gap: int) -> None:
+    feed = Feed(semantics="per_station")
+    for at in range(10, gap + 10, 15):
+        feed.publish(at, {"A": 0, "B": 5}, reported=0)
+    before = feed.incident("A")
+    feed.publish(gap + 10, {"A": 0, "B": 5}, reported=gap)
+    after = feed.incident("A")
+    assert before is not None and after is not None
+    if gap == 120:
+        assert after is before and after.state == "confirmed"
+    else:
+        assert (before.state, before.close_reason) == ("discarded", "station_stale")
+        assert after.id != before.id and after.state == "candidate"
+        assert after.observations == [feed.t(gap)]
+
+
 def test_two_incidents_at_one_station() -> None:
     feed = Feed()
     feed.publish(10, {"A": 3, "B": 5}, A={"num_docks_available": 0})  # full from 0
@@ -816,6 +892,14 @@ def test_a_stale_gap_during_hysteresis_starts_it_over() -> None:
     feed.tick(145)  # 75 s after the file of 70
     feed.publish(150, {"A": 3, "B": 5})
     assert feed.state.source_state == "stale"
+    feed.publish(165, {"A": 3, "B": 5})
+    assert feed.state.source_state == "fresh"
+
+
+def test_a_gap_during_hysteresis_restarts_it_without_an_intervening_tick() -> None:
+    feed = stale_then_one_publication()
+    feed.publish(150, {"A": 3, "B": 5})  # sourceUpdatedAt 140, 70 s after the first recovery
+    assert feed.state.source_state == "stale" and feed.state.fresh_again_count == 1
     feed.publish(165, {"A": 3, "B": 5})
     assert feed.state.source_state == "fresh"
 
