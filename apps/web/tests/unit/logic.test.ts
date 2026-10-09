@@ -121,6 +121,27 @@ describe("timeline spans", () => {
 });
 
 describe("server history spans", () => {
+  it("adds source outages received after the history response without filling station gaps", () => {
+    const list = historySpans({
+      streamId: "test:00000000",
+      stationId: "A",
+      windowStart: iso(0),
+      windowEnd: iso(120),
+      points: [{ sourceUpdatedAt: iso(0), bikesAvailable: 3, docksAvailable: 7, quality: "valid", primaryCondition: "ok" }],
+      incidents: [],
+      gaps: [{ start: iso(30), end: iso(60) }],
+      closed: [],
+    }, Date.parse(iso(300)), [
+      { at: iso(0), state: "fresh" },
+      { at: iso(120), state: "stale" },
+      { at: iso(180), state: "closed" },
+      { at: iso(240), state: "fresh" },
+    ]);
+    expect(list.map((s) => [s.kind, (s.start - Date.parse(iso(0))) / 1000])).toEqual([
+      ["data", 0], ["gap", 30], ["data", 60], ["gap", 120], ["closed", 180], ["data", 240],
+    ]);
+  });
+
   it("cuts at the server's gap and closed intervals, an open one running to the end", () => {
     const point = (at: number, bikes: number) => ({
       sourceUpdatedAt: iso(at),

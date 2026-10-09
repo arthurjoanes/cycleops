@@ -10,7 +10,7 @@
 #    from zero, twice, then pytest with unit and integration tests;
 # 3. web: generated contracts current, lint, typecheck, test, build:pages, check:bundle,
 #    Playwright against the Pages build (port 4173);
-# 4. size caps (recordings 5 MB, replay events 2 MB) and the text check;
+# 4. size caps (recording + manifest 5 MiB, replay events 2 MiB) and the text check;
 # 5. Compose synthetic with compose.offline.yaml (project cycleops-e2e, port 8080): build,
 #    up --wait, scripts/smoke, no outbound connection from the worker, e2e:compose (its
 #    last test resets the database).
@@ -73,11 +73,8 @@ web check:bundle
 web e2e
 
 step "size caps and text check"
-big=$(find fixtures/recorded -type f -size +5242880c -printf '%s %p\n')
-[[ -z $big ]] || {
-    echo "recordings above 5 MB: $big"
-    exit 1
-}
+py python -m unittest discover -s scripts/tests
+py python scripts/check-recordings.py
 big=$(find apps/web/public/replay -mindepth 2 -maxdepth 2 -name events.ndjson.gz \
     -size +2097152c -printf '%s %p\n')
 [[ -z $big ]] || {

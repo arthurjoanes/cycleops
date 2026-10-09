@@ -6,6 +6,7 @@ import { defineConfig, devices } from "@playwright/test";
 // same address, and the per-address stream limit is part of what is tested.
 export default defineConfig({
   testDir: "tests/compose",
+  outputDir: "test-results/compose",
   timeout: 240_000,
   expect: { timeout: 30_000 },
   fullyParallel: false,

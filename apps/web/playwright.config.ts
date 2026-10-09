@@ -4,6 +4,7 @@ import { defineConfig, devices } from "@playwright/test";
 // behaves like Pages (no SPA fallback, .gz without Content-Encoding).
 export default defineConfig({
   testDir: "tests",
+  outputDir: "test-results/pages",
   timeout: 90_000,
   expect: { timeout: 15_000 },
   fullyParallel: false,
