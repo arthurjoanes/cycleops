@@ -1,6 +1,6 @@
 # Caddy with the web build (base /). Paths in the node stage mirror the repository, because
 # vite.config.ts reaches packages/contracts through ../../packages/contracts.
-FROM node:24.21.0-trixie-slim@sha256:173f125896c3b47ddf056734c7ea789d04595a6a08769a8f78e0df642781fb66 AS web
+FROM node:26.10.0-trixie-slim@sha256:930557a230abacbc3f4fd9b8648abf8f4bee1e17cb72195dcdfb2f709bc85b33 AS web
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 WORKDIR /src/apps/web
 COPY apps/web/package.json apps/web/pnpm-lock.yaml apps/web/pnpm-workspace.yaml ./
