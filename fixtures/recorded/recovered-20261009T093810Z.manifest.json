@@ -1,0 +1,33 @@
+{
+  "recordingSchema": 1,
+  "file": "recovered-20261009T093810Z.ndjson.gz",
+  "sha256": "5eef6726a9dccdf30a1e866523bc06082d190dc8fb835f8f58e9a7630cf91aa2",
+  "startedAt": "2026-10-09T09:38:17.328Z",
+  "endedAt": "2026-10-09T09:43:25.715Z",
+  "urls": [
+    "https://gbfs.urbansharing.com/oslobysykkel.no/gbfs.json",
+    "https://gbfs.urbansharing.com/oslobysykkel.no/station_information.json",
+    "https://gbfs.urbansharing.com/oslobysykkel.no/station_status.json",
+    "https://gbfs.urbansharing.com/oslobysykkel.no/system_information.json",
+    "https://gbfs.urbansharing.com/oslobysykkel.no/vehicle_types.json"
+  ],
+  "gbfsVersion": [
+    "2.3"
+  ],
+  "license": "Norwegian Licence for Open Government Data (NLOD) 2.0, https://data.norge.no/nlod/en/2.0, made available by Oslo Bysykkel (UIP Bauer Media Outdoor Norge AS) at https://oslobysykkel.no/en/open-data",
+  "requests": 25,
+  "failures": 0,
+  "truncations": 0,
+  "outcomes": {
+    "ok": 25
+  },
+  "clientIdentifier": "arthurjoanes-cycleops",
+  "deadlineSeconds": 12,
+  "recovery": {
+    "sourceFile": "record-20261009T093810Z.ndjson.gz",
+    "sourceSha256": "85fea889b69af4b8c0095a3699199c6d9a252201cb343c2752611c491374334e",
+    "gzipStreamComplete": false,
+    "discardedTrailingBytes": 0,
+    "note": "Complete JSON lines recovered from interrupted gzip; original preserved. Identifier and deadline from collection command history."
+  }
+}
