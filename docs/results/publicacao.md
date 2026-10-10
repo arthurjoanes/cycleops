@@ -1,12 +1,29 @@
 # Publicação
 
-Passos para pôr o repositório e a demo no GitHub. Os workflows já estão em `.github/workflows/`:
+[Repositório público](https://github.com/arthurjoanes/cycleops) · [Demo no navegador](https://arthurjoanes.github.io/cycleops/).
+
+Os workflows estão em `.github/workflows/`:
 
 - `ci.yml`: backend (ruff, mypy, `migrate` a partir do zero, pytest com integração num PostgreSQL de service container, `generate-artifacts --check`), web (lint, typecheck, Vitest, build do Pages, `check:bundle`, Playwright sob `/cycleops/`), Compose sintético sem internet (smoke, saída do worker bloqueada e o E2E do Compose), checagem de texto e gitleaks. Roda em PR e em push na `main`.
 - `pages.yml`: build e deploy do Pages. Roda depois de um `ci` verde em push na `main`, ou à mão.
 - `feed-check.yml`: `inspect-feed` com 5 requisições, só à mão e só em `arthurjoanes/cycleops`.
 
 Nenhum deles precisa de secret.
+
+## Publicação de 2026-10-10
+
+O commit `185e5af` passou no [CI 38007237961](https://github.com/arthurjoanes/cycleops/actions/runs/38007237961) e foi publicado pelo [Pages 38007708719](https://github.com/arthurjoanes/cycleops/actions/runs/38007708719). A data está em UTC; no horário de Brasília, a publicação ocorreu em 09/10.
+
+| Verificação no GitHub | Resultado |
+|---|---|
+| Backend | 354 testes com PostgreSQL, Ruff, mypy, migrações e artefatos gerados passaram |
+| Web | 69 testes unitários, 14 E2E, lint e TypeScript passaram; bundle inicial de 119.270 bytes gzip |
+| Compose sem internet | Smoke e 11 E2E passaram; a medição de latência ficou fora desta execução porque exige `CYCLEOPS_MEASURE=1` |
+| Gitleaks | 26 commits examinados, nenhum segredo encontrado |
+
+As primeiras execuções identificaram dois ajustes nos testes: a guarda de plataforma de uma constante exclusiva do Windows (`4474e64`) e o uso de um horário de serviço sempre aberto no teste de falhas do worker (`dca5f8f`). O teste do worker e o de shutdown também passaram localmente, juntos, durante o fechamento real de Oslo: dois testes em 42,38 s.
+
+A [verificação do endereço público](data/public-pages-20261010.json) foi executada às 00:08 UTC com Chromium 153.0.8010.12, em 1440×900 e 320×900. O roteiro abriu a demo, conferiu modo e data, pausou, saltou para um incidente e abriu o mapa. Logo e favicon chegaram como SVG; o replay, como `application/gzip`, sem `Content-Encoding`. Não houve overflow horizontal, erro de JavaScript ou CSP, resposta HTTP com erro, chamada à API ou requisição a outra origem.
 
 ## Checklist
 
@@ -47,9 +64,9 @@ Uma gravação futura que substitua a demo precisa passar no aceite e caber no l
   git push -u origin main
   ```
 
-- [ ] Ver o `ci` rodar em Actions: backend com integração, web, Compose sem internet, checagem de texto e gitleaks. Com ele verde, o `pages` roda sozinho; o primeiro deploy cria o environment `github-pages`.
-- [ ] Abrir https://arthurjoanes.github.io/cycleops/ e conferir: o replay carrega (no DevTools, `events.ndjson.gz` chega como `application/gzip`, sem `Content-Encoding`), o mapa aparece com as estações e o console não mostra violação de CSP.
-- [ ] Pôr no `README.md` e no `README.en.md` o link da demo e o badge de CI, depois do primeiro CI verde:
+- [x] Ver o `ci` rodar em Actions: backend com integração, web, Compose sem internet, checagem de texto e gitleaks. Com ele verde, o `pages` roda sozinho; o primeiro deploy cria o environment `github-pages`.
+- [x] Abrir https://arthurjoanes.github.io/cycleops/ e conferir: o replay carrega (no DevTools, `events.ndjson.gz` chega como `application/gzip`, sem `Content-Encoding`), o mapa aparece com as estações e o console não mostra violação de CSP.
+- [x] Pôr no `README.md` e no `README.en.md` o link da demo e o badge de CI, depois do primeiro CI verde:
 
   ```markdown
   [![ci](https://github.com/arthurjoanes/cycleops/actions/workflows/ci.yml/badge.svg)](https://github.com/arthurjoanes/cycleops/actions/workflows/ci.yml)

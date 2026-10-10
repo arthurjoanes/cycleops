@@ -54,6 +54,13 @@ Cada execução registrada no repositório, com o commit do código usado. Coman
 | Web Vitals antes da reserva de espaço no cabeçalho, com outros Chromium em execução: medianas LCP 3.692 ms, CLS 0,123 e INP 384 ms | `docs/results/data/web-vitals-identity-20261009.json` | `corepack pnpm --dir apps/web exec playwright test --project=perf tests/performance/vitals.spec.ts` | 9e7cf8e com alterações locais | 2026-10-09 23:44:45 |
 | Web Vitals final, isolado dos outros Chromium: medianas LCP 3.248 ms, CLS 0,004 e INP 240 ms; limites de comparação no relatório | `docs/results/data/web-vitals-identity-final-20261009.json`, [Relatório](identity-20261009.md#web-vitals) | mesmo comando da linha anterior | c830eaa | 2026-10-09 23:49:57 |
 
+## Publicação de 2026-10-10
+
+| Resultado | Arquivo | Comando | Commit | Data (UTC) |
+|---|---|---|---|---|
+| CI: 354 testes Python, 69 unitários web, 14 E2E Pages, 11 E2E Compose e gitleaks sem segredos | [Publicação](publicacao.md) | [workflow ci](https://github.com/arthurjoanes/cycleops/actions/runs/38007237961) | 185e5af | 2026-10-10 |
+| Pages publicado; mapa, replay, logo e favicon conferidos no endereço público, em 1440 e 320 px | [Dados da verificação](data/public-pages-20261010.json) | [workflow pages](https://github.com/arthurjoanes/cycleops/actions/runs/38007708719); Playwright conforme roteiro em `publicacao.md` | 185e5af | 2026-10-10 00:08 |
+
 ## Pendente
 
 - A coleta de dia e de outras redes está em "Coleta pendente", em `feed-validation.md`. A gravação longa da demo passou no aceite e já tem artefato.
