@@ -9,6 +9,8 @@ Estações do Oslo Bysykkel sem bicicleta ou sem vaga, em ordem de prioridade, c
 
 [Read in English](README.en.md)
 
+[![ci](https://github.com/arthurjoanes/cycleops/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/arthurjoanes/cycleops/actions/workflows/ci.yml)
+
 <p>
   <a href="#demonstração"><img src="docs/readme/badges/demo.svg" alt="Demonstração" width="139" height="28"></a>
   <a href="#arquitetura"><img src="docs/readme/badges/architecture.svg" alt="Arquitetura" width="126" height="28"></a>
@@ -30,6 +32,8 @@ O mesmo motor Python processa o feed ao vivo, as gravações e a simulação. A 
 | Ao vivo | O worker coleta o feed de Oslo na cadência do TTL e entrega os eventos pela API. Roda no Compose local. |
 
 ## Demonstração
+
+[Abrir demo no navegador](https://arthurjoanes.github.io/cycleops/) · Replay gravado, sem login.
 
 ![CycleOps com a nova identidade no replay gravado: fila de prioridades, mapa de Oslo e controles para acompanhar os incidentes](docs/media/identity-desktop.png)
 
@@ -117,6 +121,7 @@ O `e2e` gera o build do Pages sob `/cycleops/`; `check:bundle` confere esse buil
 
 | Registro | Resultado |
 |---|---|
+| [Publicação e CI](docs/results/publicacao.md) | 354 testes Python, 69 unitários web, 14 E2E Pages e 11 E2E Compose. Demo pública conferida em desktop e celular. |
 | [Coleta real](docs/results/feed-validation.md) | 249 respostas em 60 min, todas 200. O replay tem 218 eventos e dois incidentes resolvidos. |
 | [Verificação do replay e do Compose](docs/results/validacao-20261009.md) | Testes do motor, persistência, SSE, reconexão e navegador, com comandos e resultados registrados. |
 | [Identidade visual](docs/results/identity-20261009.md) | 69 testes unitários, 14 E2E Pages, capturas desktop e celular e Web Vitals com ambiente e limites de comparação. |

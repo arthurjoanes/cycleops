@@ -1,0 +1,50 @@
+{
+  "url": "https://arthurjoanes.github.io/cycleops/",
+  "date": "2026-10-10T00:08:44.544Z",
+  "browser": "153.0.8010.12",
+  "assets": [
+    {
+      "path": "favicon.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "contentEncoding": "gzip"
+    },
+    {
+      "path": "brand/cycleops-mark-light.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "contentEncoding": "gzip"
+    },
+    {
+      "path": "replay/recorded/events.ndjson.gz",
+      "status": 200,
+      "contentType": "application/gzip",
+      "contentEncoding": null
+    }
+  ],
+  "views": [
+    {
+      "width": 1440,
+      "height": 900,
+      "errors": [],
+      "csp": [],
+      "api": [],
+      "external": [],
+      "failed": [],
+      "overflow": 0,
+      "passed": true
+    },
+    {
+      "width": 320,
+      "height": 900,
+      "errors": [],
+      "csp": [],
+      "api": [],
+      "external": [],
+      "failed": [],
+      "overflow": 0,
+      "passed": true
+    }
+  ],
+  "passed": true
+}
