@@ -287,13 +287,15 @@ def test_a_worker_waits_while_another_holds_the_lock(
 
 
 def scaled_policy(tmp_path: Path) -> Path:
-    """The Oslo provider with short collection waits: breaker and quarantine probe 20 s."""
+    """An always-open test feed with breaker and quarantine waits of 20 s."""
     directory = tmp_path / "policy"
     directory.mkdir()
     (directory / "priority-policy.yaml").write_bytes(
         (POLICY_DIR / "priority-policy.yaml").read_bytes()
     )
     provider = yaml.safe_load((POLICY_DIR / "provider-oslo.yaml").read_text("utf-8"))
+    # This checks failure handling, independently of Oslo's real opening hours.
+    provider["serviceHours"] = "always"
     provider["collection"] |= {
         "pollIntervalFloorSeconds": 3,
         "requestDeadlineSeconds": 2,
