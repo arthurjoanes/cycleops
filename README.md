@@ -45,20 +45,114 @@ O [vídeo da interface atual](docs/media/identity-demo.webm) mostra o replay rea
 
 ## Arquitetura
 
+O backend é um monólito modular com dois processos: o worker calcula e persiste as decisões; a API entrega o estado e os eventos ao navegador. Há dois caminhos de execução, ambos com o mesmo motor de domínio Python.
+
+### Operação no Compose
+
+As setas mostram o fluxo dos dados. O worker usa a fonte real ou a sintética conforme a configuração; o Caddy é a única porta publicada.
+
 ```mermaid
-flowchart LR
-    Oslo["GBFS de Oslo"] --> Worker["Worker Python"]
-    Synthetic["Simulação"] --> Worker
-    Worker --> DB[("PostgreSQL")]
-    DB --> API["FastAPI · SSE"]
-    API --> Web["React · MapLibre"]
-    Recording["Gravação + motor Python"] --> Files["Artefatos de replay"]
-    Files --> Web
+---
+config:
+  theme: base
+  themeVariables:
+    fontFamily: Arial, sans-serif
+    primaryTextColor: "#19333D"
+    lineColor: "#78919A"
+    clusterBkg: "#F1F6F7"
+    clusterBorder: "#CBDCE0"
+    edgeLabelBackground: "#F1F6F7"
+  flowchart:
+    wrappingWidth: 360
+    nodeSpacing: 28
+    rankSpacing: 32
+    subGraphTitleMargin:
+      top: 8
+      bottom: 12
+---
+flowchart TB
+    Oslo["Oslo Bysykkel · GBFS 2.3<br/>catálogo e disponibilidade"]:::source
+    Synthetic["Fonte sintética<br/>cenários por seed"]:::source
+
+        subgraph Worker["Worker Python · único escritor"]
+            Collector["Coleta HTTP e adaptação GBFS<br/>TTL · backoff · breaker · quarentena"]:::delivery
+            Engine["Motor de domínio + políticas YAML<br/>incidentes · prioridade · qualidade · vencimento"]:::core
+            Ingest["Ingestão · uma transação por entrada<br/>estado + publicações + eventos + pg_notify"]:::delivery
+            Collector -->|"publicações ou falhas"| Engine
+            Engine -->|"novo estado e eventos"| Ingest
+        end
+        DB[("PostgreSQL · volume persistente<br/>estado das estações · feed_publications<br/>event_log · histórico")]:::storage
+        subgraph API["FastAPI · somente leitura"]
+            Rest["REST<br/>snapshot · histórico · saúde do feed"]:::delivery
+            Tailer["Tailer + distribuição SSE<br/>LISTEN e leitura a cada 1 s<br/>filas limitadas por conexão"]:::delivery
+        end
+        Edge["Caddy · 127.0.0.1:8080<br/>SPA e arquivos locais · proxy REST/SSE<br/>CSP · SSE sem buffer nem compressão"]:::delivery
+        Ingest -->|"commit atômico"| DB
+        DB -->|"consultas consistentes"| Rest
+        DB -->|"event_log + aviso NOTIFY"| Tailer
+        Rest -->|"JSON"| Edge
+        Tailer -->|"eventos com cursor + heartbeat"| Edge
+
+    subgraph Browser["Navegador"]
+        Live["LiveSseSource + Ajv<br/>snapshot → SSE → reconexão por cursor"]:::delivery
+        UI["Zustand · eventos em sequência<br/>fila · mapa MapLibre · histórico"]:::core
+        Live --> UI
+    end
+    Oslo -->|"HTTPS · Client-Identifier"| Collector
+    Synthetic -->|"mesma adaptação GBFS"| Collector
+    Edge -->|"mesma origem · HTTP / SSE"| Live
+    classDef source font-family:Arial,font-size:14px,fill:#F1F6F7,stroke:#78919A,color:#19333D
+    classDef core font-family:Arial,font-size:14px,fill:#123E4A,stroke:#123E4A,color:#FFFFFF
+    classDef storage font-family:Arial,font-size:14px,fill:#E3F0F2,stroke:#086978,color:#19333D
+    classDef delivery font-family:Arial,font-size:14px,fill:#FFFFFF,stroke:#086978,color:#19333D
 ```
 
-No Compose, o worker é o único escritor; o PostgreSQL guarda o estado e os eventos, e a API atende somente leitura. O Caddy serve a interface e encaminha as requisições à API. O build do Pages usa os artefatos de replay no navegador.
+- O motor recebe estado, entrada e política, e retorna estado e eventos. Ele não acessa rede, banco ou relógio do sistema.
+- Estado e eventos entram no mesmo commit. `pg_notify` apenas acorda o tailer; os eventos são lidos do `event_log`, inclusive após perda de um aviso.
+- A API usa sessões curtas no banco. Cada conexão SSE tem sua própria fila e retoma pelo cursor; quando o cursor não pode ser recuperado, o navegador busca um novo snapshot.
+- A interface valida os contratos e aplica eventos em ordem. As decisões de incidente e prioridade vêm do motor.
 
-[Processos, conexões e testes](docs/architecture.md) · [Decisões de arquitetura](docs/adr/).
+### Replay publicado no GitHub Pages
+
+O processamento acontece antes do build. A demo pública reproduz eventos já calculados, sem API, banco ou chamadas ao feed de Oslo. O Compose também oferece esses arquivos como opção de replay.
+
+```mermaid
+---
+config:
+  theme: base
+  themeVariables:
+    fontFamily: Arial, sans-serif
+    primaryTextColor: "#19333D"
+    lineColor: "#78919A"
+    clusterBkg: "#F1F6F7"
+    clusterBorder: "#CBDCE0"
+    edgeLabelBackground: "#F1F6F7"
+  flowchart:
+    wrappingWidth: 360
+    nodeSpacing: 28
+    rankSpacing: 32
+    subGraphTitleMargin:
+      top: 8
+      bottom: 12
+---
+flowchart TB
+    Recording["Gravação real · NDJSON.gz<br/>ou cenário sintético com seed"]:::source
+    Compile["compile-replay · processamento offline<br/>mesmo adaptador, motor e políticas<br/>relógio virtual"]:::core
+    Artifacts[("Artefatos versionados<br/>events.ndjson.gz<br/>catalog.json + manifest.json")]:::storage
+    Hosting["GitHub Pages ou arquivos do Caddy<br/>interface + replay + base local do mapa"]:::delivery
+    Player["Navegador · validação Ajv + ReplayPlayer<br/>pausa · velocidade · passo · salto para incidente<br/>mesmo store e componentes React"]:::core
+    Recording --> Compile --> Artifacts
+    Artifacts -->|"incluídos no build"| Hosting
+    Hosting -->|"GET estático · descompressão no navegador"| Player
+    classDef source font-family:Arial,font-size:14px,fill:#F1F6F7,stroke:#78919A,color:#19333D
+    classDef core font-family:Arial,font-size:14px,fill:#123E4A,stroke:#123E4A,color:#FFFFFF
+    classDef storage font-family:Arial,font-size:14px,fill:#E3F0F2,stroke:#086978,color:#19333D
+    classDef delivery font-family:Arial,font-size:14px,fill:#FFFFFF,stroke:#086978,color:#19333D
+```
+
+Os contratos Pydantic geram JSON Schema e tipos TypeScript; o Ajv valida as respostas e os artefatos no navegador. A política e suas versões acompanham os dados gerados.
+
+[Transação, entrega SSE e recuperação em sequência](docs/architecture.md#da-entrada-ao-navegador) · [Processos, conexões e testes](docs/architecture.md) · [Decisões de arquitetura](docs/adr/).
 
 ## Stack e decisões
 

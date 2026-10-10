@@ -2,44 +2,107 @@
 
 O backend é um monólito modular em Python com dois processos, `worker` e `api`. O PostgreSQL é a fonte de verdade e o único caminho dos eventos. O replay roda no navegador, com os mesmos artefatos no GitHub Pages e no Compose. As decisões estão em `docs/adr/`.
 
+## Da entrada ao navegador
+
+O [diagrama de componentes](../README.md#arquitetura) separa a operação no Compose do replay estático. A sequência abaixo detalha o commit, a entrega e a recuperação no modo stream. O Caddy encaminha todas as chamadas do navegador à API; foi omitido da sequência para concentrar a leitura no protocolo.
+
+### Transação do worker
+
 ```mermaid
-flowchart LR
-    O["Oslo Bysykkel<br/>GBFS 2.3, ttl 15 s"]
+---
+config:
+  sequence:
+    wrap: true
+    width: 180
+    actorMargin: 45
+    messageFontSize: 16
+    noteFontSize: 16
+    mirrorActors: false
+---
+sequenceDiagram
+    autonumber
+    participant Source as Fonte + adaptador
+    participant Worker as Worker / Ingestor
+    participant Engine as Motor de domínio
+    participant DB as PostgreSQL
 
-    subgraph OFF["Offline e CI"]
-        CLI["inspect-feed / record-feed"]
-        CR["compile-replay<br/>mesmo adaptador e motor"]
-        ART[("artefatos<br/>apps/web/public/replay")]
+    Note over Worker,DB: Liderança: advisory lock na conexão do worker
+    Source->>Worker: Publicação normalizada ou falha
+    Note over Worker,Engine: ClockTick também entra pelo processador
+    opt Transação atômica
+        Worker->>DB: BEGIN, stream_heads FOR UPDATE
+        DB-->>Worker: Estado atual ou confirmação do cache
+        Worker->>Engine: step(estado, entrada, política)
+        Engine-->>Worker: Novo estado + eventos
+        Worker->>DB: Estado + feed_publications + event_log + histórico
+        Worker->>DB: pg_notify(cursor), COMMIT
     end
-
-    subgraph DC["Docker Compose"]
-        W["worker<br/>fonte live ou sintética<br/>uma transação por entrada"]
-        P[("PostgreSQL<br/>estado, decisões, event_log")]
-        A["api<br/>REST e SSE, só leitura"]
-        E["edge (Caddy)<br/>SPA, artefatos, proxy"]
-    end
-
-    subgraph NAV["Navegador"]
-        L["LiveSseSource"]
-        R["ReplayPlayer"]
-        S["store por stationId"]
-    end
-
-    G["GitHub Pages"]
-
-    O -->|"coleta à mão"| CLI --> CR --> ART
-    O -->|"live: GET a cada 15 s"| W
-    W -->|"commit + pg_notify"| P
-    A -->|"snapshot, history, tail do event_log"| P
-    E --> A
-    ART -->|"cópia no build"| G
-    ART -->|"cópia na imagem"| E
-    L -->|"SSE"| E
-    R -->|"GET estático"| E
-    R -->|"GET estático"| G
-    L --> S
-    R --> S
+    Note over Worker,DB: Qualquer erro: rollback e descarte do cache
 ```
+
+### Snapshot, stream e recuperação
+
+```mermaid
+---
+config:
+  sequence:
+    wrap: true
+    width: 180
+    actorMargin: 45
+    messageFontSize: 16
+    noteFontSize: 16
+    mirrorActors: false
+---
+sequenceDiagram
+    autonumber
+    participant DB as PostgreSQL
+    participant API as API / tailer
+    participant Web as Navegador
+
+    Web->>API: GET snapshot
+    API->>DB: Leitura consistente de estado e cursor
+    DB-->>API: Snapshot no cursor N
+    API-->>Web: Snapshot JSON com cursor N
+    Web->>Web: Valida com Ajv e inicia o store
+    Web->>API: Abre SSE com after=N
+    API->>API: Registra fila antes de consultar o head
+    API->>DB: Lê head H e eventos entre N e H
+    DB-->>API: Catch-up do event_log
+    API-->>Web: Eventos até H, depois fila acima de H
+
+    loop Novos eventos
+        Note over DB,API: LISTEN acorda o tailer, poll de 1 s cobre aviso perdido
+        API->>DB: Lê event_log após o cursor do tailer
+        DB-->>API: Eventos persistidos
+        API-->>Web: station_batch com id + heartbeat periódico
+        Web->>Web: Valida contrato e sequência, atualiza o store
+    end
+
+    alt Conexão interrompida e cursor recuperável
+        Web->>API: Reconecta com Last-Event-ID ou after
+        API->>DB: Busca eventos após o cursor
+        DB-->>API: Eventos pendentes
+        API-->>Web: Catch-up e retomada do stream
+    else Cursor inválido, expirado ou mais de 40 eventos atrás
+        API-->>Web: resync_required, fecha stream
+        Web->>API: Novo snapshot e novo SSE pelo cursor recebido
+    end
+```
+
+O snapshot e o stream podem observar commits diferentes. A inscrição na fila antes da leitura do head permite recuperar o intervalo pelo banco e depois consumir o que chegou durante a consulta, descartando eventos já enviados. Nenhuma conexão SSE mantém uma sessão de banco aberta durante toda sua duração.
+
+## Motor compartilhado e contratos
+
+| Fronteira | Responsabilidade | Implementação |
+|---|---|---|
+| Entrada GBFS | Valida e normaliza o catálogo e as contagens; classifica falhas de coleta | `collection/`, `adapters/gbfs.py`, `application/replay.py` |
+| Domínio | Aplica a política a publicações, falhas e ticks; produz decisões e eventos | `domain/engine.py`, `policy/` |
+| Persistência live ou sintética | Executa o motor dentro da transação e salva estado, publicações e eventos | `application/ingest.py`, `adapters/postgres/` |
+| Compilação offline | Executa o mesmo motor com relógio virtual e gera eventos, catálogo e manifesto | `application/replay.py`, `cli/compile_replay.py` |
+| Contrato Python → web | Gera JSON Schema e tipos TypeScript a partir de Pydantic; valida com Ajv | `contracts.py`, `packages/contracts/`, `apps/web/src/lib/contracts.ts` |
+| Aplicação no navegador | Seleciona stream ou arquivo e aplica os eventos ao mesmo store | `useDataSession.ts`, `LiveSseSource`, `ReplayPlayer`, `features/stations/store.ts` |
+
+Os caminhos do backend na tabela são relativos a `apps/backend/src/cycleops/`, exceto `policy/` e `packages/contracts/`, que ficam na raiz. O replay publicado dispensa os processos worker e API em execução: as decisões já estão nos artefatos. A base do mapa também é servida como arquivo local.
 
 ## Processos
 
@@ -90,7 +153,7 @@ Testes do backend em `apps/backend/tests/`, da web em `apps/web/tests/`.
 - No worker: falha de escrita no arquivo bruto, o fechamento do gzip no SIGTERM e a saída com código 2 do processo quando o banco tem outro fluxo (a regra em si tem teste).
 - O desligamento da API pelo `docker compose stop`, passando pelo Caddy.
 - No navegador: o caminho do `.gz` que chega com `Content-Encoding`.
-- O Pages de verdade e o deploy: os testes usam `serve-pages.mjs`, e o deploy ainda não rodou (`docs/results/publicacao.md`).
+- O Pages de verdade e o deploy: os testes usam `serve-pages.mjs`, e a publicação real foi conferida manualmente em desktop e celular (`docs/results/publicacao.md`).
 
 ## Propostas, depois do MVP
 

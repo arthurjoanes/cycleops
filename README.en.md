@@ -45,20 +45,114 @@ The [video of the current interface](docs/media/identity-demo.webm) shows the re
 
 ## Architecture
 
+The backend is a modular monolith with two processes: the worker computes and persists decisions; the API delivers state and events to the browser. Both execution paths share the same Python domain engine.
+
+### Compose runtime
+
+Arrows show the direction of data flow. The worker uses either the real or synthetic source, depending on configuration; Caddy is the only published port.
+
 ```mermaid
-flowchart LR
-    Oslo["Oslo GBFS"] --> Worker["Python worker"]
-    Synthetic["Simulation"] --> Worker
-    Worker --> DB[("PostgreSQL")]
-    DB --> API["FastAPI · SSE"]
-    API --> Web["React · MapLibre"]
-    Recording["Recording + Python engine"] --> Files["Replay artifacts"]
-    Files --> Web
+---
+config:
+  theme: base
+  themeVariables:
+    fontFamily: Arial, sans-serif
+    primaryTextColor: "#19333D"
+    lineColor: "#78919A"
+    clusterBkg: "#F1F6F7"
+    clusterBorder: "#CBDCE0"
+    edgeLabelBackground: "#F1F6F7"
+  flowchart:
+    wrappingWidth: 360
+    nodeSpacing: 28
+    rankSpacing: 32
+    subGraphTitleMargin:
+      top: 8
+      bottom: 12
+---
+flowchart TB
+    Oslo["Oslo Bysykkel · GBFS 2.3<br/>catalog and availability"]:::source
+    Synthetic["Synthetic source<br/>seeded scenarios"]:::source
+
+        subgraph Worker["Python worker · sole writer"]
+            Collector["HTTP collection and GBFS adapter<br/>TTL · backoff · breaker · quarantine"]:::delivery
+            Engine["Domain engine + YAML policies<br/>incidents · priority · quality · staleness"]:::core
+            Ingest["Ingestion · one transaction per input<br/>state + publications + events + pg_notify"]:::delivery
+            Collector -->|"publications or failures"| Engine
+            Engine -->|"new state and events"| Ingest
+        end
+        DB[("PostgreSQL · persistent volume<br/>station state · feed_publications<br/>event_log · history")]:::storage
+        subgraph API["FastAPI · read-only"]
+            Rest["REST<br/>snapshot · history · feed health"]:::delivery
+            Tailer["Tailer + SSE distribution<br/>LISTEN and polling every 1 s<br/>bounded per-connection queues"]:::delivery
+        end
+        Edge["Caddy · 127.0.0.1:8080<br/>SPA and local files · REST/SSE proxy<br/>CSP · unbuffered, uncompressed SSE"]:::delivery
+        Ingest -->|"atomic commit"| DB
+        DB -->|"consistent reads"| Rest
+        DB -->|"event_log + NOTIFY signal"| Tailer
+        Rest -->|"JSON"| Edge
+        Tailer -->|"events with cursor + heartbeat"| Edge
+
+    subgraph Browser["Browser"]
+        Live["LiveSseSource + Ajv<br/>snapshot → SSE → cursor-based reconnect"]:::delivery
+        UI["Zustand · events in sequence<br/>queue · MapLibre map · history"]:::core
+        Live --> UI
+    end
+    Oslo -->|"HTTPS · Client-Identifier"| Collector
+    Synthetic -->|"same GBFS adapter"| Collector
+    Edge -->|"same origin · HTTP / SSE"| Live
+    classDef source font-family:Arial,font-size:14px,fill:#F1F6F7,stroke:#78919A,color:#19333D
+    classDef core font-family:Arial,font-size:14px,fill:#123E4A,stroke:#123E4A,color:#FFFFFF
+    classDef storage font-family:Arial,font-size:14px,fill:#E3F0F2,stroke:#086978,color:#19333D
+    classDef delivery font-family:Arial,font-size:14px,fill:#FFFFFF,stroke:#086978,color:#19333D
 ```
 
-In Compose, the worker is the only writer. PostgreSQL stores state and events, the API is read-only, and Caddy serves the interface and proxies the API. The Pages build plays the artifacts in the browser.
+- The engine takes state, input and policy and returns state and events. It has no network, database or system-clock access.
+- State and events share one commit. `pg_notify` only wakes the tailer; events are read from `event_log`, including after a missed notification.
+- The API uses short database sessions. Each SSE connection has a bounded queue and resumes from its cursor; when that cursor cannot be recovered, the browser fetches a new snapshot.
+- The interface validates contracts and applies events in order. Incident and priority decisions come from the engine.
 
-[Processes, connections and tests](docs/architecture.md) · [Architecture decisions](docs/adr/). Detailed documents are in Portuguese.
+### Replay published on GitHub Pages
+
+Processing happens before the build. The public demo plays precomputed events without an API, database or requests to Oslo's feed. Compose also offers these files as a replay option.
+
+```mermaid
+---
+config:
+  theme: base
+  themeVariables:
+    fontFamily: Arial, sans-serif
+    primaryTextColor: "#19333D"
+    lineColor: "#78919A"
+    clusterBkg: "#F1F6F7"
+    clusterBorder: "#CBDCE0"
+    edgeLabelBackground: "#F1F6F7"
+  flowchart:
+    wrappingWidth: 360
+    nodeSpacing: 28
+    rankSpacing: 32
+    subGraphTitleMargin:
+      top: 8
+      bottom: 12
+---
+flowchart TB
+    Recording["Real recording · NDJSON.gz<br/>or seeded synthetic scenario"]:::source
+    Compile["compile-replay · offline processing<br/>same adapter, engine and policies<br/>virtual clock"]:::core
+    Artifacts[("Versioned artifacts<br/>events.ndjson.gz<br/>catalog.json + manifest.json")]:::storage
+    Hosting["GitHub Pages or Caddy static files<br/>interface + replay + local map base"]:::delivery
+    Player["Browser · Ajv validation + ReplayPlayer<br/>pause · speed · step · jump to incident<br/>same store and React components"]:::core
+    Recording --> Compile --> Artifacts
+    Artifacts -->|"included in the build"| Hosting
+    Hosting -->|"static GET · browser decompression"| Player
+    classDef source font-family:Arial,font-size:14px,fill:#F1F6F7,stroke:#78919A,color:#19333D
+    classDef core font-family:Arial,font-size:14px,fill:#123E4A,stroke:#123E4A,color:#FFFFFF
+    classDef storage font-family:Arial,font-size:14px,fill:#E3F0F2,stroke:#086978,color:#19333D
+    classDef delivery font-family:Arial,font-size:14px,fill:#FFFFFF,stroke:#086978,color:#19333D
+```
+
+Pydantic contracts generate JSON Schema and TypeScript types; Ajv validates responses and artifacts in the browser. Generated data carries policy and version metadata.
+
+[Transaction, SSE delivery and recovery sequence](docs/architecture.md#da-entrada-ao-navegador) · [Processes, connections and tests](docs/architecture.md) · [Architecture decisions](docs/adr/). Detailed documents are in Portuguese.
 
 ## Stack and decisions
 
