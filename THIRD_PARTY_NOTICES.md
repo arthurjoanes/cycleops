@@ -4,6 +4,10 @@ Software e dados de terceiros que vão com o CycleOps: as dependências de produ
 
 As imagens `cycleops-backend:local` e `cycleops-edge:local` são construídas localmente por `docker compose up --build` e não são publicadas no MVP. A imagem do PostgreSQL vem do Docker Hub e é usada sem alteração.
 
+## Documentation icons
+
+The local SVGs in `docs/stack/` (Python, FastAPI, PostgreSQL, TypeScript, React and Docker) and `docs/contact/linkedin.svg` come from Devicon, commit `7330accdbc47e2dc0c19789a48533c4a3c50fe58`. Each SVG preserves its source URL in a comment. They use the same files as the author's other portfolio READMEs. Copyright (c) 2015 konpa; distributed under the [MIT license](docs/stack/LICENSE.devicon).
+
 ## Software
 
 ### Web (`apps/web`)

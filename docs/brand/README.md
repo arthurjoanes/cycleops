@@ -28,3 +28,9 @@ Inter continua local à aplicação. A interface usa números tabulares e pesos 
 - [Favicon](../../apps/web/public/favicon.svg): C e ponto de estação simplificados para tamanhos pequenos.
 
 Manter a proporção e uma margem livre equivalente ao diâmetro do ponto superior. Na interface, o símbolo mede 48 × 32 px. Sobre petróleo, usar a versão branca. Não aplicar sombra, gradiente ou animação contínua à marca.
+
+## Apresentação no GitHub
+
+A navegação do README segue as cores do portfólio: azul `#0969DA` para demo, roxo `#8250DF` para arquitetura, verde `#167D4A` para execução, ocre `#9A6700` para resultados e azul `#0A66C2` para LinkedIn. Os rótulos identificam o destino e os SVGs ficam em `docs/readme/badges/`.
+
+A stack usa ícones Devicon locais de 64 × 64 px com texto alternativo; o contato usa LinkedIn de 24 × 24 px acompanhado do nome. As cores originais dos ícones são preservadas. A [licença MIT](../stack/LICENSE.devicon) acompanha os arquivos e cada SVG registra a origem.

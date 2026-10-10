@@ -21,9 +21,11 @@ Estações do Oslo Bysykkel sem bicicleta ou sem vaga, em ordem de prioridade, c
 
 ## Visão geral
 
-O CycleOps acompanha a falta de bicicletas e de vagas físicas nas estações. O motor confirma os incidentes ao longo de publicações do feed, calcula a prioridade e acompanha a recuperação. Cada linha da fila explica a decisão; os detalhes mostram contagens, horários e histórico.
+O CycleOps organiza estações do Oslo Bysykkel que estão sem bicicletas ou sem vagas físicas. Quem acompanha a disponibilidade pode abrir uma ocorrência, conferir as contagens e ver por que ela entrou naquela posição da fila.
 
-O mesmo motor Python processa o feed ao vivo, as gravações e a simulação. A interface mantém o modo visível, distingue falha da conexão de dado vencido e mostra o fechamento noturno do serviço.
+O motor confirma a falta ao longo de publicações do feed e acompanha sua resolução. Uma falha de conexão, um dado vencido e o fechamento noturno têm estados próprios na interface. A [política](policy/priority-policy.yaml) define os critérios; o [motor Python](apps/backend/src/cycleops/domain/engine.py) aplica as mesmas regras ao live, às gravações e à simulação.
+
+É um projeto de portfólio com dados abertos. A demonstração pública usa uma gravação real; a coleta ao vivo roda no Compose local.
 
 | Modo | Como funciona |
 |---|---|
@@ -35,13 +37,20 @@ O mesmo motor Python processa o feed ao vivo, as gravações e a simulação. A 
 
 [Abrir demo no navegador](https://arthurjoanes.github.io/cycleops/) · Replay gravado, sem login.
 
-![CycleOps com a nova identidade no replay gravado: fila de prioridades, mapa de Oslo e controles para acompanhar os incidentes](docs/media/identity-desktop.png)
+![CycleOps no replay gravado: fila de prioridades, mapa de Oslo e controles para acompanhar os incidentes](docs/media/identity-desktop.png)
 
 Captura de 09/10/2026 (UTC), feita com Playwright no build do Pages, reproduzindo dados reais gravados. O período e os horários exibidos pertencem à gravação. [Visualização no celular](docs/media/identity-mobile.png) · [Gravação e aceite](docs/results/feed-validation.md).
 
-No replay, pause, escolha 5× ou 20×, avance com “Passo” ou use “Ir para o incidente”. A gravação inclui confirmação e resolução de falta de vagas em St. Olavs gate. A simulação continua disponível no seletor.
+Para acompanhar uma ocorrência, pause o replay e use “Ir para o incidente”. Abra a estação, confira o motivo da prioridade e avance com “Passo” ou em 20× até a resolução. O seletor também permite explorar a simulação.
 
-O [vídeo da interface atual](docs/media/identity-demo.webm) mostra o replay real: pausa, salto para o incidente de falta de bicicletas em Jakob kirke e reprodução em 20× até a resolução.
+Na gravação de 09/10/2026, o motor produziu os seguintes eventos. Os offsets contam do início do replay:
+
+| Estação e condição | Confirmação | Resolução |
+|---|---|---|
+| St. Olavs gate (537), sem vagas | Evento 69 · 1.125,368 s | Evento 95 · 1.560,568 s |
+| Jakob kirke (412), sem bicicletas | Evento 106 · 1.740,683 s | Evento 124 · 2.040,832 s |
+
+O [manifesto do replay](apps/web/public/replay/recorded/manifest.json) registra esses pontos e os hashes dos arquivos; a [validação da coleta](docs/results/feed-validation.md) descreve a janela e seus limites. O [vídeo da demonstração](docs/media/identity-demo.webm) acompanha Jakob kirke da confirmação à resolução em 20×.
 
 ## Arquitetura
 
@@ -154,18 +163,42 @@ Os contratos Pydantic geram JSON Schema e tipos TypeScript; o Ajv valida as resp
 
 [Transação, entrega SSE e recuperação em sequência](docs/architecture.md#da-entrada-ao-navegador) · [Processos, conexões e testes](docs/architecture.md) · [Decisões de arquitetura](docs/adr/).
 
+| Responsabilidade | Implementação |
+|---|---|
+| Coletar e normalizar | [Coletor](apps/backend/src/cycleops/collection/collector.py) e [adaptador GBFS](apps/backend/src/cycleops/adapters/gbfs.py): cadência, falhas e dados normalizados. |
+| Decidir e persistir | [Motor](apps/backend/src/cycleops/domain/engine.py) e [ingestão](apps/backend/src/cycleops/application/ingest.py): incidentes, prioridade e commit do estado com os eventos. |
+| Entregar e recuperar | [Tailer](apps/backend/src/cycleops/api/tailer.py) e [stream SSE](apps/backend/src/cycleops/api/stream.py): leitura do log, filas por conexão e recuperação pelo cursor. |
+| Reproduzir e apresentar | [Compilador](apps/backend/src/cycleops/application/replay.py), [sessão de dados](apps/web/src/app/useDataSession.ts) e [store](apps/web/src/features/stations/store.ts): live e replay chegam aos mesmos componentes. |
+
 ## Stack e decisões
 
-| Parte | Escolha |
+<a id="stack"></a>
+
+<p>
+  <img src="docs/stack/python.svg" alt="Python" width="64" height="64">
+  <img src="docs/stack/fastapi.svg" alt="FastAPI" width="64" height="64">
+  <img src="docs/stack/postgresql.svg" alt="PostgreSQL" width="64" height="64">
+  <img src="docs/stack/typescript.svg" alt="TypeScript" width="64" height="64">
+  <img src="docs/stack/react.svg" alt="React" width="64" height="64">
+  <img src="docs/stack/docker.svg" alt="Docker" width="64" height="64">
+</p>
+
+| Escolha | Motivo e compromisso |
 |---|---|
-| Interface | React, TypeScript, Vite e Zustand. A interface aplica os eventos e exibe as decisões do motor. |
-| Mapa e histórico | MapLibre com base local do OpenStreetMap; gráfico de degraus em SVG e tabela alternativa. |
-| Motor e API | Python, Pydantic e FastAPI. As regras de incidente são compartilhadas pelo live e pelo replay. |
-| Eventos e execução | PostgreSQL, SSE, Docker Compose e Caddy. O PostgreSQL também entrega os avisos de novos eventos. |
+| Python + Pydantic + FastAPI | O mesmo motor processa live e replay, com contratos gerados para a web. Mudanças no domínio exigem regenerar os artefatos. |
+| PostgreSQL + SSE | Estado e eventos compartilham uma transação; o navegador recebe atualizações por um fluxo unidirecional. O tailer consulta o banco a cada segundo e cada aba mantém uma conexão SSE. |
+| React + TypeScript + Zustand | O store aplica os eventos em sequência e compartilha o estado entre fila, mapa e detalhes. Lacunas na sequência exigem recuperar eventos ou buscar um snapshot. |
+| MapLibre + base local do OpenStreetMap | O mapa funciona com arquivos servidos junto da interface. A base é simplificada e precisa ser regenerada para incorporar mudanças geográficas. |
+| Vite + GitHub Pages | A demo pública reproduz uma gravação sem backend ativo. Novos dados gravados dependem de compilação e publicação dos artefatos. |
+| Docker Compose + Caddy | Reúne banco, worker, API e web em uma instalação local. Os serviços compartilham o mesmo host. |
+
+[Alternativas para entrega de eventos](docs/adr/0003-entrega-de-eventos-sem-broker.md#alternativas) · [Escolhas do replay](docs/adr/0004-replay-no-navegador.md#alternativas) · [Estado e renderização](docs/adr/0005-estado-e-renderizacao.md).
+
+Dependências fixadas: [Python](apps/backend/uv.lock), [web](apps/web/pnpm-lock.yaml) e [imagens do Compose](compose.yaml).
 
 ## Executar localmente
 
-Para a aplicação inteira, precisa só de Docker. Da raiz do repositório:
+Use Docker com containers Linux e Docker Compose. Na raiz do repositório:
 
 ```bash
 docker compose up --build
@@ -194,7 +227,7 @@ Abra [127.0.0.1:4173/cycleops/](http://127.0.0.1:4173/cycleops/). Para desenvolv
 
 ## Testes e resultados
 
-O script usa Bash, Docker, git, uv, Node 24 com corepack e o Chromium do Playwright. Ele executa as verificações locais do CI, exceto gitleaks:
+O script usa Bash (Git Bash ou WSL no Windows), Docker, git, uv, Node 24 com corepack e o Chromium do Playwright. Ele executa as verificações locais do CI, exceto gitleaks:
 
 ```bash
 scripts/checks
@@ -213,22 +246,23 @@ corepack pnpm check:bundle
 
 O `e2e` gera o build do Pages sob `/cycleops/`; `check:bundle` confere esse build. Os comandos do backend e do E2E contra o Compose estão no [CONTRIBUTING.md](CONTRIBUTING.md). O `e2e:compose` usa o projeto isolado `cycleops-e2e` e apaga seu banco no último teste.
 
-| Registro | Resultado |
-|---|---|
-| [Publicação e CI](docs/results/publicacao.md) | 354 testes Python, 69 unitários web, 14 E2E Pages e 11 E2E Compose. Demo pública conferida em desktop e celular. |
-| [Coleta real](docs/results/feed-validation.md) | 249 respostas em 60 min, todas 200. O replay tem 218 eventos e dois incidentes resolvidos. |
-| [Verificação do replay e do Compose](docs/results/validacao-20261009.md) | Testes do motor, persistência, SSE, reconexão e navegador, com comandos e resultados registrados. |
-| [Identidade visual](docs/results/identity-20261009.md) | 69 testes unitários, 14 E2E Pages, capturas desktop e celular e Web Vitals com ambiente e limites de comparação. |
-| [Desempenho](docs/results/performance.md) | Carga do frontend, Web Vitals de laboratório e latência do Compose, com ambiente e dados de cada execução. |
+| Pergunta | Registro e resultado | Alcance |
+|---|---|---|
+| Backend e navegador passaram nos testes? | [CI da publicação](docs/results/publicacao.md), 09/10/2026 no horário de Brasília, commit `185e5af`: 354 testes Python, 69 unitários web, 14 E2E Pages e 11 E2E Compose. | A execução identifica a revisão testada; o job Compose usa a fonte sintética sem internet. |
+| A gravação contém incidentes resolvidos? | [Coleta real](docs/results/feed-validation.md), 09/10/2026: 249 respostas em 60 min, todas 200; 218 eventos e dois incidentes resolvidos no replay. | A janela inclui o fechamento noturno e não representa o movimento diurno. |
+| A demo publicada abre em desktop e celular? | [Roteiro no endereço público](docs/results/data/public-pages-20261010.json), 09/10/2026 às 21:08 em Brasília: pausa, salto para incidente e mapa em 1440×900 e 320×900. | Sem overflow ou erros no roteiro; a revisão manual de acessibilidade continua pendente. |
+| Como a interface se comportou no laboratório? | [Revisão visual](docs/results/identity-20261009.md), 09/10/2026: bundle de 119.270 bytes gzip; medianas de LCP 3.248 ms, CLS 0,004 e INP 240 ms em três execuções. | Chromium com CPU e rede emuladas; os números não são métricas de visitas reais. |
 
-O [índice de resultados](docs/results/index.md) relaciona cada execução ao comando, commit e data. As amostras diurnas adicionais e o [checklist manual de acessibilidade](docs/results/a11y-manual.md) continuam pendentes.
+O [índice de resultados](docs/results/index.md) reúne comandos, commits e datas. A [validação do replay e do Compose](docs/results/validacao-20261009.md) cobre persistência e reconexão; o [relatório de desempenho](docs/results/performance.md) guarda os cenários de carga e latência. As amostras diurnas adicionais e o [checklist manual de acessibilidade](docs/results/a11y-manual.md) continuam pendentes.
 
-## Limitações e segurança
+<a id="limitações-e-segurança"></a>
+
+## Limites e segurança
 
 - Projeto independente, sem vínculo com Oslo Bysykkel; somente leitura, sem reserva nem despacho de equipe.
-- O feed não tem SLA. O live roda só no Compose local.
+- O feed não tem SLA. O live roda só no Compose local; os critérios de coleta e frescor estão na [política da fonte](policy/provider-oslo.yaml) e na [política de prioridade](policy/priority-policy.yaml).
 - A base do mapa é simplificada e não serve para navegação.
-- No Compose, cada aba usa uma conexão SSE. A API permite quatro por IP e encerra a mais antiga ao abrir a quinta.
+- No Compose, cada aba usa uma conexão SSE. A API permite quatro por IP e encerra a mais antiga ao abrir a quinta. [Limites e recuperação](docs/architecture.md#ligações).
 - A CSP do Pages vai por meta e é mais limitada que a enviada pelo Caddy. Controles e retenção estão em [SECURITY.md](SECURITY.md).
 
 ## Documentação
@@ -239,10 +273,19 @@ O [índice de resultados](docs/results/index.md) relaciona cada execução ao co
 | Implementação e decisões | [Arquitetura](docs/architecture.md) · [ADRs](docs/adr/) · [Comandos](CONTRIBUTING.md) |
 | Execuções e medições | [Resultados](docs/results/index.md) · [Desempenho](docs/results/performance.md) |
 | Publicação e revisão manual | [Checklist de publicação](docs/results/publicacao.md) · [Acessibilidade](docs/results/a11y-manual.md) |
-| Marca e cores | [Identidade visual](docs/brand/README.md) |
+| Apresentação | [Identidade visual](docs/brand/README.md) · [Padrão documental](docs/padrao-documentacao.md) |
 
 ## Autor e licença
 
-Desenvolvido por Arthur Joanes. [LinkedIn](https://www.linkedin.com/in/arthur-joanes-6a2967373/).
+Desenvolvido por Arthur Joanes. Para conversar sobre dados abertos, eventos e operação de estações:
+
+<p>
+  <a href="https://www.linkedin.com/in/arthur-joanes-6a2967373/">
+    <img src="docs/contact/linkedin.svg" alt="" width="24" height="24">
+    <strong>Arthur Joanes no LinkedIn</strong>
+  </a>
+</p>
 
 Código sob [licença MIT](LICENSE). Dados do Oslo Bysykkel sob NLOD 2.0 e base do OpenStreetMap sob ODbL: [fontes e atribuições](DATA_SOURCES.md). Bibliotecas e demais licenças em [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+Ícones da stack e LinkedIn: [Devicon, licença MIT](docs/stack/LICENSE.devicon).

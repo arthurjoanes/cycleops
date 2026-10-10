@@ -21,9 +21,11 @@ Oslo Bysykkel stations with no bikes or no free docks, ordered by priority, with
 
 ## Overview
 
-CycleOps tracks stations with no bikes or no physical docks. The engine confirms incidents across feed publications, orders the queue and tracks recovery. Each row explains the decision; station details show counts, timestamps and history.
+CycleOps orders Oslo Bysykkel stations that have no bikes or no physical docks available. Someone monitoring availability can open an incident, check the counts and see why it occupies that position in the queue.
 
-The same Python engine processes live data, recordings and simulation. The interface keeps the mode visible, distinguishes a connection failure from stale data and shows the service's overnight closure.
+The engine confirms shortages across feed publications and tracks their resolution. Connection failure, stale data and overnight closure have separate states in the interface. The [policy](policy/priority-policy.yaml) defines the criteria; the [Python engine](apps/backend/src/cycleops/domain/engine.py) applies the same rules to live data, recordings and simulation.
+
+This is a portfolio project using open data. The public demo uses a real recording; live collection runs in local Compose.
 
 | Mode | How it runs |
 |---|---|
@@ -35,13 +37,20 @@ The same Python engine processes live data, recordings and simulation. The inter
 
 [Open the demo](https://arthurjoanes.github.io/cycleops/) · Recorded replay, no login.
 
-![CycleOps with its updated identity playing a real recording: priority queue, Oslo map and incident replay controls](docs/media/identity-desktop.png)
+![CycleOps playing a real recording: priority queue, Oslo map and incident replay controls](docs/media/identity-desktop.png)
 
 Captured on 2026-10-09 (UTC) with Playwright against the Pages build, replaying recorded real data. Its period and timestamps belong to the recording. [Mobile view](docs/media/identity-mobile.png) · [Recording and acceptance](docs/results/feed-validation.md).
 
-Pause, choose 5× or 20×, advance with “Passo” or jump with “Ir para o incidente”. In the recording, St. Olavs gate runs out of docks; the incident is confirmed and later resolved. Simulation remains available in the mode selector.
+To follow an incident, pause the replay and use “Ir para o incidente”. Open the station, check the priority reason and advance with “Passo” or at 20× until resolution. The selector also lets you explore the simulation.
 
-The [video of the current interface](docs/media/identity-demo.webm) shows the real recording: pausing, jumping to Jakob kirke's bike shortage and playing at 20× until the incident resolves.
+The engine produced these events from the recording made on 2026-10-09. Offsets are measured from the start of the replay:
+
+| Station and condition | Confirmation | Resolution |
+|---|---|---|
+| St. Olavs gate (537), no docks | Event 69 · 1,125.368 s | Event 95 · 1,560.568 s |
+| Jakob kirke (412), no bikes | Event 106 · 1,740.683 s | Event 124 · 2,040.832 s |
+
+The [replay manifest](apps/web/public/replay/recorded/manifest.json) records these points and the file hashes; [feed validation](docs/results/feed-validation.md) describes the recording window and its limits. The [demo video](docs/media/identity-demo.webm) follows Jakob kirke from confirmation to resolution at 20×.
 
 ## Architecture
 
@@ -154,18 +163,42 @@ Pydantic contracts generate JSON Schema and TypeScript types; Ajv validates resp
 
 [Transaction, SSE delivery and recovery sequence](docs/architecture.md#da-entrada-ao-navegador) · [Processes, connections and tests](docs/architecture.md) · [Architecture decisions](docs/adr/). Detailed documents are in Portuguese.
 
+| Responsibility | Implementation |
+|---|---|
+| Collect and normalize | [Collector](apps/backend/src/cycleops/collection/collector.py) and [GBFS adapter](apps/backend/src/cycleops/adapters/gbfs.py): cadence, failures and normalized data. |
+| Decide and persist | [Engine](apps/backend/src/cycleops/domain/engine.py) and [ingestion](apps/backend/src/cycleops/application/ingest.py): incidents, priority and one commit for state and events. |
+| Deliver and recover | [Tailer](apps/backend/src/cycleops/api/tailer.py) and [SSE stream](apps/backend/src/cycleops/api/stream.py): log reads, per-connection queues and cursor recovery. |
+| Replay and display | [Compiler](apps/backend/src/cycleops/application/replay.py), [data session](apps/web/src/app/useDataSession.ts) and [store](apps/web/src/features/stations/store.ts): live and replay feed the same components. |
+
 ## Stack and decisions
 
-| Part | Choice |
+<a id="stack"></a>
+
+<p>
+  <img src="docs/stack/python.svg" alt="Python" width="64" height="64">
+  <img src="docs/stack/fastapi.svg" alt="FastAPI" width="64" height="64">
+  <img src="docs/stack/postgresql.svg" alt="PostgreSQL" width="64" height="64">
+  <img src="docs/stack/typescript.svg" alt="TypeScript" width="64" height="64">
+  <img src="docs/stack/react.svg" alt="React" width="64" height="64">
+  <img src="docs/stack/docker.svg" alt="Docker" width="64" height="64">
+</p>
+
+| Choice | Reason and trade-off |
 |---|---|
-| Interface | React, TypeScript, Vite and Zustand. The interface applies events and displays engine decisions. |
-| Map and history | MapLibre with a local OpenStreetMap base; an SVG step chart with a table alternative. |
-| Engine and API | Python, Pydantic and FastAPI. Live and replay share the incident rules. |
-| Events and runtime | PostgreSQL, SSE, Docker Compose and Caddy. PostgreSQL also signals new events. |
+| Python + Pydantic + FastAPI | The same engine processes live data and replay, with contracts generated for the web. Domain changes require regenerating artifacts. |
+| PostgreSQL + SSE | State and events share a transaction; the browser receives updates through a one-way stream. The tailer polls the database every second, and each tab keeps an SSE connection. |
+| React + TypeScript + Zustand | The store applies events in sequence and shares state across the queue, map and details. Sequence gaps require event recovery or a fresh snapshot. |
+| MapLibre + local OpenStreetMap base | The map uses files served alongside the interface. The base is simplified and must be regenerated to incorporate geographic changes. |
+| Vite + GitHub Pages | The public demo plays a recording without an active backend. New recorded data requires compiling and publishing artifacts. |
+| Docker Compose + Caddy | Packages the database, worker, API and web for local installation. Services share the same host. |
+
+[Event delivery alternatives](docs/adr/0003-entrega-de-eventos-sem-broker.md#alternativas) · [Replay choices](docs/adr/0004-replay-no-navegador.md#alternativas) · [State and rendering](docs/adr/0005-estado-e-renderizacao.md).
+
+Pinned dependencies: [Python](apps/backend/uv.lock), [web](apps/web/pnpm-lock.yaml) and [Compose images](compose.yaml).
 
 ## Run locally
 
-Docker is the only requirement for the full application. From the repository root:
+Use Docker with Linux containers and Docker Compose. From the repository root:
 
 ```bash
 docker compose up --build
@@ -194,7 +227,7 @@ Open [127.0.0.1:4173/cycleops/](http://127.0.0.1:4173/cycleops/). For developmen
 
 ## Tests and results
 
-The script needs Bash, Docker, git, uv, Node 24 with corepack and Playwright's Chromium. It runs the local equivalents of CI checks, except gitleaks:
+The script needs Bash (Git Bash or WSL on Windows), Docker, git, uv, Node 24 with corepack and Playwright's Chromium. It runs the local equivalents of CI checks, except gitleaks:
 
 ```bash
 scripts/checks
@@ -213,22 +246,21 @@ corepack pnpm check:bundle
 
 The `e2e` command builds Pages under `/cycleops/`; `check:bundle` checks that build. Backend and Compose E2E commands are in [CONTRIBUTING.md](CONTRIBUTING.md). The `e2e:compose` suite uses the isolated `cycleops-e2e` project and deletes its database in the last test.
 
-| Record | Result |
-|---|---|
-| [Publication and CI](docs/results/publicacao.md) | 354 Python tests, 69 web unit tests, 14 Pages E2E and 11 Compose E2E. Public demo checked on desktop and mobile. |
-| [Real feed collection](docs/results/feed-validation.md) | 249 responses over 60 min, all HTTP 200. The replay contains 218 events and two resolved incidents. |
-| [Replay and Compose checks](docs/results/validacao-20261009.md) | Engine, persistence, SSE, reconnection and browser tests, with commands and recorded results. |
-| [Visual identity](docs/results/identity-20261009.md) | 69 unit tests, 14 Pages E2E tests, desktop and mobile captures, and lab Web Vitals with the environment and comparison limits. |
-| [Performance](docs/results/performance.md) | Frontend load, lab Web Vitals and Compose latency, with the environment and data for each run. |
+| Question | Record and result | Scope |
+|---|---|---|
+| Did the backend and browser tests pass? | [Publication CI](docs/results/publicacao.md), 2026-10-09 in Brasília time, commit `185e5af`: 354 Python tests, 69 web unit tests, 14 Pages E2E and 11 Compose E2E. | The run identifies the tested revision; the Compose job uses the synthetic source without internet access. |
+| Does the recording contain resolved incidents? | [Real collection](docs/results/feed-validation.md), 2026-10-09: 249 responses over 60 min, all HTTP 200; 218 events and two resolved incidents in the replay. | The window includes overnight closure and does not represent daytime activity. |
+| Does the published demo open on desktop and mobile? | [Public URL check](docs/results/data/public-pages-20261010.json), 2026-10-09 at 21:08 Brasília time: pause, incident jump and map at 1440×900 and 320×900. | No overflow or errors in this walkthrough; manual accessibility review is still pending. |
+| How did the interface behave in the lab? | [Visual review](docs/results/identity-20261009.md), 2026-10-09: 119,270-byte gzip bundle; median LCP 3,248 ms, CLS 0.004 and INP 240 ms across three runs. | Chromium with emulated CPU and network conditions; these are not real-user metrics. |
 
-The [results index](docs/results/index.md) links runs to commands, commits and dates. Additional daytime samples and the [manual accessibility checklist](docs/results/a11y-manual.md) remain pending.
+The [results index](docs/results/index.md) lists commands, commits and dates. [Replay and Compose validation](docs/results/validacao-20261009.md) covers persistence and reconnection; the [performance report](docs/results/performance.md) retains load and latency scenarios. Additional daytime samples and the [manual accessibility checklist](docs/results/a11y-manual.md) remain pending.
 
 ## Limitations and security
 
 - Independent project, unaffiliated with Oslo Bysykkel. Read-only, with no booking or dispatch.
-- The feed has no SLA. Live runs only in local Compose.
+- The feed has no SLA. Live runs only in local Compose; collection and freshness criteria are in the [provider policy](policy/provider-oslo.yaml) and [priority policy](policy/priority-policy.yaml).
 - The simplified map base is not for navigation.
-- Each Compose browser tab uses one SSE connection. The API allows four per IP and closes the oldest when a fifth opens.
+- Each Compose browser tab uses one SSE connection. The API allows four per IP and closes the oldest when a fifth opens. [Limits and recovery](docs/architecture.md#ligações).
 - Pages delivers CSP through a meta tag, with fewer controls than Caddy's header. See [SECURITY.md](SECURITY.md) for controls and retention.
 
 ## Documentation
@@ -239,10 +271,19 @@ The [results index](docs/results/index.md) links runs to commands, commits and d
 | Implementation and decisions | [Architecture](docs/architecture.md) · [ADRs](docs/adr/) · [Commands](CONTRIBUTING.md) |
 | Runs and measurements | [Results](docs/results/index.md) · [Performance](docs/results/performance.md) |
 | Publication and manual review | [Publication checklist](docs/results/publicacao.md) · [Accessibility](docs/results/a11y-manual.md) |
-| Brand and colors | [Visual identity](docs/brand/README.md) |
+| Presentation | [Visual identity](docs/brand/README.md) · [Documentation pattern](docs/padrao-documentacao.md) |
 
 ## Author and license
 
-Developed by Arthur Joanes. [LinkedIn](https://www.linkedin.com/in/arthur-joanes-6a2967373/).
+Developed by Arthur Joanes. Get in touch to discuss open data, event delivery and station operations:
+
+<p>
+  <a href="https://www.linkedin.com/in/arthur-joanes-6a2967373/">
+    <img src="docs/contact/linkedin.svg" alt="" width="24" height="24">
+    <strong>Arthur Joanes on LinkedIn</strong>
+  </a>
+</p>
 
 Code under the [MIT license](LICENSE). Oslo Bysykkel data under NLOD 2.0 and the OpenStreetMap base under ODbL: [sources and attribution](DATA_SOURCES.md). Libraries and other licenses are listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+Stack and LinkedIn icons: [Devicon, MIT license](docs/stack/LICENSE.devicon).
