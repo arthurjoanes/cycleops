@@ -37,7 +37,7 @@ Captura de 09/10/2026 (UTC), feita com Playwright no build do Pages, reproduzind
 
 No replay, pause, escolha 5× ou 20×, avance com “Passo” ou use “Ir para o incidente”. A gravação inclui confirmação e resolução de falta de vagas em St. Olavs gate. A simulação continua disponível no seletor.
 
-O [vídeo de 27 s da versão anterior](docs/media/demo.webm) mostra o modo Simulação no Compose, um incidente confirmado, a reconexão após reiniciar a API e a troca para o replay em arquivo. Ele conserva a aparência anterior da interface.
+O [vídeo da interface atual](docs/media/identity-demo.webm) mostra o replay real: pausa, salto para o incidente de falta de bicicletas em Jakob kirke e reprodução em 20× até a resolução.
 
 ## Arquitetura
 

@@ -37,7 +37,7 @@ Captured on 2026-10-09 (UTC) with Playwright against the Pages build, replaying 
 
 Pause, choose 5× or 20×, advance with “Passo” or jump with “Ir para o incidente”. In the recording, St. Olavs gate runs out of docks; the incident is confirmed and later resolved. Simulation remains available in the mode selector.
 
-The [27 s video of the earlier version](docs/media/demo.webm) shows simulation in Compose, a confirmed incident, reconnection after an API restart and switching to the file replay. It retains the interface's previous appearance.
+The [video of the current interface](docs/media/identity-demo.webm) shows the real recording: pausing, jumping to Jakob kirke's bike shortage and playing at 20× until the incident resolves.
 
 ## Architecture
 
