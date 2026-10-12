@@ -2,9 +2,19 @@
 
 O replay permite voltar a um incidente e comparar o que a estação informou com a decisão do motor. A análise reúne o período da gravação, a evolução dos indicadores e as tentativas de coleta. No stream do Compose, os indicadores acompanham a sessão aberta e o relatório de qualidade consulta o banco.
 
+## Fonte, horários e estações
+
+O cabeçalho mantém o modo e a data da gravação, ou o modo “Simulação” com sua seed. O seletor “Horários” alterna entre Oslo e o fuso local. “Dados da sessão”, no ícone de informação ao lado do estado da fonte, abre a origem, a última publicação e a cobertura.
+
+A fila mostra a condição e as contagens de bicicletas e vagas. Selecione a estação para ler o motivo completo e abrir seu histórico. No celular, esses detalhes aparecem em uma gaveta; Escape ou “Fechar” retorna à lista.
+
+“Todas as estações” começa com 50 linhas e “Mostrar mais estações” acrescenta mais 50. A busca consulta o catálogo inteiro e reinicia o trecho exibido. Uma seleção pelo mapa ou por link pode ampliar esse trecho para incluir a estação escolhida. O contador informa quantas linhas estão visíveis e quantas correspondem à busca.
+
+No mapa, “Legenda” abre todos os estados. O rodapé mantém os créditos resumidos; “Fontes e licenças” abre as atribuições e os links para os dados.
+
 ## Compartilhar um momento
 
-Abra uma estação e escolha o horário no replay. O botão “Copiar este momento” pausa a reprodução e cria um endereço com a fonte, a estação, as opções da tela e o instante escolhido. O link também inclui o hash dos eventos da gravação.
+Abra uma estação e escolha o horário no replay. O ícone de link, “Copiar este momento”, pausa a reprodução e cria um endereço com a fonte, a estação, as opções da tela e o instante escolhido. O link também inclui o hash dos eventos da gravação.
 
 Quem abrir o endereço recebe a mesma posição, pausada. Se a gravação publicada tiver outro hash, a página explica a diferença e permite abrir do início. Um horário inválido também gera uma mensagem; ele não é convertido em outro instante. Quando o navegador não permite copiar automaticamente, o campo de texto mostra o endereço para cópia manual.
 
@@ -14,11 +24,13 @@ O parâmetro `artifact` identifica os eventos por SHA-256; `at` guarda os segund
 
 A linha do tempo cobre o período da gravação. Arraste o controle ou use o teclado para escolher um horário; a reprodução pausa nesse ponto. Os marcadores distinguem confirmação e resolução. Ao selecionar uma estação, os marcadores se limitam aos incidentes dela.
 
-As posições seguem o tempo decorrido, inclusive durante falhas da fonte e fechamento do serviço. Os botões de pausa, velocidade, passo e salto para incidente continuam disponíveis.
+“Ir para o incidente” abre a ocorrência escolhida. Em “Incidentes” (“Explorar incidentes”), altere a ocorrência no seletor, consulte os marcos ou desative o filtro da estação selecionada. O ícone de informação do replay, “Detalhes do replay”, mostra o evento atual, o total e o término da reprodução.
+
+As posições seguem o tempo decorrido, inclusive durante falhas da fonte e fechamento do serviço. Pausa, velocidade e “Passo” permanecem na barra. As setas do teclado movem a timeline em um segundo; Page Up e Page Down, em um minuto. Home e End levam aos limites do período.
 
 ## Ler o resumo
 
-Em “Analisar dados”, abra “Resumo da gravação”. O relatório usa a gravação inteira, independentemente do ponto em que o player está pausado. Ele mostra a duração, incidentes confirmados e resolvidos e os períodos com fonte válida, sem dados ou com o serviço fechado.
+Na faixa de indicadores, use o ícone de gráfico, “Analisar dados”, e abra “Resumo da gravação”. O relatório usa a gravação inteira, independentemente do ponto em que o player está pausado. Ele mostra a duração, incidentes confirmados e resolvidos e os períodos com fonte válida, sem dados ou com o serviço fechado.
 
 O ranking soma o tempo observado com zero bicicletas ou zero vagas físicas por estação. Um intervalo só entra quando a fonte e o registro da estação permitem verificar aquela contagem. Vagas desconhecidas, estações fora do cadastro e períodos sem dados ficam fora do denominador; fechamento é apresentado à parte.
 
@@ -43,6 +55,8 @@ No replay, `diagnostics.json` cobre o período inteiro. Seu SHA-256, fluxo, modo
 No Compose, `GET /api/v1/feed-diagnostics` consulta as últimas seis horas por padrão. Os parâmetros `from` e `to` permitem uma janela de até 24 horas. A API continua somente leitura, com o mesmo limite de requisições. “Atualizar relatório” faz uma nova consulta.
 
 ## Implementação e referências
+
+O [guia da interface](ui-ux.md) descreve a organização da tela, os controles de teclado e os comandos para conferir a apresentação.
 
 | Parte | Código |
 |---|---|

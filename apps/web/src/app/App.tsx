@@ -1,6 +1,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { lazy, Suspense, useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import ui from "../components/ui/ui.module.css";
+import { ActionIcon } from "../components/ui/ActionIcon";
 import { Indicators } from "../features/priorities/Indicators";
 import { StationPriorityList } from "../features/priorities/StationPriorityList";
 import { ReplayControls } from "../features/replay/ReplayControls";
@@ -54,6 +55,7 @@ export function App() {
   const [mapUnavailable, setMapUnavailable] = useState(false);
   const [analysisOpen, setAnalysisOpen] = useState(false);
   const analysisStation = useRef<string | null>(null);
+  const analysisTrigger = useRef<HTMLButtonElement>(null);
   const status = useStations((s) => s.status);
   const data = useStations((s) => s.session);
   const selectedName = useStations((s) => (hash.station ? (s.catalog.get(hash.station)?.name ?? hash.station) : null));
@@ -115,12 +117,6 @@ export function App() {
         onKind={(mode) => setHash({ mode, station: null, artifact: null, at: null })}
         manifest={session.manifest}
       />
-      {data?.mode === "synthetic" && (
-        <p className={styles.simulation}>
-          Simulação: estações e contagens geradas com seed {data.seed}. Não é a operação real do Oslo
-          Bysykkel.
-        </p>
-      )}
       {player && session.manifest && (
         <ReplayControls
           key={session.manifest.streamId}
@@ -132,52 +128,54 @@ export function App() {
         />
       )}
       {status === "loading" && (
-        <p className={styles.loading} role="status">
+        <p className={styles.loading} data-replay={import.meta.env.MODE === "pages" || hash.mode === "recorded" || hash.mode === "synthetic"} role="status">
           Carregando os dados.
         </p>
       )}
-      <Indicators />
       {session.replayLinkError && (
         <div className={styles.linkError} role="alert">
           <p>{session.replayLinkError}</p>
           <button type="button" className={ui.button} onClick={() => setHash({ at: null, artifact: null })}>Abrir do início</button>
         </div>
       )}
-      <Dialog.Root open={analysisOpen} onOpenChange={setAnalysisOpen}>
-        <div className={styles.analysisActions}>
-          <Dialog.Trigger asChild>
-            <button type="button" className={ui.button} disabled={status !== "ready"}>Analisar dados</button>
-          </Dialog.Trigger>
-        </div>
-        <Dialog.Portal>
-          <Dialog.Overlay className={styles.overlay} />
-          <Dialog.Content className={styles.analysisDialog} aria-describedby="analysis-description" onCloseAutoFocus={(event) => {
-            if (analysisStation.current) {
-              event.preventDefault();
-              select(analysisStation.current);
-              analysisStation.current = null;
-              if (!narrow) requestAnimationFrame(() => detailsHeading.current?.focus());
-            }
-          }}>
-            <div className={styles.analysisHead}>
-              <div>
-                <Dialog.Title>Análise dos dados</Dialog.Title>
-                <Dialog.Description id="analysis-description">
-                  {player ? "Resumo da gravação, evolução dos indicadores e qualidade da coleta." : "Indicadores recebidos nesta sessão e qualidade da coleta."}
-                </Dialog.Description>
+      <div className={styles.overview}>
+        <Dialog.Root open={analysisOpen} onOpenChange={setAnalysisOpen}>
+          <Indicators action={
+            <Dialog.Trigger asChild>
+              <button ref={analysisTrigger} type="button" className={ui.button} aria-label="Analisar dados" title="Analisar dados" disabled={status !== "ready"}><ActionIcon name="chart" size={20} /></button>
+            </Dialog.Trigger>
+          } />
+          <Dialog.Portal>
+            <Dialog.Overlay className={styles.overlay} />
+            <Dialog.Content className={styles.analysisDialog} aria-describedby="analysis-description" onCloseAutoFocus={(event) => {
+              if (analysisStation.current) {
+                event.preventDefault();
+                select(analysisStation.current);
+                opener.current = analysisTrigger.current;
+                analysisStation.current = null;
+                if (!narrow) requestAnimationFrame(() => detailsHeading.current?.focus());
+              }
+            }}>
+              <div className={styles.analysisHead}>
+                <div>
+                  <Dialog.Title>Análise dos dados</Dialog.Title>
+                  <Dialog.Description id="analysis-description">
+                    {player ? "Resumo do período, evolução dos indicadores e qualidade da coleta." : "Indicadores recebidos nesta sessão e qualidade da coleta."}
+                  </Dialog.Description>
+                  {detailsContext && <p className={styles.analysisContext}>{detailsContext}</p>}
+                </div>
+                <Dialog.Close className={ui.button} aria-label="Fechar análise" title="Fechar análise"><ActionIcon name="close" /></Dialog.Close>
               </div>
-              <Dialog.Close className={ui.button}>Fechar análise</Dialog.Close>
-            </div>
-            {detailsContext && <p className={styles.analysisContext}>{detailsContext}</p>}
-            <Suspense fallback={<p role="status">Carregando a análise.</p>}>
-              <AnalysisPanel key={data?.streamId ?? "loading"} player={player} zone={hash.zone} onSelectStation={(id) => {
-                analysisStation.current = id;
-                setAnalysisOpen(false);
-              }} />
-            </Suspense>
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
+              <Suspense fallback={<p role="status">Carregando a análise.</p>}>
+                <AnalysisPanel key={data?.streamId ?? "loading"} player={player} zone={hash.zone} onSelectStation={(id) => {
+                  analysisStation.current = id;
+                  setAnalysisOpen(false);
+                }} />
+              </Suspense>
+            </Dialog.Content>
+          </Dialog.Portal>
+        </Dialog.Root>
+      </div>
       <div className={styles.message}>
         <MainMessage
           zone={hash.zone}
@@ -196,7 +194,7 @@ export function App() {
               className={ui.button}
               onClick={() => setHash({ tab })}
             >
-              {tab === "list" ? "Lista" : "Mapa"}
+              <ActionIcon name={tab === "list" ? "list" : "map"} />{tab === "list" ? "Lista" : "Mapa"}
             </button>
           ))}
         </div>
@@ -206,7 +204,7 @@ export function App() {
           <section className={styles.queue} aria-labelledby="queue-title">
             <div className={styles.queueHead}>
               <h2 id="queue-title" ref={queueHeading} tabIndex={-1}>
-                {hash.view === "all" ? "Todas as estações" : "Prioridades"}
+                Estações
               </h2>
               <div className={ui.group} role="group" aria-label="Lista">
                 <button
@@ -256,12 +254,12 @@ export function App() {
               />
             ) : (
               <>
-                <a className={styles.mapLink} href="#/?view=all" onClick={(e) => {
+                {narrow && <a className={styles.mapLink} href="#/?view=all" onClick={(e) => {
                   e.preventDefault();
                   setHash({ view: "all", tab: "list" });
                 }}>
                   Ver as estações em lista
-                </a>
+                </a>}
                 <Suspense fallback={<p className={ui.notice}>Carregando o mapa.</p>}>
                   <StationAvailabilityMap
                     selected={hash.station}
@@ -278,8 +276,8 @@ export function App() {
                   <h2 id="details-title" ref={detailsHeading} tabIndex={-1}>
                     {selectedName}
                   </h2>
-                  <button type="button" className={ui.button} onClick={closeDetails}>
-                    Fechar
+                  <button type="button" className={ui.button} aria-label="Fechar" title="Fechar" onClick={closeDetails}>
+                    <ActionIcon name="close" />
                   </button>
                 </div>
                 {details}
@@ -298,7 +296,7 @@ export function App() {
                   <Dialog.Title>{selectedName}</Dialog.Title>
                   {detailsContext && <p className={styles.detailsContext}>{detailsContext}</p>}
                 </div>
-                <Dialog.Close className={ui.button}>Fechar</Dialog.Close>
+                <Dialog.Close className={ui.button} aria-label="Fechar" title="Fechar"><ActionIcon name="close" /></Dialog.Close>
               </div>
               {details}
             </Dialog.Content>

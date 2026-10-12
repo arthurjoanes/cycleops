@@ -1,0 +1,1942 @@
+{
+  "environment": {
+    "cpu": "AMD Ryzen 7 5700X3D 8-Core Processor",
+    "cores": 16,
+    "memoryGb": 31.9,
+    "os": "win32 10.0.26300",
+    "browser": "chromium 153.0.8010.12 (Playwright, headless)",
+    "commit": "96c8f56 + local changes",
+    "date": "2026-10-12T04:49:53.109Z"
+  },
+  "method": {
+    "batches": 30,
+    "warmupBatches": 5,
+    "intervalMs": 1000,
+    "cpuSlowdown": 4,
+    "network": "none (events injected in the page)",
+    "seed": 7,
+    "notes": "applyMs: store update for the batch; renderMs: store update plus the React render and commit (the list); the map updates in its own animation frame and is not in renderMs; receiveToPaintMs: from the batch leaving the generator to the first task after the next frame (100 ms coalescing window included). The all view starts with 50 visible rows; this test does not expand that prefix. All stations still reach the store and the map."
+  },
+  "results": [
+    {
+      "scenario": "267 estações, todas mudando a cada lote",
+      "view": "priorities",
+      "stations": 267,
+      "fraction": 1,
+      "batchesMeasured": 25,
+      "changedPerBatch": 267,
+      "applyMs": {
+        "p50": 0.7,
+        "p95": 1.3,
+        "max": 1.6
+      },
+      "renderMs": {
+        "p50": 12.7,
+        "p95": 17.1,
+        "max": 17.3
+      },
+      "receiveToPaintMs": {
+        "p50": 158.6,
+        "p95": 176.6,
+        "max": 189.3
+      },
+      "rowRendersPerBatch": {
+        "p50": 11,
+        "max": 21
+      },
+      "longTasks": {
+        "count": 2,
+        "maxMs": 59
+      },
+      "framesPerSecond": 51,
+      "domNodes": 376,
+      "heapMb": {
+        "afterWarmup": 12,
+        "end": 12.5
+      },
+      "raw": {
+        "samples": [
+          {
+            "sequence": 1,
+            "changed": 267,
+            "applyMs": 3.5,
+            "renderMs": 56.30000001192093,
+            "paintMs": 486.40000000596046,
+            "rowRenders": 7
+          },
+          {
+            "sequence": 2,
+            "changed": 267,
+            "applyMs": 3.0999999940395355,
+            "renderMs": 29.80000001192093,
+            "paintMs": 382.5,
+            "rowRenders": 18
+          },
+          {
+            "sequence": 3,
+            "changed": 267,
+            "applyMs": 1.5,
+            "renderMs": 15.099999994039536,
+            "paintMs": 156.90000000596046,
+            "rowRenders": 15
+          },
+          {
+            "sequence": 4,
+            "changed": 267,
+            "applyMs": 1.0999999940395355,
+            "renderMs": 18.900000005960464,
+            "paintMs": 160.80000001192093,
+            "rowRenders": 10
+          },
+          {
+            "sequence": 5,
+            "changed": 267,
+            "applyMs": 0.9000000059604645,
+            "renderMs": 20.900000005960464,
+            "paintMs": 174.69999998807907,
+            "rowRenders": 18
+          },
+          {
+            "sequence": 6,
+            "changed": 267,
+            "applyMs": 1.5999999940395355,
+            "renderMs": 16.5,
+            "paintMs": 158.59999999403954,
+            "rowRenders": 12
+          },
+          {
+            "sequence": 7,
+            "changed": 267,
+            "applyMs": 0.699999988079071,
+            "renderMs": 11.699999988079071,
+            "paintMs": 155.2999999821186,
+            "rowRenders": 14
+          },
+          {
+            "sequence": 8,
+            "changed": 267,
+            "applyMs": 0.800000011920929,
+            "renderMs": 14.300000011920929,
+            "paintMs": 161.5,
+            "rowRenders": 14
+          },
+          {
+            "sequence": 9,
+            "changed": 267,
+            "applyMs": 1,
+            "renderMs": 10.399999976158142,
+            "paintMs": 141.69999998807907,
+            "rowRenders": 10
+          },
+          {
+            "sequence": 10,
+            "changed": 267,
+            "applyMs": 0.800000011920929,
+            "renderMs": 14.699999988079071,
+            "paintMs": 161.2000000178814,
+            "rowRenders": 17
+          },
+          {
+            "sequence": 11,
+            "changed": 267,
+            "applyMs": 1.0999999940395355,
+            "renderMs": 15.399999976158142,
+            "paintMs": 156.40000000596046,
+            "rowRenders": 11
+          },
+          {
+            "sequence": 12,
+            "changed": 267,
+            "applyMs": 1.300000011920929,
+            "renderMs": 13.800000011920929,
+            "paintMs": 158.5,
+            "rowRenders": 13
+          },
+          {
+            "sequence": 13,
+            "changed": 267,
+            "applyMs": 0.800000011920929,
+            "renderMs": 10.800000011920929,
+            "paintMs": 162.60000002384186,
+            "rowRenders": 9
+          },
+          {
+            "sequence": 14,
+            "changed": 267,
+            "applyMs": 0.5,
+            "renderMs": 13.900000005960464,
+            "paintMs": 164.89999997615814,
+            "rowRenders": 14
+          },
+          {
+            "sequence": 15,
+            "changed": 267,
+            "applyMs": 0.5,
+            "renderMs": 11.599999994039536,
+            "paintMs": 166.10000002384186,
+            "rowRenders": 11
+          },
+          {
+            "sequence": 16,
+            "changed": 267,
+            "applyMs": 0.9000000059604645,
+            "renderMs": 9.800000011920929,
+            "paintMs": 145.80000001192093,
+            "rowRenders": 11
+          },
+          {
+            "sequence": 17,
+            "changed": 267,
+            "applyMs": 0.699999988079071,
+            "renderMs": 13.5,
+            "paintMs": 153.59999999403954,
+            "rowRenders": 11
+          },
+          {
+            "sequence": 18,
+            "changed": 267,
+            "applyMs": 0.5999999940395355,
+            "renderMs": 8.699999988079071,
+            "paintMs": 144.09999999403954,
+            "rowRenders": 8
+          },
+          {
+            "sequence": 19,
+            "changed": 267,
+            "applyMs": 0.5,
+            "renderMs": 13.200000017881393,
+            "paintMs": 158.2000000178814,
+            "rowRenders": 17
+          },
+          {
+            "sequence": 20,
+            "changed": 267,
+            "applyMs": 0.699999988079071,
+            "renderMs": 17.299999982118607,
+            "paintMs": 169.2999999821186,
+            "rowRenders": 16
+          },
+          {
+            "sequence": 21,
+            "changed": 267,
+            "applyMs": 0.4000000059604645,
+            "renderMs": 12.699999988079071,
+            "paintMs": 172,
+            "rowRenders": 11
+          },
+          {
+            "sequence": 22,
+            "changed": 267,
+            "applyMs": 0.29999998211860657,
+            "renderMs": 8.599999994039536,
+            "paintMs": 139.40000000596046,
+            "rowRenders": 8
+          },
+          {
+            "sequence": 23,
+            "changed": 267,
+            "applyMs": 0.699999988079071,
+            "renderMs": 17.299999982118607,
+            "paintMs": 176.7000000178814,
+            "rowRenders": 14
+          },
+          {
+            "sequence": 24,
+            "changed": 267,
+            "applyMs": 0.699999988079071,
+            "renderMs": 8.899999976158142,
+            "paintMs": 152.5,
+            "rowRenders": 10
+          },
+          {
+            "sequence": 25,
+            "changed": 267,
+            "applyMs": 0.5,
+            "renderMs": 10.600000023841858,
+            "paintMs": 169,
+            "rowRenders": 16
+          },
+          {
+            "sequence": 26,
+            "changed": 267,
+            "applyMs": 0.3999999761581421,
+            "renderMs": 10.099999994039536,
+            "paintMs": 145.80000001192093,
+            "rowRenders": 10
+          },
+          {
+            "sequence": 27,
+            "changed": 267,
+            "applyMs": 0.5999999940395355,
+            "renderMs": 11.900000005960464,
+            "paintMs": 170.39999997615814,
+            "rowRenders": 21
+          },
+          {
+            "sequence": 28,
+            "changed": 267,
+            "applyMs": 0.6000000238418579,
+            "renderMs": 10.400000005960464,
+            "paintMs": 158.2999999821186,
+            "rowRenders": 8
+          },
+          {
+            "sequence": 29,
+            "changed": 267,
+            "applyMs": 0.7999999821186066,
+            "renderMs": 16.299999982118607,
+            "paintMs": 189.30000001192093,
+            "rowRenders": 14
+          },
+          {
+            "sequence": 30,
+            "changed": 267,
+            "applyMs": 0.5999999940395355,
+            "renderMs": 13.599999994039536,
+            "paintMs": 176.09999999403954,
+            "rowRenders": 11
+          }
+        ],
+        "longtasks": [
+          {
+            "start": 22888.90000000596,
+            "duration": 58
+          },
+          {
+            "start": 28905.70000001788,
+            "duration": 59
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "267 estações, todas mudando a cada lote",
+      "view": "all",
+      "stations": 267,
+      "fraction": 1,
+      "batchesMeasured": 25,
+      "changedPerBatch": 267,
+      "applyMs": {
+        "p50": 0.7,
+        "p95": 1.3,
+        "max": 1.4
+      },
+      "renderMs": {
+        "p50": 10.6,
+        "p95": 13.1,
+        "max": 14.2
+      },
+      "receiveToPaintMs": {
+        "p50": 175.9,
+        "p95": 191.3,
+        "max": 192.7
+      },
+      "rowRendersPerBatch": {
+        "p50": 50,
+        "max": 50
+      },
+      "longTasks": {
+        "count": 22,
+        "maxMs": 73
+      },
+      "framesPerSecond": 45,
+      "domNodes": 971,
+      "heapMb": {
+        "afterWarmup": 12.4,
+        "end": 13
+      },
+      "raw": {
+        "samples": [
+          {
+            "sequence": 1,
+            "changed": 267,
+            "applyMs": 4,
+            "renderMs": 102.80000001192093,
+            "paintMs": 774,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 2,
+            "changed": 267,
+            "applyMs": 2.7999999821186066,
+            "renderMs": 24.399999976158142,
+            "paintMs": 701.5,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 3,
+            "changed": 267,
+            "applyMs": 2,
+            "renderMs": 15.299999982118607,
+            "paintMs": 180.60000002384186,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 4,
+            "changed": 267,
+            "applyMs": 1.300000011920929,
+            "renderMs": 18.900000005960464,
+            "paintMs": 196.59999999403954,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 5,
+            "changed": 267,
+            "applyMs": 1.2000000178813934,
+            "renderMs": 14.100000023841858,
+            "paintMs": 201.5,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 6,
+            "changed": 267,
+            "applyMs": 1.4000000059604645,
+            "renderMs": 12.5,
+            "paintMs": 175.90000000596046,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 7,
+            "changed": 267,
+            "applyMs": 0.7999999821186066,
+            "renderMs": 12.199999988079071,
+            "paintMs": 175.2000000178814,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 8,
+            "changed": 267,
+            "applyMs": 1.2000000178813934,
+            "renderMs": 14.200000017881393,
+            "paintMs": 192.69999998807907,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 9,
+            "changed": 267,
+            "applyMs": 1.0999999940395355,
+            "renderMs": 10.400000005960464,
+            "paintMs": 166.19999998807907,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 10,
+            "changed": 267,
+            "applyMs": 1.2999999821186066,
+            "renderMs": 12.199999988079071,
+            "paintMs": 175.2999999821186,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 11,
+            "changed": 267,
+            "applyMs": 0.5999999940395355,
+            "renderMs": 11.700000017881393,
+            "paintMs": 179.59999999403954,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 12,
+            "changed": 267,
+            "applyMs": 1.199999988079071,
+            "renderMs": 12.5,
+            "paintMs": 175.2000000178814,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 13,
+            "changed": 267,
+            "applyMs": 0.9000000059604645,
+            "renderMs": 10.599999994039536,
+            "paintMs": 173.80000001192093,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 14,
+            "changed": 267,
+            "applyMs": 0.5,
+            "renderMs": 11.299999982118607,
+            "paintMs": 171.69999998807907,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 15,
+            "changed": 267,
+            "applyMs": 0.7999999821186066,
+            "renderMs": 9.699999988079071,
+            "paintMs": 181.59999999403954,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 16,
+            "changed": 267,
+            "applyMs": 0.5999999940395355,
+            "renderMs": 8.300000011920929,
+            "paintMs": 171.19999998807907,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 17,
+            "changed": 267,
+            "applyMs": 0.5,
+            "renderMs": 9.200000017881393,
+            "paintMs": 184.7000000178814,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 18,
+            "changed": 267,
+            "applyMs": 0.5,
+            "renderMs": 9.400000005960464,
+            "paintMs": 173.09999999403954,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 19,
+            "changed": 267,
+            "applyMs": 0.5,
+            "renderMs": 10,
+            "paintMs": 187.7000000178814,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 20,
+            "changed": 267,
+            "applyMs": 0.5,
+            "renderMs": 9.099999994039536,
+            "paintMs": 173.80000001192093,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 21,
+            "changed": 267,
+            "applyMs": 0.7000000178813934,
+            "renderMs": 10.900000005960464,
+            "paintMs": 175.90000000596046,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 22,
+            "changed": 267,
+            "applyMs": 0.7000000178813934,
+            "renderMs": 8.200000017881393,
+            "paintMs": 164.09999999403954,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 23,
+            "changed": 267,
+            "applyMs": 0.4000000059604645,
+            "renderMs": 9.5,
+            "paintMs": 168.69999998807907,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 24,
+            "changed": 267,
+            "applyMs": 0.7999999821186066,
+            "renderMs": 10.599999994039536,
+            "paintMs": 180,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 25,
+            "changed": 267,
+            "applyMs": 0.5999999940395355,
+            "renderMs": 7.9000000059604645,
+            "paintMs": 184.5,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 26,
+            "changed": 267,
+            "applyMs": 0.5,
+            "renderMs": 13.300000011920929,
+            "paintMs": 191.40000000596046,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 27,
+            "changed": 267,
+            "applyMs": 0.7000000178813934,
+            "renderMs": 10.200000017881393,
+            "paintMs": 191,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 28,
+            "changed": 267,
+            "applyMs": 0.7000000178813934,
+            "renderMs": 11.700000017881393,
+            "paintMs": 190,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 29,
+            "changed": 267,
+            "applyMs": 0.5999999940395355,
+            "renderMs": 12.299999982118607,
+            "paintMs": 184.2999999821186,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 30,
+            "changed": 267,
+            "applyMs": 0.5,
+            "renderMs": 8.100000023841858,
+            "paintMs": 176.40000000596046,
+            "rowRenders": 50
+          }
+        ],
+        "longtasks": [
+          {
+            "start": 6168.5,
+            "duration": 50
+          },
+          {
+            "start": 7168.699999988079,
+            "duration": 54
+          },
+          {
+            "start": 8187,
+            "duration": 56
+          },
+          {
+            "start": 10168.5,
+            "duration": 57
+          },
+          {
+            "start": 11169.300000011921,
+            "duration": 60
+          },
+          {
+            "start": 12168.300000011921,
+            "duration": 57
+          },
+          {
+            "start": 13168.300000011921,
+            "duration": 50
+          },
+          {
+            "start": 14169.699999988079,
+            "duration": 51
+          },
+          {
+            "start": 15168.300000011921,
+            "duration": 54
+          },
+          {
+            "start": 17168.09999999404,
+            "duration": 61
+          },
+          {
+            "start": 18169.69999998808,
+            "duration": 52
+          },
+          {
+            "start": 19167.69999998808,
+            "duration": 58
+          },
+          {
+            "start": 21168.40000000596,
+            "duration": 56
+          },
+          {
+            "start": 24168.09999999404,
+            "duration": 60
+          },
+          {
+            "start": 25168.30000001192,
+            "duration": 52
+          },
+          {
+            "start": 26168,
+            "duration": 73
+          },
+          {
+            "start": 26263.69999998808,
+            "duration": 53
+          },
+          {
+            "start": 27168,
+            "duration": 71
+          },
+          {
+            "start": 27267.59999999404,
+            "duration": 61
+          },
+          {
+            "start": 28168.19999998808,
+            "duration": 61
+          },
+          {
+            "start": 29168.59999999404,
+            "duration": 65
+          },
+          {
+            "start": 30167.69999998808,
+            "duration": 52
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "1.000 estações, 30% mudando a cada lote",
+      "view": "priorities",
+      "stations": 1000,
+      "fraction": 0.3,
+      "batchesMeasured": 25,
+      "changedPerBatch": 303,
+      "applyMs": {
+        "p50": 1.9,
+        "p95": 2.5,
+        "max": 2.8
+      },
+      "renderMs": {
+        "p50": 29.5,
+        "p95": 36.8,
+        "max": 39.5
+      },
+      "receiveToPaintMs": {
+        "p50": 244.7,
+        "p95": 319.7,
+        "max": 387.8
+      },
+      "rowRendersPerBatch": {
+        "p50": 16,
+        "max": 23
+      },
+      "longTasks": {
+        "count": 162,
+        "maxMs": 203
+      },
+      "framesPerSecond": 27,
+      "domNodes": 1098,
+      "heapMb": {
+        "afterWarmup": 13.7,
+        "end": 14.1
+      },
+      "raw": {
+        "samples": [
+          {
+            "sequence": 1,
+            "changed": 1000,
+            "applyMs": 12,
+            "renderMs": 190.5,
+            "paintMs": 1101.4000000059605,
+            "rowRenders": 118
+          },
+          {
+            "sequence": 2,
+            "changed": 307,
+            "applyMs": 2.9000000059604645,
+            "renderMs": 35.5,
+            "paintMs": 975.5999999940395,
+            "rowRenders": 15
+          },
+          {
+            "sequence": 3,
+            "changed": 320,
+            "applyMs": 2.699999988079071,
+            "renderMs": 29,
+            "paintMs": 649,
+            "rowRenders": 13
+          },
+          {
+            "sequence": 4,
+            "changed": 314,
+            "applyMs": 2.0999999940395355,
+            "renderMs": 27,
+            "paintMs": 362.7999999821186,
+            "rowRenders": 14
+          },
+          {
+            "sequence": 5,
+            "changed": 293,
+            "applyMs": 3,
+            "renderMs": 23.599999994039536,
+            "paintMs": 229.30000001192093,
+            "rowRenders": 9
+          },
+          {
+            "sequence": 6,
+            "changed": 303,
+            "applyMs": 2.0999999940395355,
+            "renderMs": 28.900000005960464,
+            "paintMs": 387.80000001192093,
+            "rowRenders": 9
+          },
+          {
+            "sequence": 7,
+            "changed": 306,
+            "applyMs": 2.2999999821186066,
+            "renderMs": 34.79999998211861,
+            "paintMs": 251.2999999821186,
+            "rowRenders": 16
+          },
+          {
+            "sequence": 8,
+            "changed": 286,
+            "applyMs": 1.7999999821186066,
+            "renderMs": 22.799999982118607,
+            "paintMs": 200.60000002384186,
+            "rowRenders": 12
+          },
+          {
+            "sequence": 9,
+            "changed": 336,
+            "applyMs": 2.0999999940395355,
+            "renderMs": 27.19999998807907,
+            "paintMs": 232.69999998807907,
+            "rowRenders": 18
+          },
+          {
+            "sequence": 10,
+            "changed": 299,
+            "applyMs": 2.100000023841858,
+            "renderMs": 25.900000005960464,
+            "paintMs": 208.59999999403954,
+            "rowRenders": 13
+          },
+          {
+            "sequence": 11,
+            "changed": 293,
+            "applyMs": 1.9000000059604645,
+            "renderMs": 27.80000001192093,
+            "paintMs": 248.89999997615814,
+            "rowRenders": 18
+          },
+          {
+            "sequence": 12,
+            "changed": 299,
+            "applyMs": 1.699999988079071,
+            "renderMs": 39.5,
+            "paintMs": 307.7999999821186,
+            "rowRenders": 23
+          },
+          {
+            "sequence": 13,
+            "changed": 288,
+            "applyMs": 2,
+            "renderMs": 25.900000005960464,
+            "paintMs": 237.5,
+            "rowRenders": 15
+          },
+          {
+            "sequence": 14,
+            "changed": 294,
+            "applyMs": 2,
+            "renderMs": 37,
+            "paintMs": 244.7000000178814,
+            "rowRenders": 16
+          },
+          {
+            "sequence": 15,
+            "changed": 295,
+            "applyMs": 1.7000000178813934,
+            "renderMs": 29.599999994039536,
+            "paintMs": 246.7000000178814,
+            "rowRenders": 15
+          },
+          {
+            "sequence": 16,
+            "changed": 272,
+            "applyMs": 2.800000011920929,
+            "renderMs": 30.200000017881393,
+            "paintMs": 259,
+            "rowRenders": 13
+          },
+          {
+            "sequence": 17,
+            "changed": 308,
+            "applyMs": 1.9000000059604645,
+            "renderMs": 34.900000005960464,
+            "paintMs": 253.80000001192093,
+            "rowRenders": 21
+          },
+          {
+            "sequence": 18,
+            "changed": 291,
+            "applyMs": 2.2000000178813934,
+            "renderMs": 36.20000001788139,
+            "paintMs": 288.60000002384186,
+            "rowRenders": 18
+          },
+          {
+            "sequence": 19,
+            "changed": 303,
+            "applyMs": 1.5,
+            "renderMs": 33.099999994039536,
+            "paintMs": 266.30000001192093,
+            "rowRenders": 20
+          },
+          {
+            "sequence": 20,
+            "changed": 312,
+            "applyMs": 2.5,
+            "renderMs": 32.30000001192093,
+            "paintMs": 247.7999999821186,
+            "rowRenders": 17
+          },
+          {
+            "sequence": 21,
+            "changed": 286,
+            "applyMs": 1.7999999821186066,
+            "renderMs": 33.599999994039536,
+            "paintMs": 246.39999997615814,
+            "rowRenders": 19
+          },
+          {
+            "sequence": 22,
+            "changed": 297,
+            "applyMs": 1,
+            "renderMs": 26.400000005960464,
+            "paintMs": 228.5,
+            "rowRenders": 10
+          },
+          {
+            "sequence": 23,
+            "changed": 309,
+            "applyMs": 1.9000000059604645,
+            "renderMs": 21.700000017881393,
+            "paintMs": 225.59999999403954,
+            "rowRenders": 10
+          },
+          {
+            "sequence": 24,
+            "changed": 312,
+            "applyMs": 1.5,
+            "renderMs": 26.400000005960464,
+            "paintMs": 231.80000001192093,
+            "rowRenders": 16
+          },
+          {
+            "sequence": 25,
+            "changed": 327,
+            "applyMs": 1.9000000059604645,
+            "renderMs": 29.5,
+            "paintMs": 225.59999999403954,
+            "rowRenders": 14
+          },
+          {
+            "sequence": 26,
+            "changed": 317,
+            "applyMs": 1.7000000178813934,
+            "renderMs": 36,
+            "paintMs": 322.69999998807907,
+            "rowRenders": 19
+          },
+          {
+            "sequence": 27,
+            "changed": 300,
+            "applyMs": 2.199999988079071,
+            "renderMs": 30,
+            "paintMs": 230.09999999403954,
+            "rowRenders": 14
+          },
+          {
+            "sequence": 28,
+            "changed": 306,
+            "applyMs": 2.2000000178813934,
+            "renderMs": 21.100000023841858,
+            "paintMs": 214.59999999403954,
+            "rowRenders": 12
+          },
+          {
+            "sequence": 29,
+            "changed": 308,
+            "applyMs": 1.699999988079071,
+            "renderMs": 24.099999994039536,
+            "paintMs": 241,
+            "rowRenders": 23
+          },
+          {
+            "sequence": 30,
+            "changed": 318,
+            "applyMs": 1,
+            "renderMs": 14.100000023841858,
+            "paintMs": 177.89999997615814,
+            "rowRenders": 13
+          }
+        ],
+        "longtasks": [
+          {
+            "start": 6503.5999999940395,
+            "duration": 54
+          },
+          {
+            "start": 6644.4000000059605,
+            "duration": 125
+          },
+          {
+            "start": 6827.800000011921,
+            "duration": 68
+          },
+          {
+            "start": 6913.0999999940395,
+            "duration": 54
+          },
+          {
+            "start": 7080,
+            "duration": 53
+          },
+          {
+            "start": 7511.5,
+            "duration": 116
+          },
+          {
+            "start": 7645.300000011921,
+            "duration": 53
+          },
+          {
+            "start": 7725.4000000059605,
+            "duration": 68
+          },
+          {
+            "start": 7819.5999999940395,
+            "duration": 64
+          },
+          {
+            "start": 7884.5,
+            "duration": 50
+          },
+          {
+            "start": 8294.800000011921,
+            "duration": 56
+          },
+          {
+            "start": 8495.5,
+            "duration": 80
+          },
+          {
+            "start": 8591.300000011921,
+            "duration": 56
+          },
+          {
+            "start": 8671.59999999404,
+            "duration": 57
+          },
+          {
+            "start": 8751.90000000596,
+            "duration": 56
+          },
+          {
+            "start": 9115.09999999404,
+            "duration": 50
+          },
+          {
+            "start": 9495.5,
+            "duration": 113
+          },
+          {
+            "start": 9625.200000017881,
+            "duration": 61
+          },
+          {
+            "start": 9713.5,
+            "duration": 65
+          },
+          {
+            "start": 9793.800000011921,
+            "duration": 65
+          },
+          {
+            "start": 10044.09999999404,
+            "duration": 50
+          },
+          {
+            "start": 10094.700000017881,
+            "duration": 51
+          },
+          {
+            "start": 10196.800000011921,
+            "duration": 51
+          },
+          {
+            "start": 10295,
+            "duration": 55
+          },
+          {
+            "start": 10495.90000000596,
+            "duration": 88
+          },
+          {
+            "start": 10600.200000017881,
+            "duration": 55
+          },
+          {
+            "start": 10672.300000011921,
+            "duration": 52
+          },
+          {
+            "start": 10744.5,
+            "duration": 55
+          },
+          {
+            "start": 11138.90000000596,
+            "duration": 55
+          },
+          {
+            "start": 11495.200000017881,
+            "duration": 129
+          },
+          {
+            "start": 11701.09999999404,
+            "duration": 66
+          },
+          {
+            "start": 11794.800000011921,
+            "duration": 57
+          },
+          {
+            "start": 11853.200000017881,
+            "duration": 51
+          },
+          {
+            "start": 11904.40000000596,
+            "duration": 50
+          },
+          {
+            "start": 11955.800000011921,
+            "duration": 51
+          },
+          {
+            "start": 12102.09999999404,
+            "duration": 51
+          },
+          {
+            "start": 12156.59999999404,
+            "duration": 52
+          },
+          {
+            "start": 12495,
+            "duration": 189
+          },
+          {
+            "start": 12701.09999999404,
+            "duration": 63
+          },
+          {
+            "start": 12790.5,
+            "duration": 63
+          },
+          {
+            "start": 12870.700000017881,
+            "duration": 72
+          },
+          {
+            "start": 12943.200000017881,
+            "duration": 58
+          },
+          {
+            "start": 13002.40000000596,
+            "duration": 51
+          },
+          {
+            "start": 13102.59999999404,
+            "duration": 58
+          },
+          {
+            "start": 13252.59999999404,
+            "duration": 55
+          },
+          {
+            "start": 13308.5,
+            "duration": 62
+          },
+          {
+            "start": 13494.90000000596,
+            "duration": 118
+          },
+          {
+            "start": 13629.200000017881,
+            "duration": 60
+          },
+          {
+            "start": 13712,
+            "duration": 59
+          },
+          {
+            "start": 13789.5,
+            "duration": 57
+          },
+          {
+            "start": 13847.40000000596,
+            "duration": 55
+          },
+          {
+            "start": 13904,
+            "duration": 55
+          },
+          {
+            "start": 13960.09999999404,
+            "duration": 53
+          },
+          {
+            "start": 14062,
+            "duration": 53
+          },
+          {
+            "start": 14116.09999999404,
+            "duration": 53
+          },
+          {
+            "start": 14170.40000000596,
+            "duration": 52
+          },
+          {
+            "start": 14495.200000017881,
+            "duration": 123
+          },
+          {
+            "start": 14636.300000011921,
+            "duration": 68
+          },
+          {
+            "start": 14728.40000000596,
+            "duration": 60
+          },
+          {
+            "start": 14814.300000011921,
+            "duration": 60
+          },
+          {
+            "start": 14876.59999999404,
+            "duration": 55
+          },
+          {
+            "start": 15028.90000000596,
+            "duration": 53
+          },
+          {
+            "start": 15082.5,
+            "duration": 52
+          },
+          {
+            "start": 15137,
+            "duration": 59
+          },
+          {
+            "start": 15196.800000011921,
+            "duration": 50
+          },
+          {
+            "start": 15247.40000000596,
+            "duration": 54
+          },
+          {
+            "start": 15494.700000017881,
+            "duration": 127
+          },
+          {
+            "start": 15638.800000011921,
+            "duration": 62
+          },
+          {
+            "start": 15732.40000000596,
+            "duration": 65
+          },
+          {
+            "start": 15819.59999999404,
+            "duration": 58
+          },
+          {
+            "start": 16055.300000011921,
+            "duration": 50
+          },
+          {
+            "start": 16105.59999999404,
+            "duration": 61
+          },
+          {
+            "start": 16216.700000017881,
+            "duration": 53
+          },
+          {
+            "start": 16494.70000001788,
+            "duration": 137
+          },
+          {
+            "start": 16649.40000000596,
+            "duration": 58
+          },
+          {
+            "start": 16726.09999999404,
+            "duration": 66
+          },
+          {
+            "start": 16811.80000001192,
+            "duration": 64
+          },
+          {
+            "start": 16924.20000001788,
+            "duration": 63
+          },
+          {
+            "start": 16988.90000000596,
+            "duration": 52
+          },
+          {
+            "start": 17087.30000001192,
+            "duration": 50
+          },
+          {
+            "start": 17179.70000001788,
+            "duration": 51
+          },
+          {
+            "start": 17495,
+            "duration": 135
+          },
+          {
+            "start": 17646.30000001192,
+            "duration": 55
+          },
+          {
+            "start": 17744.59999999404,
+            "duration": 70
+          },
+          {
+            "start": 17815.80000001192,
+            "duration": 56
+          },
+          {
+            "start": 17918.59999999404,
+            "duration": 52
+          },
+          {
+            "start": 18511.59999999404,
+            "duration": 152
+          },
+          {
+            "start": 18751.20000001788,
+            "duration": 64
+          },
+          {
+            "start": 18836.40000000596,
+            "duration": 57
+          },
+          {
+            "start": 18893.90000000596,
+            "duration": 51
+          },
+          {
+            "start": 19129.20000001788,
+            "duration": 50
+          },
+          {
+            "start": 19180,
+            "duration": 53
+          },
+          {
+            "start": 19234.09999999404,
+            "duration": 50
+          },
+          {
+            "start": 19511.20000001788,
+            "duration": 130
+          },
+          {
+            "start": 19658.5,
+            "duration": 52
+          },
+          {
+            "start": 19732.40000000596,
+            "duration": 63
+          },
+          {
+            "start": 19816.90000000596,
+            "duration": 57
+          },
+          {
+            "start": 19917.5,
+            "duration": 50
+          },
+          {
+            "start": 20017,
+            "duration": 54
+          },
+          {
+            "start": 20169,
+            "duration": 51
+          },
+          {
+            "start": 20495.20000001788,
+            "duration": 127
+          },
+          {
+            "start": 20638,
+            "duration": 58
+          },
+          {
+            "start": 20715.90000000596,
+            "duration": 61
+          },
+          {
+            "start": 20803.09999999404,
+            "duration": 52
+          },
+          {
+            "start": 20856.40000000596,
+            "duration": 53
+          },
+          {
+            "start": 20910.30000001192,
+            "duration": 54
+          },
+          {
+            "start": 20965.70000001788,
+            "duration": 54
+          },
+          {
+            "start": 21152.09999999404,
+            "duration": 51
+          },
+          {
+            "start": 21203.40000000596,
+            "duration": 51
+          },
+          {
+            "start": 21495.5,
+            "duration": 124
+          },
+          {
+            "start": 21636,
+            "duration": 58
+          },
+          {
+            "start": 21720.70000001788,
+            "duration": 64
+          },
+          {
+            "start": 21809.09999999404,
+            "duration": 61
+          },
+          {
+            "start": 22016.09999999404,
+            "duration": 50
+          },
+          {
+            "start": 22067.20000001788,
+            "duration": 58
+          },
+          {
+            "start": 22125.70000001788,
+            "duration": 53
+          },
+          {
+            "start": 22494.90000000596,
+            "duration": 107
+          },
+          {
+            "start": 22683,
+            "duration": 62
+          },
+          {
+            "start": 22764.20000001788,
+            "duration": 52
+          },
+          {
+            "start": 23089.5,
+            "duration": 65
+          },
+          {
+            "start": 23155.20000001788,
+            "duration": 59
+          },
+          {
+            "start": 23215.40000000596,
+            "duration": 54
+          },
+          {
+            "start": 23511.20000001788,
+            "duration": 88
+          },
+          {
+            "start": 23616.40000000596,
+            "duration": 56
+          },
+          {
+            "start": 23702.59999999404,
+            "duration": 57
+          },
+          {
+            "start": 23777.5,
+            "duration": 57
+          },
+          {
+            "start": 23835.40000000596,
+            "duration": 51
+          },
+          {
+            "start": 24059.5,
+            "duration": 52
+          },
+          {
+            "start": 24113.09999999404,
+            "duration": 50
+          },
+          {
+            "start": 24164,
+            "duration": 51
+          },
+          {
+            "start": 24495,
+            "duration": 111
+          },
+          {
+            "start": 24623.09999999404,
+            "duration": 59
+          },
+          {
+            "start": 24709.80000001192,
+            "duration": 60
+          },
+          {
+            "start": 24797.80000001192,
+            "duration": 64
+          },
+          {
+            "start": 24862.5,
+            "duration": 54
+          },
+          {
+            "start": 24917.70000001788,
+            "duration": 50
+          },
+          {
+            "start": 25157.90000000596,
+            "duration": 52
+          },
+          {
+            "start": 25210.40000000596,
+            "duration": 51
+          },
+          {
+            "start": 25494.5,
+            "duration": 105
+          },
+          {
+            "start": 25616.5,
+            "duration": 58
+          },
+          {
+            "start": 25707.40000000596,
+            "duration": 59
+          },
+          {
+            "start": 25792.40000000596,
+            "duration": 53
+          },
+          {
+            "start": 25845.80000001192,
+            "duration": 59
+          },
+          {
+            "start": 26188.80000001192,
+            "duration": 55
+          },
+          {
+            "start": 26244.09999999404,
+            "duration": 51
+          },
+          {
+            "start": 26296.40000000596,
+            "duration": 58
+          },
+          {
+            "start": 26494.70000001788,
+            "duration": 203
+          },
+          {
+            "start": 26715.09999999404,
+            "duration": 54
+          },
+          {
+            "start": 26794.5,
+            "duration": 62
+          },
+          {
+            "start": 26881.09999999404,
+            "duration": 60
+          },
+          {
+            "start": 26941.90000000596,
+            "duration": 55
+          },
+          {
+            "start": 27043.40000000596,
+            "duration": 56
+          },
+          {
+            "start": 27190,
+            "duration": 53
+          },
+          {
+            "start": 27243.59999999404,
+            "duration": 58
+          },
+          {
+            "start": 27302.5,
+            "duration": 53
+          },
+          {
+            "start": 27494.09999999404,
+            "duration": 109
+          },
+          {
+            "start": 27621.80000001192,
+            "duration": 59
+          },
+          {
+            "start": 27699.5,
+            "duration": 53
+          },
+          {
+            "start": 28511.5,
+            "duration": 79
+          },
+          {
+            "start": 29511.09999999404,
+            "duration": 106
+          },
+          {
+            "start": 29632.90000000596,
+            "duration": 52
+          },
+          {
+            "start": 30494.59999999404,
+            "duration": 58
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "1.000 estações, 30% mudando a cada lote",
+      "view": "all",
+      "stations": 1000,
+      "fraction": 0.3,
+      "batchesMeasured": 25,
+      "changedPerBatch": 303,
+      "applyMs": {
+        "p50": 1.3,
+        "p95": 1.9,
+        "max": 2.2
+      },
+      "renderMs": {
+        "p50": 7.3,
+        "p95": 10.2,
+        "max": 14.1
+      },
+      "receiveToPaintMs": {
+        "p50": 153.5,
+        "p95": 169,
+        "max": 173
+      },
+      "rowRendersPerBatch": {
+        "p50": 15,
+        "max": 19
+      },
+      "longTasks": {
+        "count": 11,
+        "maxMs": 57
+      },
+      "framesPerSecond": 41,
+      "domNodes": 971,
+      "heapMb": {
+        "afterWarmup": 13.2,
+        "end": 13.9
+      },
+      "raw": {
+        "samples": [
+          {
+            "sequence": 1,
+            "changed": 1000,
+            "applyMs": 7.5,
+            "renderMs": 119.80000001192093,
+            "paintMs": 809.5,
+            "rowRenders": 50
+          },
+          {
+            "sequence": 2,
+            "changed": 307,
+            "applyMs": 1.9000000059604645,
+            "renderMs": 13.900000005960464,
+            "paintMs": 570,
+            "rowRenders": 13
+          },
+          {
+            "sequence": 3,
+            "changed": 320,
+            "applyMs": 1.899999976158142,
+            "renderMs": 9.099999994039536,
+            "paintMs": 150.09999999403954,
+            "rowRenders": 15
+          },
+          {
+            "sequence": 4,
+            "changed": 314,
+            "applyMs": 1.7999999821186066,
+            "renderMs": 12.900000005960464,
+            "paintMs": 166.5,
+            "rowRenders": 17
+          },
+          {
+            "sequence": 5,
+            "changed": 293,
+            "applyMs": 1.300000011920929,
+            "renderMs": 9.200000017881393,
+            "paintMs": 170.5,
+            "rowRenders": 15
+          },
+          {
+            "sequence": 6,
+            "changed": 303,
+            "applyMs": 2.199999988079071,
+            "renderMs": 14.099999994039536,
+            "paintMs": 163.5,
+            "rowRenders": 19
+          },
+          {
+            "sequence": 7,
+            "changed": 306,
+            "applyMs": 1.300000011920929,
+            "renderMs": 9,
+            "paintMs": 151.09999999403954,
+            "rowRenders": 19
+          },
+          {
+            "sequence": 8,
+            "changed": 286,
+            "applyMs": 1.7999999821186066,
+            "renderMs": 9.099999994039536,
+            "paintMs": 153.5,
+            "rowRenders": 16
+          },
+          {
+            "sequence": 9,
+            "changed": 336,
+            "applyMs": 1.2000000178813934,
+            "renderMs": 7.800000011920929,
+            "paintMs": 150.69999998807907,
+            "rowRenders": 18
+          },
+          {
+            "sequence": 10,
+            "changed": 299,
+            "applyMs": 1.5,
+            "renderMs": 8.900000005960464,
+            "paintMs": 156.80000001192093,
+            "rowRenders": 17
+          },
+          {
+            "sequence": 11,
+            "changed": 293,
+            "applyMs": 1.0999999940395355,
+            "renderMs": 7.199999988079071,
+            "paintMs": 152.39999997615814,
+            "rowRenders": 18
+          },
+          {
+            "sequence": 12,
+            "changed": 299,
+            "applyMs": 1.9000000059604645,
+            "renderMs": 7.800000011920929,
+            "paintMs": 173,
+            "rowRenders": 15
+          },
+          {
+            "sequence": 13,
+            "changed": 288,
+            "applyMs": 1.300000011920929,
+            "renderMs": 9.099999994039536,
+            "paintMs": 160.7999999821186,
+            "rowRenders": 19
+          },
+          {
+            "sequence": 14,
+            "changed": 294,
+            "applyMs": 1.300000011920929,
+            "renderMs": 7.5,
+            "paintMs": 157.10000002384186,
+            "rowRenders": 14
+          },
+          {
+            "sequence": 15,
+            "changed": 295,
+            "applyMs": 1.199999988079071,
+            "renderMs": 6.4000000059604645,
+            "paintMs": 148.5,
+            "rowRenders": 14
+          },
+          {
+            "sequence": 16,
+            "changed": 272,
+            "applyMs": 1.2999999821186066,
+            "renderMs": 5.199999988079071,
+            "paintMs": 143.09999999403954,
+            "rowRenders": 12
+          },
+          {
+            "sequence": 17,
+            "changed": 308,
+            "applyMs": 1.300000011920929,
+            "renderMs": 10.400000005960464,
+            "paintMs": 167.59999999403954,
+            "rowRenders": 19
+          },
+          {
+            "sequence": 18,
+            "changed": 291,
+            "applyMs": 1,
+            "renderMs": 5.5999999940395355,
+            "paintMs": 162.59999999403954,
+            "rowRenders": 16
+          },
+          {
+            "sequence": 19,
+            "changed": 303,
+            "applyMs": 1.300000011920929,
+            "renderMs": 8.300000011920929,
+            "paintMs": 166.59999999403954,
+            "rowRenders": 15
+          },
+          {
+            "sequence": 20,
+            "changed": 312,
+            "applyMs": 1.4000000059604645,
+            "renderMs": 7.300000011920929,
+            "paintMs": 164.90000000596046,
+            "rowRenders": 14
+          },
+          {
+            "sequence": 21,
+            "changed": 286,
+            "applyMs": 1,
+            "renderMs": 5.199999988079071,
+            "paintMs": 167.5,
+            "rowRenders": 13
+          },
+          {
+            "sequence": 22,
+            "changed": 297,
+            "applyMs": 1.4000000059604645,
+            "renderMs": 9.600000023841858,
+            "paintMs": 156.09999999403954,
+            "rowRenders": 19
+          },
+          {
+            "sequence": 23,
+            "changed": 309,
+            "applyMs": 1,
+            "renderMs": 5.5999999940395355,
+            "paintMs": 146.90000000596046,
+            "rowRenders": 15
+          },
+          {
+            "sequence": 24,
+            "changed": 312,
+            "applyMs": 1.5,
+            "renderMs": 7.300000011920929,
+            "paintMs": 150.90000000596046,
+            "rowRenders": 16
+          },
+          {
+            "sequence": 25,
+            "changed": 327,
+            "applyMs": 1,
+            "renderMs": 5.4000000059604645,
+            "paintMs": 150.09999999403954,
+            "rowRenders": 17
+          },
+          {
+            "sequence": 26,
+            "changed": 317,
+            "applyMs": 1.0999999940395355,
+            "renderMs": 5.4000000059604645,
+            "paintMs": 149.2999999821186,
+            "rowRenders": 13
+          },
+          {
+            "sequence": 27,
+            "changed": 300,
+            "applyMs": 1.199999988079071,
+            "renderMs": 7.0999999940395355,
+            "paintMs": 145.7000000178814,
+            "rowRenders": 15
+          },
+          {
+            "sequence": 28,
+            "changed": 306,
+            "applyMs": 1.0999999940395355,
+            "renderMs": 7.0999999940395355,
+            "paintMs": 169.40000000596046,
+            "rowRenders": 14
+          },
+          {
+            "sequence": 29,
+            "changed": 308,
+            "applyMs": 1.899999976158142,
+            "renderMs": 7.699999988079071,
+            "paintMs": 148.2000000178814,
+            "rowRenders": 14
+          },
+          {
+            "sequence": 30,
+            "changed": 318,
+            "applyMs": 1.0999999940395355,
+            "renderMs": 5.799999982118607,
+            "paintMs": 142.90000000596046,
+            "rowRenders": 9
+          }
+        ],
+        "longtasks": [
+          {
+            "start": 5754.899999976158,
+            "duration": 50
+          },
+          {
+            "start": 6298,
+            "duration": 57
+          },
+          {
+            "start": 6397.5999999940395,
+            "duration": 50
+          },
+          {
+            "start": 6746.399999976158,
+            "duration": 50
+          },
+          {
+            "start": 10268.399999976158,
+            "duration": 51
+          },
+          {
+            "start": 11271,
+            "duration": 50
+          },
+          {
+            "start": 19217.399999976158,
+            "duration": 52
+          },
+          {
+            "start": 19286.5,
+            "duration": 50
+          },
+          {
+            "start": 21233.399999976158,
+            "duration": 50
+          },
+          {
+            "start": 21643.59999999404,
+            "duration": 51
+          },
+          {
+            "start": 23257.399999976158,
+            "duration": 52
+          }
+        ]
+      }
+    }
+  ]
+}

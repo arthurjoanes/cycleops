@@ -18,18 +18,7 @@
   top: var(--space-2);
 }
 
-/* Permanent stripe while the data is simulated. */
-.simulation {
-  margin: 0;
-  padding: var(--space-1) var(--space-4);
-  color: var(--simulation);
-  background: var(--simulation-bg);
-  border-bottom: 1px solid currentColor;
-  font-size: var(--size-s);
-  font-weight: 600;
-}
-
-/* Takes the place of the stripe and the replay controls while loading. */
+/* Reserve space for the controls while the replay loads. */
 .loading {
   margin: 0;
   padding: var(--space-2) var(--space-4);
@@ -42,14 +31,12 @@
   padding: 0 var(--space-4);
 }
 
+.loading[data-replay="true"] { min-height: 152px; }
+.overview { display: flex; align-items: center; gap: var(--space-4); margin: var(--space-2) var(--space-4); }
+.overview > ul { flex: 1; margin: 0; }
+
 .message:empty {
   display: none;
-}
-
-.analysisActions {
-  display: flex;
-  justify-content: flex-end;
-  padding: 0 var(--space-4) var(--space-1);
 }
 
 .linkError {
@@ -74,6 +61,7 @@
   width: min(1080px, calc(100vw - var(--space-6)));
   max-height: calc(100dvh - var(--space-6));
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: var(--space-4);
   background: var(--surface);
   border: 1px solid var(--border-control);
@@ -81,7 +69,12 @@
   border-radius: var(--radius);
 }
 
-.analysisHead { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); }
+.analysisHead {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3);
+  position: sticky; top: calc(-1 * var(--space-4)); z-index: 2;
+  margin: calc(-1 * var(--space-4)) calc(-1 * var(--space-4)) var(--space-3);
+  padding: var(--space-4); border-bottom: 1px solid var(--border); background: var(--surface);
+}
 .analysisHead h2 { color: var(--navy); font-size: var(--size-l); }
 .analysisHead p { margin: var(--space-1) 0 0; color: var(--muted); font-size: var(--size-s); }
 .analysisContext { color: var(--muted); margin: var(--space-2) 0 var(--space-3); font-size: var(--size-xs); }
@@ -95,7 +88,7 @@
 .main {
   flex: 1;
   display: grid;
-  grid-template-columns: minmax(0, 35fr) minmax(0, 65fr);
+  grid-template-columns: minmax(320px, 380px) minmax(0, 1fr);
   gap: var(--space-4);
   padding: var(--space-2) var(--space-4) var(--space-4);
   min-height: 0;
@@ -128,7 +121,7 @@
   flex-direction: column;
   gap: var(--space-1);
   min-width: 0;
-  min-height: 480px;
+  min-height: 320px;
 }
 
 .mapLink {
@@ -141,7 +134,7 @@
   position: absolute;
   top: var(--space-6);
   right: var(--space-2);
-  bottom: var(--space-2);
+  bottom: 48px;
   width: min(380px, calc(100% - var(--space-4)));
   overflow: auto;
   /* Above the MapLibre controls (z-index 2); the OSM attribution stays in the footer. */
@@ -196,7 +189,8 @@
   bottom: 0;
   max-height: 85vh;
   overflow: auto;
-  padding: var(--space-4);
+  overscroll-behavior: contain;
+  padding: var(--space-4) var(--space-4) max(var(--space-4), env(safe-area-inset-bottom));
   background: var(--surface);
   border-radius: var(--radius) var(--radius) 0 0;
   border-top: 3px solid var(--brand);
@@ -213,7 +207,7 @@
 }
 
 .footer {
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-2) var(--space-4);
   border-top: 1px solid var(--border);
   background: var(--bg);
   color: var(--muted);
@@ -225,6 +219,11 @@
   overflow-wrap: anywhere;
 }
 
+.credits > summary { display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--space-2); cursor: pointer; min-height: 24px; list-style: none; }
+.credits > summary::-webkit-details-marker { display: none; }
+.credits[open] > summary { margin-bottom: var(--space-2); }
+.credits > summary:hover { color: var(--brand); text-decoration: underline; }
+
 /* From 768 px the page has the window height and the queue scrolls inside its column:
    a queue that grows or shrinks with each batch would otherwise resize the map canvas. */
 @media (min-width: 768px) {
@@ -233,18 +232,24 @@
   }
 
   .main {
-    flex: 1 0 480px;
+    flex: 1 1 0;
+    min-height: 360px;
     grid-template-rows: minmax(0, 1fr);
   }
 
   .queue,
   .mapArea {
     overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
   }
+
+  .queueHead { position: sticky; top: 0; z-index: 1; background: var(--bg); padding-bottom: var(--space-2); }
 }
 
 /* 768 to 1199 px: two areas, details over the map. */
 @media (max-width: 1199px) {
+  .details { bottom: 96px; }
   .main {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
@@ -252,13 +257,19 @@
 
 /* 320 to 767 px: one area at a time (Lista or Mapa), details in a drawer. */
 @media (max-width: 767px) {
+  .overview { flex-wrap: wrap; gap: var(--space-2); margin-inline: var(--space-3); }
+  .overview > ul { flex-basis: 100%; }
+  .loading[data-replay="true"] { min-height: 232px; }
   .analysisDialog {
     width: calc(100vw - var(--space-2));
     max-height: calc(100dvh - var(--space-2));
     padding: var(--space-3);
   }
 
-  .analysisHead { flex-wrap: wrap; }
+  .analysisHead { top: calc(-1 * var(--space-3)); margin: calc(-1 * var(--space-3)) calc(-1 * var(--space-3)) var(--space-3); padding: var(--space-3); }
+  .analysisHead h2 { font-size: var(--size-m); }
+  .analysisHead p { font-size: var(--size-xs); }
+  .analysisHead button { flex: none; padding-inline: var(--space-2); font-size: var(--size-xs); }
 
   .main {
     grid-template-columns: minmax(0, 1fr);

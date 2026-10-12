@@ -29,6 +29,16 @@ Inter continua local à aplicação. A interface usa números tabulares e pesos 
 
 Manter a proporção e uma margem livre equivalente ao diâmetro do ponto superior. Na interface, o símbolo mede 48 × 32 px. Sobre petróleo, usar a versão branca. Não aplicar sombra, gradiente ou animação contínua à marca.
 
+## Ícones e leitura da interface
+
+Os [ícones de ação](../../apps/web/src/components/ui/ActionIcon.tsx) são SVGs locais de 18 px, desenhados com traço e a cor do controle. Eles acompanham transporte, compartilhamento, análise e informações da sessão. Cada botão mantém um nome acessível; o SVG é decorativo e fica fora da navegação por teclado.
+
+Pausa e retomada mantêm texto junto do símbolo. Passo, compartilhamento e análise usam ícones com o nome da ação no tooltip. Nas contagens, bicicleta e vaga têm números alinhados; o texto acessível identifica o campo e informa quando o valor é desconhecido.
+
+O modo e o estado da fonte permanecem no cabeçalho. Metadados, legendas e licenças abrem em controles próprios. A fila reúne condição e contagens; selecionar uma estação mostra a justificativa e o histórico. A faixa de indicadores concentra as contagens da cidade e o acesso à análise.
+
+O petróleo organiza o cabeçalho e os horários; o azul identifica ações e foco. As condições continuam com cores e rótulos próprios. Espaçamento, alinhamento e contraste sustentam a leitura; o [guia da interface](../ui-ux.md) registra os controles e sua verificação.
+
 ## Apresentação no GitHub
 
 A navegação do README segue as cores do portfólio: azul `#0969DA` para demo, roxo `#8250DF` para arquitetura, verde `#167D4A` para execução, ocre `#9A6700` para resultados e azul `#0A66C2` para LinkedIn. Os rótulos identificam o destino e os SVGs ficam em `docs/readme/badges/`.

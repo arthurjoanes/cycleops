@@ -22,6 +22,7 @@ CycleOps lists Oslo Bysykkel stations with no bikes or no docks, in priority ord
   - `src/features/priorities/`: queue order, freeze, indicators. `src/features/stations/`: list, details, step chart, map.
   - `src/features/replay/`: transport controls, timeline markers and shared moments with artifact identity and a paused virtual instant. `src/features/analysis/`: full-recording summary, observed availability rankings, up to 120 samples from accepted events and feed diagnostics. Source switches and snapshots reset the series; a replay seek rebuilds its prefix. The panels use engine decisions and validated attempts; they do not derive new domain incidents.
   - `src/app/`: layout, header, screen states, hash routing.
+  - `src/components/ui/ActionIcon.tsx`: local decorative SVGs; accessible action names belong to buttons and summaries. The header's “Dados da sessão”, replay tools, full map legend and source credits use native disclosures. The catalog initially renders 50 rows; search covers every catalog entry and “Mostrar mais estações” extends the visible prefix.
   - `tests/unit/` (Vitest), `tests/e2e/` (Playwright against the Pages build), `tests/compose/` (Playwright against the Compose stack, `playwright.compose.config.ts`), `tests/performance/` and `tests/media/` (by hand).
   - `scripts/`: `generate-contracts.mjs`, `serve-pages.mjs` (static server that behaves like Pages), `check-bundle.mjs`.
 - `scripts/basemap/`: generates the map base from OpenStreetMap. Run by hand only.
@@ -31,7 +32,7 @@ CycleOps lists Oslo Bysykkel stations with no bikes or no docks, in priority ord
 - `fixtures/recorded/`: recordings of the real feed (NDJSON.gz with a manifest) and the NLOD `NOTICE`. A `demo.yaml` there names the recording that becomes the recorded replay; it exists only once a recording passes acceptance.
 - `fixtures/synthetic/demo.yaml`: parameters of the synthetic demo artifact.
 - `data/recordings/`: full recordings, not versioned.
-- `docs/architecture.md` (processes, connections and the test covering each), `docs/explorar-dados.md` (replay controls, rankings and diagnostic denominators), `docs/adr/` (decisions; new ones start as Proposto), `docs/results/` (every run with commit and command, indexed in `index.md`; `a11y-manual.md` is filled by a person; `publicacao.md` lists what only Arthur can do), `docs/media/` (captures, made with the Playwright `media` project; `tests/media/demo.spec.ts` records `demo.webm` against the Compose stack with `CYCLEOPS_DEMO=1`).
+- `docs/architecture.md` (processes, connections and the test covering each), `docs/explorar-dados.md` (replay controls, rankings and diagnostic denominators), `docs/ui-ux.md` (screen layout, keyboard controls and visual checks), `docs/adr/` (decisions; new ones start as Proposto), `docs/results/` (every run with commit and command, indexed in `index.md`; `a11y-manual.md` is filled by a person; `publicacao.md` lists what only Arthur can do), `docs/media/` (captures, made with the Playwright `media` project; `tests/media/demo.spec.ts` records `demo.webm` against the Compose stack with `CYCLEOPS_DEMO=1`).
 
 ## Commands
 
@@ -98,6 +99,34 @@ Remove-Item Env:CYCLEOPS_WEB_TEST_PORT
 ```
 
 The replay tools and analysis suites are `tests/e2e/replay-tools.spec.ts` and `tests/e2e/analysis.spec.ts`. They run with the same static server and require no live-feed calls. The [exploration report](docs/results/exploracao-20261011.md) records the commands and captures for this review.
+
+Targeted interface checks and captures, from `apps/web`:
+
+```bash
+corepack pnpm exec playwright test --project=e2e tests/e2e/uiux.spec.ts tests/e2e/replay-tools.spec.ts
+corepack pnpm exec playwright test --project=media tests/media/uiux.spec.ts tests/media/analysis.spec.ts
+```
+
+The media project writes real browser captures to `docs/media/`. It is run by hand and is not part of CI. Exact event assertions open “Detalhes do replay”; incident selection opens “Explorar incidentes”. Session metadata and full credits are checked through their disclosures. Keep source mode and recording date or simulation seed visible in every capture. Test output and captures do not replace the [manual accessibility checklist](docs/results/a11y-manual.md).
+
+### Generated contract validation
+
+`scripts/generate-contracts.mjs` emits each Ajv standalone validator in its own module and pure initialization factory under `packages/contracts/validators/`. `validators.js` re-exports the same public names. The bundler can discard unused schemas from the initial Pages chunk and keep server validators in stream and history chunks. Validation still runs at the boundary where each payload enters the browser. Keep the schema options and public exports when changing generation.
+
+After a schema or generator change, regenerate backend artifacts first when the domain or contracts changed, as required below. Then, from the repository root:
+
+```bash
+uv run --project apps/backend generate-artifacts --check
+corepack pnpm --dir apps/web generate:contracts
+corepack pnpm --dir apps/web lint
+corepack pnpm --dir apps/web typecheck
+corepack pnpm --dir apps/web exec vitest run tests/unit/logic.test.ts tests/unit/diagnostics.test.ts
+corepack pnpm --dir apps/web build:pages
+corepack pnpm --dir apps/web check:bundle
+git diff -- packages/contracts
+```
+
+Check the regenerated schemas, types and validator declarations together. Bundle checks retain the existing budget. Reduce unused code when the build exceeds it.
 
 Against the Compose stack (port 8080, project `cycleops-e2e`; the last test resets that project's database with `down -v`):
 

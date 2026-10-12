@@ -1,5 +1,6 @@
 import { useState, useSyncExternalStore } from "react";
 import ui from "../../components/ui/ui.module.css";
+import { ActionIcon } from "../../components/ui/ActionIcon";
 import type { ManifestIncident, ReplayManifest } from "../../lib/contracts";
 import { KIND_LABEL } from "../../lib/labels";
 import { formatTime, type Zone } from "../../lib/time";
@@ -45,104 +46,113 @@ export function ReplayControls(props: {
 
   return (
     <section className={styles.controls} aria-label="Controles do replay">
-      <div className={`${ui.group} ${styles.transport}`}>
-        {player.ended ? (
-          <button type="button" className={`${ui.button} ${ui.primary}`} onClick={() => player.start(player.speed)}>
-            Recomeçar
+      <div className={styles.toolbar}>
+        <div className={`${ui.group} ${styles.transport}`}>
+          {player.ended ? (
+            <button type="button" className={`${ui.button} ${ui.primary}`} onClick={() => player.start(player.speed)}>
+              <ActionIcon name="restart" />
+              Recomeçar
+            </button>
+          ) : (
+            <button
+              type="button"
+              className={`${ui.button} ${ui.primary}`}
+              onClick={() => (player.playing ? player.pause() : player.play())}
+            >
+              <ActionIcon name={player.playing ? "pause" : "play"} />
+              {player.playing ? "Pausar" : "Continuar"}
+            </button>
+          )}
+          <button type="button" className={`${ui.button} ${styles.iconButton}`} title="Passo" aria-label="Passo" onClick={() => player.step()} disabled={player.ended}>
+            <ActionIcon name="step" />
           </button>
-        ) : (
-          <button
-            type="button"
-            className={`${ui.button} ${ui.primary}`}
-            onClick={() => (player.playing ? player.pause() : player.play())}
-          >
-            {player.playing ? "Pausar" : "Continuar"}
+        </div>
+        <div className={`${ui.group} ${styles.speed}`} role="group" aria-label="Velocidade">
+          {SPEEDS.map((speed) => (
+            <button
+              key={speed}
+              type="button"
+              className={ui.button}
+              aria-pressed={player.speed === speed}
+              onClick={() => player.setSpeed(speed)}
+            >
+              {speed}×
+            </button>
+          ))}
+        </div>
+        <p className={styles.position}>
+          <time className={styles.currentTime} dateTime={new Date(now).toISOString()}>{formatTime(now, zone, true)}</time>
+        </p>
+        <div className={styles.share}>
+          <button type="button" className={`${ui.button} ${styles.iconButton}`} title="Copiar este momento" aria-label="Copiar este momento" onClick={() => {
+            // Reapply through this instant so a delayed timer cannot leave its state behind the clock.
+            player.seekOffset(player.offsetSeconds);
+            const url = replayMomentUrl(window.location.href, manifest, player.offsetSeconds);
+            void (async () => {
+              try {
+                await navigator.clipboard.writeText(url);
+                setShare({ url, copied: true });
+              } catch {
+                setShare({ url, copied: false });
+              }
+            })();
+          }}>
+            <ActionIcon name="share" />
           </button>
-        )}
-        <button type="button" className={ui.button} onClick={() => player.step()} disabled={player.ended}>
-          Passo
-        </button>
+        </div>
       </div>
-      <div className={`${ui.group} ${styles.speed}`} role="group" aria-label="Velocidade">
-        {SPEEDS.map((speed) => (
+      {share && <span role="status" className={styles.shareStatus}>{share.copied ? "Link copiado. O replay abre pausado neste horário." : "Copie o link abaixo para abrir este momento."}</span>}
+      {share && !share.copied && (
+        <label className={styles.shareFallback}>Link deste momento
+          <input readOnly value={share.url} onFocus={(event) => event.target.select()} />
+        </label>
+      )}
+      <ReplayTimeline
+        player={player} manifest={manifest} now={now} zone={zone}
+        selectedStation={props.selectedStation} stationName={name} onIncident={props.onIncident}
+        shortcut={incidents.length > 0 && (
           <button
-            key={speed}
-            type="button"
-            className={ui.button}
-            aria-pressed={player.speed === speed}
-            onClick={() => player.setSpeed(speed)}
-          >
-            {speed}×
-          </button>
-        ))}
-      </div>
-      {incidents.length > 0 && (
-        <div className={styles.incident}>
-          <label htmlFor="incident-select" className="visually-hidden">
-            Incidente
-          </label>
-          <select
-            id="incident-select"
-            className={styles.select}
-            value={chosen}
-            onChange={(e) => setChosen(e.target.value)}
-          >
-            {incidents.map((i) => (
-              <option key={i.incidentId} value={i.incidentId}>
-                {name(i.stationId)}, {KIND_LABEL[i.kind]},{" "}
-                {formatTime(origin + i.confirmedOffsetSeconds * 1000, zone)}
-              </option>
-            ))}
-          </select>
-          <button
-            type="button"
-            className={ui.button}
+            type="button" className={`${ui.button} ${styles.quickJump}`}
             onClick={() => {
-              const incident = incidents.find((i) => i.incidentId === chosen);
+              const incident = incidents.find((item) => item.incidentId === chosen);
               if (incident) {
                 player.goToIncident(incident);
                 props.onIncident(incident);
               }
             }}
           >
-            Ir para o incidente
+            <ActionIcon name="step" /> Ir para o incidente
           </button>
-        </div>
-      )}
-      <p className={styles.position}>
-        <span>
-          Evento {Math.min(player.position, player.events.length)} de {player.events.length}
-        </span>
-        <span className={ui.muted}>{formatTime(now, zone, true)}</span>
-        {player.ended && <span className={ui.badge}>Replay terminado</span>}
-      </p>
-      <div className={styles.share}>
-        <button type="button" className={ui.button} onClick={() => {
-          // Reapply through this instant so a delayed timer cannot leave its state behind the clock.
-          player.seekOffset(player.offsetSeconds);
-          const url = replayMomentUrl(window.location.href, manifest, player.offsetSeconds);
-          void (async () => {
-            try {
-              await navigator.clipboard.writeText(url);
-              setShare({ url, copied: true });
-            } catch {
-              setShare({ url, copied: false });
-            }
-          })();
-        }}>
-          Copiar este momento
-        </button>
-        {share && <span role="status" className={styles.shareStatus}>{share.copied ? "Link copiado. O replay abre pausado neste horário." : "Copie o link abaixo para abrir este momento."}</span>}
-        {share && !share.copied && (
-          <label className={styles.shareFallback}>Link deste momento
-            <input readOnly value={share.url} onFocus={(event) => event.target.select()} />
-          </label>
         )}
-      </div>
-      <ReplayTimeline
-        player={player} manifest={manifest} now={now} zone={zone}
-        selectedStation={props.selectedStation} stationName={name} onIncident={props.onIncident}
-      />
+        replayDetails={(
+          <details className={styles.replayDetails}>
+            <summary title="Detalhes do replay" aria-label="Detalhes do replay"><ActionIcon name="info" /></summary>
+            <p>Evento {Math.min(player.position, player.events.length)} de {player.events.length}</p>
+            {player.ended && <span className={ui.badge}>Replay terminado</span>}
+          </details>
+        )}
+      >
+        {incidents.length > 0 && (
+          <div className={styles.incident}>
+            <label htmlFor="incident-select" className="visually-hidden">
+              Incidente
+            </label>
+            <select
+              id="incident-select"
+              className={styles.select}
+              value={chosen}
+              onChange={(e) => setChosen(e.target.value)}
+            >
+              {incidents.map((i) => (
+                <option key={i.incidentId} value={i.incidentId}>
+                  {name(i.stationId)}, {KIND_LABEL[i.kind]},{" "}
+                  {formatTime(origin + i.confirmedOffsetSeconds * 1000, zone)}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+      </ReplayTimeline>
     </section>
   );
 }

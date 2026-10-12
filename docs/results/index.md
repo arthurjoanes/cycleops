@@ -69,6 +69,14 @@ A gravação usada nessa revisão é a mesma de 09/10/2026: 249 respostas HTTP 2
 
 Capturas: [resumo da gravação](../media/analysis-summary.png), [qualidade da coleta](../media/analysis-quality.png) e [celular](../media/analysis-mobile.png).
 
+## Interface em 2026-10-12
+
+O [relatório da interface](uiux-20261012.md) registra a revisão da página principal, controles do replay, navegação por teclado e comportamento em 1440, 768 e 320 px. O [guia da interface](../ui-ux.md) descreve as ações e os painéis expansíveis.
+
+Capturas: [desktop](../media/uiux-desktop.png), [tablet](../media/uiux-tablet.png), [celular](../media/uiux-mobile.png) e [análise](../media/uiux-analysis.png).
+
+110 testes unitários web, 28 cenários de navegação e quatro capturas passaram. Bundle inicial: 125.599 bytes gzip no Pages e 125.941 no servidor, com teto de 127.026. Medianas de laboratório: LCP 6.004 ms, CLS 0,000 e INP 152 ms; LCP segue acima da meta nessa rede emulada. [Web Vitals](data/web-vitals-uiux-final-20261012.json) · [Carga](data/frontend-load-uiux-20261012.json) · [Comparação dos contratos](data/contract-validation-parity-20261012.json).
+
 ## Pendente
 
 - A coleta de dia e de outras redes está em "Coleta pendente", em `feed-validation.md`. A gravação longa da demo passou no aceite e já tem artefato.

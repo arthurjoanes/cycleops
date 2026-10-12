@@ -116,7 +116,7 @@ describe("incident timeline", () => {
     expect(player.playing).toBe(false);
     fireEvent.keyDown(slider, { key: "End" });
     expect(player.offsetSeconds).toBe(90);
-    fireEvent.click(screen.getByText(/Marcos dos incidentes/));
+    fireEvent.click(screen.getByTitle("Explorar incidentes"));
     expect(screen.queryByRole("button", { name: /Station B, sem vagas/ })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("checkbox", { name: "Só Station A" }));
     expect(screen.getByRole("button", { name: /Station B, sem vagas/ })).toBeVisible();

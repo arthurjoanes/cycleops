@@ -141,6 +141,7 @@ test("switching between the server stream and an artifact does not mix events", 
   await expect(page.getByTestId("mode")).toContainText("Simulação");
   await expect(page.getByRole("button", { name: "Servidor" })).toHaveAttribute("aria-pressed", "false");
   const counter = page.getByText(/^Evento \d+ de \d+/);
+  await page.getByTitle("Detalhes do replay", { exact: true }).click();
   await expect(counter).toBeVisible();
   // 2: EventSource.CLOSED.
   expect((await readProbe(page)).streams.map((s) => s.state)).toEqual([2]);

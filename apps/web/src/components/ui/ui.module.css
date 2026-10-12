@@ -3,8 +3,8 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-1);
-  min-height: 32px;
-  min-width: 32px;
+  min-height: 36px;
+  min-width: 36px;
   padding: var(--space-1) var(--space-3);
   border: 1px solid var(--border-control);
   border-radius: var(--radius);
@@ -12,6 +12,7 @@
   cursor: pointer;
   font-size: var(--size-s);
   font-weight: 550;
+  touch-action: manipulation;
 }
 
 .button:hover {
@@ -106,4 +107,8 @@
 
 .muted {
   color: var(--muted);
+}
+
+@media (max-width: 767px), (pointer: coarse) {
+  .button { min-height: 44px; min-width: 44px; }
 }

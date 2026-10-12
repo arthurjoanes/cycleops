@@ -50,7 +50,12 @@ h2,
 h3 {
   margin: 0;
   line-height: 1.25;
+  text-wrap: balance;
+  scroll-margin-block: var(--space-4);
 }
+
+button, summary, select { touch-action: manipulation; }
+input[type="search"] { -webkit-appearance: none; appearance: none; }
 
 .visually-hidden {
   position: absolute;

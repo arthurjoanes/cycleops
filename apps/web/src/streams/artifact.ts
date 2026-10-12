@@ -57,21 +57,27 @@ export function parseEvents(text: string): StationBatchEvent[] {
   return events;
 }
 
-/** Manifest and catalog first, then the events. The .gz is served as a plain file (no
- * Content-Encoding), so it is decompressed here. */
+/** The validated manifest identifies the files downloaded together. The .gz is served
+ * as a plain file (no Content-Encoding), so it is decompressed here. Nothing is returned
+ * until every file and their shared stream/period have passed validation. */
 export async function loadArtifact(kind: ArtifactKind, signal?: AbortSignal): Promise<Artifact> {
   const base = artifactBase(kind);
   const manifest: unknown = await (await fetchOk(`${base}manifest.json`, signal)).json();
   if (!validateReplayManifest(manifest)) throw new InvalidPayloadError("manifest");
-  const catalog: unknown = await (await fetchOk(`${base}catalog.json`, signal)).json();
+  const [catalog, text, diagnosticText]: [unknown, string, string | null] = await Promise.all([
+    fetchOk(`${base}catalog.json`, signal).then((response) => response.json()),
+    fetchOk(`${base}events.ndjson.gz`, signal).then(async (gz) => {
+      if (!gz.body) throw new Error("events.ndjson.gz: empty body");
+      // A server adding Content-Encoding has already had the browser decompress it.
+      const encoded = (gz.headers.get("content-encoding") ?? "").includes("gzip");
+      const body = encoded ? gz.body : gz.body.pipeThrough(new DecompressionStream("gzip"));
+      return new Response(body).text();
+    }),
+    manifest.diagnosticsSha256
+      ? fetchOk(`${base}diagnostics.json`, signal).then((response) => response.text())
+      : Promise.resolve(null),
+  ]);
   if (!validateReplayCatalog(catalog)) throw new InvalidPayloadError("catalog");
-  const gz = await fetchOk(`${base}events.ndjson.gz`, signal);
-  if (!gz.body) throw new Error("events.ndjson.gz: empty body");
-  // Served as a plain .gz (GitHub Pages, Caddy). A server that adds Content-Encoding has
-  // already had the browser decompress it.
-  const encoded = (gz.headers.get("content-encoding") ?? "").includes("gzip");
-  const body = encoded ? gz.body : gz.body.pipeThrough(new DecompressionStream("gzip"));
-  const text = await new Response(body).text();
   const events = parseEvents(text);
   // The three files must be one artifact: a mix from two deploys would play as a frozen
   // screen, because the store only takes sequence 1, 2, 3... of one stream.
@@ -81,10 +87,9 @@ export async function loadArtifact(kind: ArtifactKind, signal?: AbortSignal): Pr
     events.every((e, i) => e.streamId === manifest.streamId && e.sequence === i + 1 && versions.has(e.catalogVersion));
   if (!consistent) throw new InvalidPayloadError("events");
   let diagnostics: FeedDiagnostics | null = null;
-  if (manifest.diagnosticsSha256) {
-    const content = await (await fetchOk(`${base}diagnostics.json`, signal)).text();
-    const body: unknown = JSON.parse(content);
-    if (!validateFeedDiagnostics(body) || (await sha256(content)) !== manifest.diagnosticsSha256) {
+  if (diagnosticText !== null) {
+    const body: unknown = JSON.parse(diagnosticText);
+    if (!validateFeedDiagnostics(body) || (await sha256(diagnosticText)) !== manifest.diagnosticsSha256) {
       throw new InvalidPayloadError("feed diagnostics");
     }
     if (

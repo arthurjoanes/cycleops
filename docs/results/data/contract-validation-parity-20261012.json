@@ -1,0 +1,53 @@
+{
+  "checks": 957,
+  "exports": 9,
+  "result": "all results and errors identical",
+  "cspEvalFunctionUsed": false,
+  "statistics": {
+    "validateReplayManifest": {
+      "total": 112,
+      "valid": 12,
+      "invalid": 100
+    },
+    "validateReplayCatalog": {
+      "total": 24,
+      "valid": 4,
+      "invalid": 20
+    },
+    "validateFeedDiagnostics": {
+      "total": 58,
+      "valid": 4,
+      "invalid": 54
+    },
+    "validateStationBatchEvent": {
+      "total": 535,
+      "valid": 464,
+      "invalid": 71
+    },
+    "validateSnapshot": {
+      "total": 56,
+      "valid": 4,
+      "invalid": 52
+    },
+    "validateHeartbeat": {
+      "total": 40,
+      "valid": 6,
+      "invalid": 34
+    },
+    "validateStationHistory": {
+      "total": 48,
+      "valid": 4,
+      "invalid": 44
+    },
+    "validateResyncRequired": {
+      "total": 60,
+      "valid": 12,
+      "invalid": 48
+    },
+    "validateStreamClosed": {
+      "total": 24,
+      "valid": 6,
+      "invalid": 18
+    }
+  }
+}

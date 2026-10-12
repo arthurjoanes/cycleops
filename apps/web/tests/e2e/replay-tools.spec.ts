@@ -27,6 +27,7 @@ test("copies and restores the exact replay moment with its station and view, wit
   await page.goto(`./${sharedHash(confirmed)}`);
   await expect(page.getByRole("button", { name: "Continuar", exact: true })).toBeVisible();
   await expect(page.getByRole("slider", { name: "Linha do tempo" })).toHaveValue(String(confirmed));
+  await page.getByTitle("Detalhes do replay", { exact: true }).click();
   await expect(page.getByText(/^Evento \d+ de \d+/)).toContainText(`Evento ${incident.confirmedSequence} de`);
   await page.getByRole("button", { name: "Copiar este momento" }).click();
   await expect(page.getByRole("status").filter({ hasText: "Link copiado" })).toBeVisible();
@@ -43,6 +44,7 @@ test("copies and restores the exact replay moment with its station and view, wit
   await expect(reopened.getByRole("button", { name: "Continuar", exact: true })).toBeVisible();
   await expect(reopened.getByRole("slider", { name: "Linha do tempo" })).toHaveValue(String(confirmed));
   await expect(reopened.locator("aside[aria-labelledby='details-title']")).toBeVisible();
+  await reopened.getByTitle("Detalhes do replay", { exact: true }).click();
   await expect(reopened.getByText(/^Evento \d+ de \d+/)).toContainText(`Evento ${incident.confirmedSequence} de`);
   expect(api).toEqual([]);
   await reopened.close();
@@ -58,6 +60,7 @@ test("back and forward change the paused moment without fetching the artifact ag
   await expect(slider).toHaveValue(String(confirmed));
   await page.evaluate((hash) => { window.location.hash = hash; }, sharedHash(resolved));
   await expect(slider).toHaveValue(String(resolved));
+  await page.getByTitle("Detalhes do replay", { exact: true }).click();
   await expect(page.getByText(/^Evento \d+ de \d+/)).toContainText(`Evento ${incident.resolvedSequence} de`);
   await page.goBack();
   await expect(slider).toHaveValue(String(confirmed));
@@ -92,7 +95,7 @@ test("timeline supports keyboard and station markers at 320 px without overflow"
   await page.keyboard.press("ArrowRight");
   await expect(slider).toHaveValue(String(Math.round((confirmed + 1) * 1000) / 1000));
   await expect(page.getByRole("button", { name: "Continuar", exact: true })).toBeVisible();
-  await page.getByText(/^Marcos dos incidentes \(/).click();
+  await page.getByTitle("Explorar incidentes", { exact: true }).click();
   await page.getByRole("button", { name: /^resolvido,/ }).first().click();
   await expect(page.getByRole("dialog")).toBeVisible();
   await page.keyboard.press("Escape");

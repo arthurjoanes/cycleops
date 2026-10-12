@@ -73,9 +73,13 @@ test("identity video: real replay from confirmation to resolution", async ({ bro
     await page.waitForTimeout(2_000);
     await page.getByRole("button", { name: "Pausar" }).click();
     await page.waitForTimeout(1_000);
+    await page.getByTitle("Explorar incidentes", { exact: true }).click();
     await page.getByLabel("Incidente", { exact: true }).selectOption(incident.incidentId);
+    await page.getByTitle("Explorar incidentes", { exact: true }).click();
     await page.getByRole("button", { name: "Ir para o incidente" }).click();
+    await page.getByTitle("Detalhes do replay", { exact: true }).click();
     await expect(page.getByText(/^Evento \d+ de \d+/)).toContainText(`Evento ${incident.confirmedSequence} de`);
+    await page.getByTitle("Detalhes do replay", { exact: true }).click();
 
     const details = page.locator("aside[aria-labelledby='details-title']");
     const kind = incident.kind === "pickup_unavailable" ? "sem bicicletas" : "sem vagas";

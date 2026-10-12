@@ -1,5 +1,4 @@
 import { useState } from "react";
-import ui from "../../components/ui/ui.module.css";
 import type { Zone } from "../../lib/time";
 import type { ReplayPlayer } from "../../streams/replayPlayer";
 import { CityTrend } from "./CityTrend";
@@ -21,7 +20,7 @@ export default function AnalysisPanel({ player, zone, onSelectStation }: {
   return (
     <>
       <div className={styles.tabs} role="group" aria-label="Análise dos dados">
-        {tabs.map(({ key, label }) => <button type="button" key={key} className={ui.button} aria-pressed={tab === key} onClick={() => setTab(key)}>{label}</button>)}
+        {tabs.map(({ key, label }) => <button type="button" key={key} className={styles.tab} aria-pressed={tab === key} onClick={() => setTab(key)}>{label}</button>)}
       </div>
       {tab === "summary" && player && <ReplaySummary artifact={player.artifact} zone={zone} onSelectStation={onSelectStation} />}
       {tab === "trend" && <CityTrend zone={zone} />}
