@@ -41,14 +41,20 @@ This is a portfolio project using open data. The public demo uses a real recordi
 
 Captured on 2026-10-09 (UTC) with Playwright against the Pages build, replaying recorded real data. Its period and timestamps belong to the recording. [Mobile view](docs/media/identity-mobile.png) · [Recording and acceptance](docs/results/feed-validation.md).
 
-To follow an incident, pause the replay and use “Ir para o incidente”. Open the station, check the priority reason and advance with “Passo” or at 20× until resolution. The selector also lets you explore the simulation.
+Choose a time on the timeline or use “Ir para o incidente”. Markers show confirmation and resolution; opening a station lets you filter its markers. “Copiar este momento” creates a link that opens the same station and time with playback paused.
 
-The engine produced these events from the recording made on 2026-10-09. Offsets are measured from the start of the replay:
+In “Analisar dados”, the summary shows observed time without bikes or docks per station and resolved incidents. “Evolução da cidade” tracks indicators from accepted events in this session; “Qualidade do feed” explains HTTP responses and accepted or repeated publications.
+
+![Recording summary: period coverage, incidents and observed time per station](docs/media/analysis-summary.png)
+
+[Collection quality](docs/media/analysis-quality.png) · [Analysis on mobile](docs/media/analysis-mobile.png) · [How to explore the data](docs/explorar-dados.md).
+
+The engine produced these events from the recording made on 2026-10-09. Links open the recorded instants in Oslo time:
 
 | Station and condition | Confirmation | Resolution |
 |---|---|---|
-| St. Olavs gate (537), no docks | Event 69 · 1,125.368 s | Event 95 · 1,560.568 s |
-| Jakob kirke (412), no bikes | Event 106 · 1,740.683 s | Event 124 · 2,040.832 s |
+| St. Olavs gate (537), no docks | [Event 69 · 00:44:14](https://arthurjoanes.github.io/cycleops/#/?mode=recorded&station=537&artifact=48e2c7d55854510f1845b9ef2950aa0274a7c0f4363f090a71032f3b0eed0031&at=1126.445) | [Event 95 · 00:51:29](https://arthurjoanes.github.io/cycleops/#/?mode=recorded&station=537&artifact=48e2c7d55854510f1845b9ef2950aa0274a7c0f4363f090a71032f3b0eed0031&at=1561.645) |
+| Jakob kirke (412), no bikes | [Event 106 · 00:54:29](https://arthurjoanes.github.io/cycleops/#/?mode=recorded&station=412&artifact=48e2c7d55854510f1845b9ef2950aa0274a7c0f4363f090a71032f3b0eed0031&at=1741.76) | [Event 124 · 00:59:29](https://arthurjoanes.github.io/cycleops/#/?mode=recorded&station=412&artifact=48e2c7d55854510f1845b9ef2950aa0274a7c0f4363f090a71032f3b0eed0031&at=2041.909) |
 
 The [replay manifest](apps/web/public/replay/recorded/manifest.json) records these points and the file hashes; [feed validation](docs/results/feed-validation.md) describes the recording window and its limits. The [demo video](docs/media/identity-demo.webm) follows Jakob kirke from confirmation to resolution at 20×.
 
@@ -92,7 +98,7 @@ flowchart TB
         end
         DB[("PostgreSQL · persistent volume<br/>station state · feed_publications<br/>event_log · history")]:::storage
         subgraph API["FastAPI · read-only"]
-            Rest["REST<br/>snapshot · history · feed health"]:::delivery
+            Rest["REST<br/>snapshot · history · feed health<br/>collection diagnostics by time window"]:::delivery
             Tailer["Tailer + SSE distribution<br/>LISTEN and polling every 1 s<br/>bounded per-connection queues"]:::delivery
         end
         Edge["Caddy · 127.0.0.1:8080<br/>SPA and local files · REST/SSE proxy<br/>CSP · unbuffered, uncompressed SSE"]:::delivery
@@ -105,11 +111,14 @@ flowchart TB
     subgraph Browser["Browser"]
         Live["LiveSseSource + Ajv<br/>snapshot → SSE → cursor-based reconnect"]:::delivery
         UI["Zustand · events in sequence<br/>queue · MapLibre map · history"]:::core
+        Analysis["React analysis<br/>up to 120 points from accepted events<br/>collection diagnostics on demand"]:::delivery
         Live --> UI
+        UI -->|"session indicators"| Analysis
     end
     Oslo -->|"HTTPS · Client-Identifier"| Collector
     Synthetic -->|"same GBFS adapter"| Collector
     Edge -->|"same origin · HTTP / SSE"| Live
+    Edge -->|"JSON · GET /api/v1/feed-diagnostics"| Analysis
     classDef source font-family:Arial,font-size:14px,fill:#F1F6F7,stroke:#78919A,color:#19333D
     classDef core font-family:Arial,font-size:14px,fill:#123E4A,stroke:#123E4A,color:#FFFFFF
     classDef storage font-family:Arial,font-size:14px,fill:#E3F0F2,stroke:#086978,color:#19333D
@@ -147,12 +156,20 @@ config:
 flowchart TB
     Recording["Real recording · NDJSON.gz<br/>or seeded synthetic scenario"]:::source
     Compile["compile-replay · offline processing<br/>same adapter, engine and policies<br/>virtual clock"]:::core
-    Artifacts[("Versioned artifacts<br/>events.ndjson.gz<br/>catalog.json + manifest.json")]:::storage
+    Artifacts[("Versioned artifacts<br/>events.ndjson.gz · catalog.json<br/>manifest.json · diagnostics.json")]:::storage
     Hosting["GitHub Pages or Caddy static files<br/>interface + replay + local map base"]:::delivery
-    Player["Browser · Ajv validation + ReplayPlayer<br/>pause · speed · step · jump to incident<br/>same store and React components"]:::core
+    Player["Browser · Ajv validation + ReplayPlayer<br/>virtual clock · transport · timeline<br/>confirmation and resolution markers"]:::core
+    Store["Zustand · events in sequence<br/>queue · map · session history"]:::core
+    Analysis["React analysis<br/>artifact summary · observed ranking<br/>session series · collection quality"]:::delivery
+    Shared["Shared link<br/>station · view · time zone<br/>event hash + instant"]:::storage
     Recording --> Compile --> Artifacts
     Artifacts -->|"included in the build"| Hosting
     Hosting -->|"static GET · browser decompression"| Player
+    Player --> Store
+    Player -->|"whole artifact + validated diagnostics"| Analysis
+    Store -->|"up to 120 points from accepted events"| Analysis
+    Player -->|"copy moment"| Shared
+    Shared -->|"check version · restore paused"| Player
     classDef source font-family:Arial,font-size:14px,fill:#F1F6F7,stroke:#78919A,color:#19333D
     classDef core font-family:Arial,font-size:14px,fill:#123E4A,stroke:#123E4A,color:#FFFFFF
     classDef storage font-family:Arial,font-size:14px,fill:#E3F0F2,stroke:#086978,color:#19333D
@@ -160,6 +177,8 @@ flowchart TB
 ```
 
 Pydantic contracts generate JSON Schema and TypeScript types; Ajv validates responses and artifacts in the browser. Generated data carries policy and version metadata.
+
+The summary uses events from the entire recording. Rankings count only observed intervals with valid data; gaps and service closure appear separately. Diagnostics accompany the artifact in `diagnostics.json` and come from a REST query in stream mode. City trends keep up to 120 points from accepted events; a replay jump rebuilds the latest points up to the selected instant.
 
 [Transaction, SSE delivery and recovery sequence](docs/architecture.md#da-entrada-ao-navegador) · [Processes, connections and tests](docs/architecture.md) · [Architecture decisions](docs/adr/). Detailed documents are in Portuguese.
 
@@ -169,6 +188,7 @@ Pydantic contracts generate JSON Schema and TypeScript types; Ajv validates resp
 | Decide and persist | [Engine](apps/backend/src/cycleops/domain/engine.py) and [ingestion](apps/backend/src/cycleops/application/ingest.py): incidents, priority and one commit for state and events. |
 | Deliver and recover | [Tailer](apps/backend/src/cycleops/api/tailer.py) and [SSE stream](apps/backend/src/cycleops/api/stream.py): log reads, per-connection queues and cursor recovery. |
 | Replay and display | [Compiler](apps/backend/src/cycleops/application/replay.py), [data session](apps/web/src/app/useDataSession.ts) and [store](apps/web/src/features/stations/store.ts): live and replay feed the same components. |
+| Explore and diagnose | [Browser analysis](apps/web/src/features/analysis/), [replay link](apps/web/src/features/replay/replayMoment.ts) and [collection report](apps/backend/src/cycleops/application/feed_diagnostics.py): summary, indicators and reasons per attempt. |
 
 ## Stack and decisions
 
@@ -192,7 +212,7 @@ Pydantic contracts generate JSON Schema and TypeScript types; Ajv validates resp
 | Vite + GitHub Pages | The public demo plays a recording without an active backend. New recorded data requires compiling and publishing artifacts. |
 | Docker Compose + Caddy | Packages the database, worker, API and web for local installation. Services share the same host. |
 
-[Event delivery alternatives](docs/adr/0003-entrega-de-eventos-sem-broker.md#alternativas) · [Replay choices](docs/adr/0004-replay-no-navegador.md#alternativas) · [State and rendering](docs/adr/0005-estado-e-renderizacao.md).
+[Event delivery alternatives](docs/adr/0003-entrega-de-eventos-sem-broker.md#alternativas) · [Replay choices](docs/adr/0004-replay-no-navegador.md#alternativas) · [State and rendering](docs/adr/0005-estado-e-renderizacao.md) · [Exploration and diagnostics](docs/adr/0006-exploracao-e-diagnostico.md).
 
 Pinned dependencies: [Python](apps/backend/uv.lock), [web](apps/web/pnpm-lock.yaml) and [Compose images](compose.yaml).
 
@@ -244,12 +264,13 @@ corepack pnpm e2e
 corepack pnpm check:bundle
 ```
 
-The `e2e` command builds Pages under `/cycleops/`; `check:bundle` checks that build. Backend and Compose E2E commands are in [CONTRIBUTING.md](CONTRIBUTING.md). The `e2e:compose` suite uses the isolated `cycleops-e2e` project and deletes its database in the last test.
+The `e2e` command builds Pages under `/cycleops/` and starts its own server on port 4188. It does not reuse an existing server; `CYCLEOPS_WEB_TEST_PORT` selects another port. Manual preview stays on port 4173. `check:bundle` checks the generated build. Backend and Compose E2E commands are in [CONTRIBUTING.md](CONTRIBUTING.md). The `e2e:compose` suite uses the isolated `cycleops-e2e` project and deletes its database in the last test.
 
 | Question | Record and result | Scope |
 |---|---|---|
 | Did the backend and browser tests pass? | [Publication CI](docs/results/publicacao.md), 2026-10-09 in Brasília time, commit `185e5af`: 354 Python tests, 69 web unit tests, 14 Pages E2E and 11 Compose E2E. | The run identifies the tested revision; the Compose job uses the synthetic source without internet access. |
 | Does the recording contain resolved incidents? | [Real collection](docs/results/feed-validation.md), 2026-10-09: 249 responses over 60 min, all HTTP 200; 218 events and two resolved incidents in the replay. | The window includes overnight closure and does not represent daytime activity. |
+| How can I check what reached the engine? | [Exploration report](docs/results/exploracao-20261011.md): the recording contains 225 accepted publications and 24 repeated publications, with 40 confirmed incidents and two resolved. | HTTP responses, accepted publications and engine events have distinct counts. |
 | Does the published demo open on desktop and mobile? | [Public URL check](docs/results/data/public-pages-20261010.json), 2026-10-09 at 21:08 Brasília time: pause, incident jump and map at 1440×900 and 320×900. | No overflow or errors in this walkthrough; manual accessibility review is still pending. |
 | How did the interface behave in the lab? | [Visual review](docs/results/identity-20261009.md), 2026-10-09: 119,270-byte gzip bundle; median LCP 3,248 ms, CLS 0.004 and INP 240 ms across three runs. | Chromium with emulated CPU and network conditions; these are not real-user metrics. |
 
@@ -260,6 +281,7 @@ The [results index](docs/results/index.md) lists commands, commits and dates. [R
 - Independent project, unaffiliated with Oslo Bysykkel. Read-only, with no booking or dispatch.
 - The feed has no SLA. Live runs only in local Compose; collection and freshness criteria are in the [provider policy](policy/provider-oslo.yaml) and [priority policy](policy/priority-policy.yaml).
 - The simplified map base is not for navigation.
+- Rankings use only the recording window and observed counts. They do not estimate trips or weekly patterns; city trends cover up to 120 points from accepted events in the session or reconstructed replay prefix.
 - Each Compose browser tab uses one SSE connection. The API allows four per IP and closes the oldest when a fifth opens. [Limits and recovery](docs/architecture.md#ligações).
 - Pages delivers CSP through a meta tag, with fewer controls than Caddy's header. See [SECURITY.md](SECURITY.md) for controls and retention.
 
@@ -269,6 +291,7 @@ The [results index](docs/results/index.md) lists commands, commits and dates. [R
 |---|---|
 | Sources, licensing and collection | [Data sources](DATA_SOURCES.md) · [Feed validation](docs/results/feed-validation.md) |
 | Implementation and decisions | [Architecture](docs/architecture.md) · [ADRs](docs/adr/) · [Commands](CONTRIBUTING.md) |
+| Replay, indicators and quality | [Explore the data](docs/explorar-dados.md) · [Exploration validation](docs/results/exploracao-20261011.md) |
 | Runs and measurements | [Results](docs/results/index.md) · [Performance](docs/results/performance.md) |
 | Publication and manual review | [Publication checklist](docs/results/publicacao.md) · [Accessibility](docs/results/a11y-manual.md) |
 | Presentation | [Visual identity](docs/brand/README.md) · [Documentation pattern](docs/padrao-documentacao.md) |

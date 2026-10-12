@@ -1,4 +1,12 @@
 import { create } from "zustand";
+import {
+  appendCitySample,
+  citySample,
+  countCity,
+  stationCityCounts,
+  type CityCounts,
+  type CitySample,
+} from "../analysis/cityHistory";
 import type {
   CatalogStation,
   Condition,
@@ -64,6 +72,8 @@ export interface StreamData {
   monitoringStart: string | null;
   history: ReadonlyMap<string, readonly HistoryPoint[]>;
   sourceTimeline: readonly SourcePoint[];
+  cityCounts: CityCounts;
+  citySamples: readonly CitySample[];
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -84,6 +94,8 @@ export function emptyData(
     monitoringStart: null,
     history: new Map(),
     sourceTimeline: [],
+    cityCounts: { empty: 0, full: 0, disabled: 0 },
+    citySamples: [],
   };
 }
 
@@ -116,16 +128,27 @@ export function applyEvents(
     }
     stations ??= new Map(data.stations);
     if (keepHistory) history ??= new Map(data.history);
+    const cityCounts = { ...next.cityCounts };
+    const updateCounts = (state: StationState | undefined, sign: 1 | -1) => {
+      if (!state) return;
+      const delta = stationCityCounts(state);
+      cityCounts.empty += sign * delta.empty;
+      cityCounts.full += sign * delta.full;
+      cityCounts.disabled += sign * delta.disabled;
+    };
     let catalog = next.catalog;
     if (event.catalogVersion !== next.catalogVersion) {
       const version = next.catalogs.get(event.catalogVersion) ?? [];
       catalog = new Map(version.map((s) => [s.stationId, s]));
     }
     for (const id of event.removedStationIds) {
+      updateCounts(stations.get(id), -1);
       stations.delete(id);
       history?.delete(id);
     }
     for (const state of event.stations) {
+      updateCounts(stations.get(state.decision.stationId), -1);
+      updateCounts(state, 1);
       stations.set(state.decision.stationId, state);
       if (history) {
         const point: HistoryPoint = {
@@ -159,6 +182,8 @@ export function applyEvents(
       },
       monitoringStart: next.monitoringStart ?? event.sourceUpdatedAt,
       sourceTimeline: timeline,
+      cityCounts,
+      citySamples: appendCitySample(next.citySamples, citySample(event.committedAt, event.sequence, event.feedHealth, cityCounts)),
     };
     results.push("applied");
   }
@@ -247,6 +272,7 @@ export const useStations = create<StationsStore>()((set, get) => ({
       catalogVersion: snapshot.catalogVersion,
       catalog: new Map(snapshot.catalog.map((s) => [s.stationId, s])),
       stations: new Map(snapshot.stations.map((s) => [s.decision.stationId, s])),
+      cityCounts: countCity(snapshot.stations),
       feedHealth: snapshot.feedHealth,
       // Without stateSince the cut is this page's start; the messages leave it out.
       sourceTimeline: [{ at: snapshot.feedHealth.stateSince ?? at, state: snapshot.feedHealth.state }],

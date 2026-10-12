@@ -1,0 +1,406 @@
+{
+  "feeds": [
+    {
+      "counts": {
+        "acceptedPublications": 1,
+        "attempts": 1,
+        "contractFailures": 0,
+        "correctionPublications": 0,
+        "duplicatePublications": 0,
+        "futurePublications": 0,
+        "httpFailures": 0,
+        "httpResponses": 1,
+        "invalidStationRecords": null,
+        "notModified": 0,
+        "outOfOrderPublications": 0,
+        "rejectedPublications": 0,
+        "stationRecords": null,
+        "successfulResponses": 1,
+        "transportFailures": 0,
+        "validStationRecords": null
+      },
+      "feed": "gbfs",
+      "latestAttempt": {
+        "attemptAt": "2026-10-09T22:25:27.795Z",
+        "durationMs": 1072,
+        "errorCode": null,
+        "outcome": "ok",
+        "receivedAt": "2026-10-09T22:25:28.867Z",
+        "sourceUpdatedAt": "2026-10-09T22:25:15.000Z",
+        "stationRecords": null,
+        "status": 200,
+        "validStationRecords": null
+      },
+      "outcomes": [
+        {
+          "count": 1,
+          "outcome": "ok"
+        }
+      ],
+      "recentAttempts": [
+        {
+          "attemptAt": "2026-10-09T22:25:27.795Z",
+          "durationMs": 1072,
+          "errorCode": null,
+          "outcome": "ok",
+          "receivedAt": "2026-10-09T22:25:28.867Z",
+          "sourceUpdatedAt": "2026-10-09T22:25:15.000Z",
+          "stationRecords": null,
+          "status": 200,
+          "validStationRecords": null
+        }
+      ],
+      "statuses": [
+        {
+          "count": 1,
+          "status": 200
+        }
+      ]
+    },
+    {
+      "counts": {
+        "acceptedPublications": 6,
+        "attempts": 6,
+        "contractFailures": 0,
+        "correctionPublications": 0,
+        "duplicatePublications": 0,
+        "futurePublications": 0,
+        "httpFailures": 0,
+        "httpResponses": 6,
+        "invalidStationRecords": 0,
+        "notModified": 0,
+        "outOfOrderPublications": 0,
+        "rejectedPublications": 0,
+        "stationRecords": 1602,
+        "successfulResponses": 6,
+        "transportFailures": 0,
+        "validStationRecords": 1602
+      },
+      "feed": "station_information",
+      "latestAttempt": {
+        "attemptAt": "2026-10-09T23:15:27.974Z",
+        "durationMs": 831,
+        "errorCode": null,
+        "outcome": "ok",
+        "receivedAt": "2026-10-09T23:15:28.805Z",
+        "sourceUpdatedAt": "2026-10-09T23:15:15.000Z",
+        "stationRecords": 267,
+        "status": 200,
+        "validStationRecords": 267
+      },
+      "outcomes": [
+        {
+          "count": 6,
+          "outcome": "ok"
+        }
+      ],
+      "recentAttempts": [
+        {
+          "attemptAt": "2026-10-09T23:15:27.974Z",
+          "durationMs": 831,
+          "errorCode": null,
+          "outcome": "ok",
+          "receivedAt": "2026-10-09T23:15:28.805Z",
+          "sourceUpdatedAt": "2026-10-09T23:15:15.000Z",
+          "stationRecords": 267,
+          "status": 200,
+          "validStationRecords": 267
+        },
+        {
+          "attemptAt": "2026-10-09T23:05:27.969Z",
+          "durationMs": 850,
+          "errorCode": null,
+          "outcome": "ok",
+          "receivedAt": "2026-10-09T23:05:28.819Z",
+          "sourceUpdatedAt": "2026-10-09T23:05:15.000Z",
+          "stationRecords": 267,
+          "status": 200,
+          "validStationRecords": 267
+        },
+        {
+          "attemptAt": "2026-10-09T22:55:27.968Z",
+          "durationMs": 841,
+          "errorCode": null,
+          "outcome": "ok",
+          "receivedAt": "2026-10-09T22:55:28.809Z",
+          "sourceUpdatedAt": "2026-10-09T22:55:15.000Z",
+          "stationRecords": 267,
+          "status": 200,
+          "validStationRecords": 267
+        },
+        {
+          "attemptAt": "2026-10-09T22:45:27.958Z",
+          "durationMs": 845,
+          "errorCode": null,
+          "outcome": "ok",
+          "receivedAt": "2026-10-09T22:45:28.803Z",
+          "sourceUpdatedAt": "2026-10-09T22:45:15.000Z",
+          "stationRecords": 267,
+          "status": 200,
+          "validStationRecords": 267
+        },
+        {
+          "attemptAt": "2026-10-09T22:35:27.943Z",
+          "durationMs": 844,
+          "errorCode": null,
+          "outcome": "ok",
+          "receivedAt": "2026-10-09T22:35:28.787Z",
+          "sourceUpdatedAt": "2026-10-09T22:35:15.000Z",
+          "stationRecords": 267,
+          "status": 200,
+          "validStationRecords": 267
+        }
+      ],
+      "statuses": [
+        {
+          "count": 6,
+          "status": 200
+        }
+      ]
+    },
+    {
+      "counts": {
+        "acceptedPublications": 216,
+        "attempts": 240,
+        "contractFailures": 0,
+        "correctionPublications": 0,
+        "duplicatePublications": 24,
+        "futurePublications": 0,
+        "httpFailures": 0,
+        "httpResponses": 240,
+        "invalidStationRecords": 0,
+        "notModified": 0,
+        "outOfOrderPublications": 0,
+        "rejectedPublications": 24,
+        "stationRecords": 64080,
+        "successfulResponses": 240,
+        "transportFailures": 0,
+        "validStationRecords": 64080
+      },
+      "feed": "station_status",
+      "latestAttempt": {
+        "attemptAt": "2026-10-09T23:25:14.910Z",
+        "durationMs": 623,
+        "errorCode": null,
+        "outcome": "ok",
+        "receivedAt": "2026-10-09T23:25:15.533Z",
+        "sourceUpdatedAt": "2026-10-09T23:25:00.000Z",
+        "stationRecords": 267,
+        "status": 200,
+        "validStationRecords": 267
+      },
+      "outcomes": [
+        {
+          "count": 24,
+          "outcome": "duplicate"
+        },
+        {
+          "count": 216,
+          "outcome": "ok"
+        }
+      ],
+      "recentAttempts": [
+        {
+          "attemptAt": "2026-10-09T23:25:14.910Z",
+          "durationMs": 623,
+          "errorCode": null,
+          "outcome": "ok",
+          "receivedAt": "2026-10-09T23:25:15.533Z",
+          "sourceUpdatedAt": "2026-10-09T23:25:00.000Z",
+          "stationRecords": 267,
+          "status": 200,
+          "validStationRecords": 267
+        },
+        {
+          "attemptAt": "2026-10-09T23:24:59.907Z",
+          "durationMs": 619,
+          "errorCode": null,
+          "outcome": "ok",
+          "receivedAt": "2026-10-09T23:25:00.526Z",
+          "sourceUpdatedAt": "2026-10-09T23:24:45.000Z",
+          "stationRecords": 267,
+          "status": 200,
+          "validStationRecords": 267
+        },
+        {
+          "attemptAt": "2026-10-09T23:24:44.904Z",
+          "durationMs": 623,
+          "errorCode": null,
+          "outcome": "ok",
+          "receivedAt": "2026-10-09T23:24:45.527Z",
+          "sourceUpdatedAt": "2026-10-09T23:24:30.000Z",
+          "stationRecords": 267,
+          "status": 200,
+          "validStationRecords": 267
+        },
+        {
+          "attemptAt": "2026-10-09T23:24:29.901Z",
+          "durationMs": 631,
+          "errorCode": null,
+          "outcome": "ok",
+          "receivedAt": "2026-10-09T23:24:30.532Z",
+          "sourceUpdatedAt": "2026-10-09T23:24:15.000Z",
+          "stationRecords": 267,
+          "status": 200,
+          "validStationRecords": 267
+        },
+        {
+          "attemptAt": "2026-10-09T23:24:14.895Z",
+          "durationMs": 623,
+          "errorCode": null,
+          "outcome": "ok",
+          "receivedAt": "2026-10-09T23:24:15.518Z",
+          "sourceUpdatedAt": "2026-10-09T23:24:00.000Z",
+          "stationRecords": 267,
+          "status": 200,
+          "validStationRecords": 267
+        }
+      ],
+      "statuses": [
+        {
+          "count": 240,
+          "status": 200
+        }
+      ]
+    },
+    {
+      "counts": {
+        "acceptedPublications": 1,
+        "attempts": 1,
+        "contractFailures": 0,
+        "correctionPublications": 0,
+        "duplicatePublications": 0,
+        "futurePublications": 0,
+        "httpFailures": 0,
+        "httpResponses": 1,
+        "invalidStationRecords": null,
+        "notModified": 0,
+        "outOfOrderPublications": 0,
+        "rejectedPublications": 0,
+        "stationRecords": null,
+        "successfulResponses": 1,
+        "transportFailures": 0,
+        "validStationRecords": null
+      },
+      "feed": "system_information",
+      "latestAttempt": {
+        "attemptAt": "2026-10-09T22:25:27.927Z",
+        "durationMs": 938,
+        "errorCode": null,
+        "outcome": "ok",
+        "receivedAt": "2026-10-09T22:25:28.865Z",
+        "sourceUpdatedAt": "2026-10-09T22:25:15.000Z",
+        "stationRecords": null,
+        "status": 200,
+        "validStationRecords": null
+      },
+      "outcomes": [
+        {
+          "count": 1,
+          "outcome": "ok"
+        }
+      ],
+      "recentAttempts": [
+        {
+          "attemptAt": "2026-10-09T22:25:27.927Z",
+          "durationMs": 938,
+          "errorCode": null,
+          "outcome": "ok",
+          "receivedAt": "2026-10-09T22:25:28.865Z",
+          "sourceUpdatedAt": "2026-10-09T22:25:15.000Z",
+          "stationRecords": null,
+          "status": 200,
+          "validStationRecords": null
+        }
+      ],
+      "statuses": [
+        {
+          "count": 1,
+          "status": 200
+        }
+      ]
+    },
+    {
+      "counts": {
+        "acceptedPublications": 1,
+        "attempts": 1,
+        "contractFailures": 0,
+        "correctionPublications": 0,
+        "duplicatePublications": 0,
+        "futurePublications": 0,
+        "httpFailures": 0,
+        "httpResponses": 1,
+        "invalidStationRecords": null,
+        "notModified": 0,
+        "outOfOrderPublications": 0,
+        "rejectedPublications": 0,
+        "stationRecords": null,
+        "successfulResponses": 1,
+        "transportFailures": 0,
+        "validStationRecords": null
+      },
+      "feed": "vehicle_types",
+      "latestAttempt": {
+        "attemptAt": "2026-10-09T22:25:27.929Z",
+        "durationMs": 929,
+        "errorCode": null,
+        "outcome": "ok",
+        "receivedAt": "2026-10-09T22:25:28.858Z",
+        "sourceUpdatedAt": "2026-10-09T22:25:15.000Z",
+        "stationRecords": null,
+        "status": 200,
+        "validStationRecords": null
+      },
+      "outcomes": [
+        {
+          "count": 1,
+          "outcome": "ok"
+        }
+      ],
+      "recentAttempts": [
+        {
+          "attemptAt": "2026-10-09T22:25:27.929Z",
+          "durationMs": 929,
+          "errorCode": null,
+          "outcome": "ok",
+          "receivedAt": "2026-10-09T22:25:28.858Z",
+          "sourceUpdatedAt": "2026-10-09T22:25:15.000Z",
+          "stationRecords": null,
+          "status": 200,
+          "validStationRecords": null
+        }
+      ],
+      "statuses": [
+        {
+          "count": 1,
+          "status": 200
+        }
+      ]
+    }
+  ],
+  "mode": "recorded_replay",
+  "observedEnd": "2026-10-09T23:25:15.533Z",
+  "observedStart": "2026-10-09T22:25:28.858Z",
+  "schemaVersion": 1,
+  "streamId": "oslobysykkel:a5c03364",
+  "totals": {
+    "acceptedPublications": 225,
+    "attempts": 249,
+    "contractFailures": 0,
+    "correctionPublications": 0,
+    "duplicatePublications": 24,
+    "futurePublications": 0,
+    "httpFailures": 0,
+    "httpResponses": 249,
+    "invalidStationRecords": 0,
+    "notModified": 0,
+    "outOfOrderPublications": 0,
+    "rejectedPublications": 24,
+    "stationRecords": 65682,
+    "successfulResponses": 249,
+    "transportFailures": 0,
+    "validStationRecords": 65682
+  },
+  "windowEnd": "2026-10-09T23:25:15.533Z",
+  "windowStart": "2026-10-09T22:25:27.795Z"
+}

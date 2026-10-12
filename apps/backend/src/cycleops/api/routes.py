@@ -72,3 +72,19 @@ async def feed_health(request: Request) -> Response:
     if found is None:
         raise HTTPException(503, NO_STREAM)
     return _json(found)
+
+
+async def feed_diagnostics(
+    request: Request,
+    start: Annotated[AwareDatetime | None, Query(alias="from")] = None,
+    end: Annotated[AwareDatetime | None, Query(alias="to")] = None,
+) -> Response:
+    end = end or datetime.now(UTC)
+    start = start or end - DEFAULT_WINDOW
+    if not start < end <= start + MAX_WINDOW:
+        raise HTTPException(422, "from must be before to, at most 24 h apart")
+    async with _engine(request).connect() as conn:
+        found = await queries.feed_diagnostics(conn, start, end)
+    if found is None:
+        raise HTTPException(503, NO_STREAM)
+    return _json(found)

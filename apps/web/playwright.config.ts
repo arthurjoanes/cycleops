@@ -1,5 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const port = Number(process.env.CYCLEOPS_WEB_TEST_PORT ?? "4188");
+if (!Number.isInteger(port) || port < 1024 || port > 65535) throw new Error("Invalid CYCLEOPS_WEB_TEST_PORT");
+
 // E2E against the GitHub Pages build, served under /cycleops/ by a static server that
 // behaves like Pages (no SPA fallback, .gz without Content-Encoding).
 export default defineConfig({
@@ -12,7 +15,7 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : "list",
   use: {
-    baseURL: "http://127.0.0.1:4173/cycleops/",
+    baseURL: `http://127.0.0.1:${port}/cycleops/`,
     trace: "retain-on-failure",
     ...devices["Desktop Chrome"],
     viewport: { width: 1440, height: 900 },
@@ -26,8 +29,9 @@ export default defineConfig({
   ],
   webServer: {
     command: "corepack pnpm build:pages && node scripts/serve-pages.mjs",
-    url: "http://127.0.0.1:4173/cycleops/",
-    reuseExistingServer: !process.env.CI,
+    url: `http://127.0.0.1:${port}/cycleops/`,
+    env: { PORT: String(port) },
+    reuseExistingServer: false,
     timeout: 120_000,
   },
 });

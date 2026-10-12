@@ -1,0 +1,369 @@
+{
+  "$defs": {
+    "FeedAttemptSample": {
+      "additionalProperties": false,
+      "properties": {
+        "attemptAt": {
+          "format": "date-time",
+          "title": "Attemptat",
+          "type": "string"
+        },
+        "durationMs": {
+          "title": "Durationms",
+          "type": "integer"
+        },
+        "errorCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Errorcode"
+        },
+        "outcome": {
+          "title": "Outcome",
+          "type": "string"
+        },
+        "receivedAt": {
+          "format": "date-time",
+          "title": "Receivedat",
+          "type": "string"
+        },
+        "sourceUpdatedAt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Sourceupdatedat"
+        },
+        "stationRecords": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Stationrecords"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Status"
+        },
+        "validStationRecords": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Validstationrecords"
+        }
+      },
+      "required": [
+        "attemptAt",
+        "receivedAt",
+        "status",
+        "outcome",
+        "sourceUpdatedAt",
+        "errorCode",
+        "stationRecords",
+        "validStationRecords",
+        "durationMs"
+      ],
+      "title": "FeedAttemptSample",
+      "type": "object"
+    },
+    "FeedDiagnosticCounts": {
+      "additionalProperties": false,
+      "properties": {
+        "acceptedPublications": {
+          "title": "Acceptedpublications",
+          "type": "integer"
+        },
+        "attempts": {
+          "title": "Attempts",
+          "type": "integer"
+        },
+        "contractFailures": {
+          "title": "Contractfailures",
+          "type": "integer"
+        },
+        "correctionPublications": {
+          "title": "Correctionpublications",
+          "type": "integer"
+        },
+        "duplicatePublications": {
+          "title": "Duplicatepublications",
+          "type": "integer"
+        },
+        "futurePublications": {
+          "title": "Futurepublications",
+          "type": "integer"
+        },
+        "httpFailures": {
+          "title": "Httpfailures",
+          "type": "integer"
+        },
+        "httpResponses": {
+          "title": "Httpresponses",
+          "type": "integer"
+        },
+        "invalidStationRecords": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Invalidstationrecords"
+        },
+        "notModified": {
+          "title": "Notmodified",
+          "type": "integer"
+        },
+        "outOfOrderPublications": {
+          "title": "Outoforderpublications",
+          "type": "integer"
+        },
+        "rejectedPublications": {
+          "title": "Rejectedpublications",
+          "type": "integer"
+        },
+        "stationRecords": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Stationrecords"
+        },
+        "successfulResponses": {
+          "title": "Successfulresponses",
+          "type": "integer"
+        },
+        "transportFailures": {
+          "title": "Transportfailures",
+          "type": "integer"
+        },
+        "validStationRecords": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Validstationrecords"
+        }
+      },
+      "required": [
+        "attempts",
+        "httpResponses",
+        "successfulResponses",
+        "httpFailures",
+        "transportFailures",
+        "contractFailures",
+        "acceptedPublications",
+        "rejectedPublications",
+        "duplicatePublications",
+        "correctionPublications",
+        "outOfOrderPublications",
+        "futurePublications",
+        "notModified",
+        "stationRecords",
+        "validStationRecords",
+        "invalidStationRecords"
+      ],
+      "title": "FeedDiagnosticCounts",
+      "type": "object"
+    },
+    "FeedDiagnosticSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "counts": {
+          "$ref": "#/$defs/FeedDiagnosticCounts"
+        },
+        "feed": {
+          "title": "Feed",
+          "type": "string"
+        },
+        "latestAttempt": {
+          "$ref": "#/$defs/FeedAttemptSample"
+        },
+        "outcomes": {
+          "items": {
+            "$ref": "#/$defs/FeedOutcomeCount"
+          },
+          "title": "Outcomes",
+          "type": "array"
+        },
+        "recentAttempts": {
+          "items": {
+            "$ref": "#/$defs/FeedAttemptSample"
+          },
+          "title": "Recentattempts",
+          "type": "array"
+        },
+        "statuses": {
+          "items": {
+            "$ref": "#/$defs/FeedStatusCount"
+          },
+          "title": "Statuses",
+          "type": "array"
+        }
+      },
+      "required": [
+        "feed",
+        "counts",
+        "outcomes",
+        "statuses",
+        "latestAttempt",
+        "recentAttempts"
+      ],
+      "title": "FeedDiagnosticSummary",
+      "type": "object"
+    },
+    "FeedOutcomeCount": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "title": "Count",
+          "type": "integer"
+        },
+        "outcome": {
+          "title": "Outcome",
+          "type": "string"
+        }
+      },
+      "required": [
+        "outcome",
+        "count"
+      ],
+      "title": "FeedOutcomeCount",
+      "type": "object"
+    },
+    "FeedStatusCount": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "title": "Count",
+          "type": "integer"
+        },
+        "status": {
+          "title": "Status",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "status",
+        "count"
+      ],
+      "title": "FeedStatusCount",
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "feeds": {
+      "items": {
+        "$ref": "#/$defs/FeedDiagnosticSummary"
+      },
+      "title": "Feeds",
+      "type": "array"
+    },
+    "mode": {
+      "enum": [
+        "live",
+        "recorded_replay",
+        "synthetic"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "observedEnd": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Observedend"
+    },
+    "observedStart": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Observedstart"
+    },
+    "schemaVersion": {
+      "const": 1,
+      "title": "Schemaversion",
+      "type": "integer"
+    },
+    "streamId": {
+      "title": "Streamid",
+      "type": "string"
+    },
+    "totals": {
+      "$ref": "#/$defs/FeedDiagnosticCounts"
+    },
+    "windowEnd": {
+      "format": "date-time",
+      "title": "Windowend",
+      "type": "string"
+    },
+    "windowStart": {
+      "format": "date-time",
+      "title": "Windowstart",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "streamId",
+    "mode",
+    "windowStart",
+    "windowEnd",
+    "observedStart",
+    "observedEnd",
+    "totals",
+    "feeds"
+  ],
+  "title": "FeedDiagnostics",
+  "type": "object"
+}

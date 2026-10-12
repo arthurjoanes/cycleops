@@ -46,6 +46,46 @@
   display: none;
 }
 
+.analysisActions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 var(--space-4) var(--space-1);
+}
+
+.linkError {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0 var(--space-4) var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--warning-bg);
+  color: var(--warning);
+  border: 1px solid currentColor;
+}
+
+.linkError p { margin: 0; flex: 1 1 200px; font-size: var(--size-s); }
+
+.analysisDialog {
+  position: fixed;
+  z-index: 12;
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  width: min(1080px, calc(100vw - var(--space-6)));
+  max-height: calc(100dvh - var(--space-6));
+  overflow-y: auto;
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border-control);
+  border-top: 4px solid var(--brand);
+  border-radius: var(--radius);
+}
+
+.analysisHead { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); }
+.analysisHead h2 { color: var(--navy); font-size: var(--size-l); }
+.analysisHead p { margin: var(--space-1) 0 0; color: var(--muted); font-size: var(--size-s); }
+.analysisContext { color: var(--muted); margin: var(--space-2) 0 var(--space-3); font-size: var(--size-xs); }
+
 .tabs {
   display: flex;
   gap: var(--space-1);
@@ -212,6 +252,14 @@
 
 /* 320 to 767 px: one area at a time (Lista or Mapa), details in a drawer. */
 @media (max-width: 767px) {
+  .analysisDialog {
+    width: calc(100vw - var(--space-2));
+    max-height: calc(100dvh - var(--space-2));
+    padding: var(--space-3);
+  }
+
+  .analysisHead { flex-wrap: wrap; }
+
   .main {
     grid-template-columns: minmax(0, 1fr);
   }

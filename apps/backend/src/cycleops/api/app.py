@@ -26,7 +26,7 @@ from starlette.types import ASGIApp, Message, Receive, Scope, Send
 from cycleops.adapters.postgres.connect import create_engine
 from cycleops.api import routes, stream
 from cycleops.api.tailer import Hub, Tailer
-from cycleops.contracts import FeedHealth, Snapshot, StationHistory
+from cycleops.contracts import FeedDiagnostics, FeedHealth, Snapshot, StationHistory
 
 log = logging.getLogger("cycleops.api")
 access = logging.getLogger("cycleops.api.access")
@@ -90,6 +90,9 @@ def create_app(settings: Settings) -> FastAPI:
         routes.history
     )
     app.get("/api/v1/feed-health", responses={200: {"model": FeedHealth}})(routes.feed_health)
+    app.get("/api/v1/feed-diagnostics", responses={200: {"model": FeedDiagnostics}})(
+        routes.feed_diagnostics
+    )
     app.get(stream.PATH)(stream.stream_stations)
     app.add_middleware(RequestMiddleware, rest_per_minute=settings.rest_per_minute_per_ip)
     app.add_exception_handler(HTTPException, _http_error)  # type: ignore[arg-type]

@@ -65,6 +65,14 @@ export class ReplayPlayer implements StationEventSource {
     return this.index >= this.events.length;
   }
 
+  get durationSeconds(): number {
+    return Math.max(0, (Date.parse(this.artifact.manifest.periodEnd) - Date.parse(this.artifact.manifest.periodStart)) / 1000);
+  }
+
+  get offsetSeconds(): number {
+    return Math.max(0, Math.min(this.durationSeconds, (this.virtualNow() - Date.parse(this.artifact.manifest.periodStart)) / 1000));
+  }
+
   virtualNow(): number {
     if (!this.playing) return this.virtualAnchor;
     return this.virtualAnchor + (this.timers.now() - this.realAnchor) * this.speed;
@@ -129,7 +137,7 @@ export class ReplayPlayer implements StationEventSource {
 
   /** Goes to the event of the incident's first confirmation, found by the manifest offset. */
   goToIncident(incident: ManifestIncident): void {
-    const origin = this.times[0] ?? 0;
+    const origin = this.times[0] ?? Date.parse(this.artifact.manifest.periodStart);
     // Offsets are seconds with millisecond precision; rounding avoids landing one event early.
     const target = origin + Math.round(incident.confirmedOffsetSeconds * 1000);
     let last = 0;
@@ -143,11 +151,12 @@ export class ReplayPlayer implements StationEventSource {
   /** Reapplies events 0..index from the start. */
   seek(index: number): void {
     if (this.stopped) return;
+    if (!Number.isFinite(index)) return;
     const wasPlaying = this.playing;
     this.cancel();
     this.sink.reset();
     this.sink.setEnded(false);
-    this.index = Math.min(index + 1, this.events.length);
+    this.index = Math.max(0, Math.min(Math.trunc(index) + 1, this.events.length));
     this.sink.applyNow(this.events.slice(0, this.index));
     this.virtualAnchor = this.times[this.index - 1] ?? this.virtualAnchor;
     this.realAnchor = this.timers.now();
@@ -156,6 +165,30 @@ export class ReplayPlayer implements StationEventSource {
     if (this.playing) this.schedule();
     this.finishIfDone();
     this.notify();
+  }
+
+  /** A timeline jump freezes at the requested instant, even between commits. */
+  seekOffset(offsetSeconds: number): boolean {
+    if (this.stopped || !Number.isFinite(offsetSeconds) || offsetSeconds < 0 || offsetSeconds > this.durationSeconds) return false;
+    const target = Date.parse(this.artifact.manifest.periodStart) + Math.round(offsetSeconds * 1000);
+    let lo = 0;
+    let hi = this.times.length;
+    while (lo < hi) {
+      const middle = Math.floor((lo + hi) / 2);
+      if ((this.times[middle] ?? Infinity) <= target) lo = middle + 1;
+      else hi = middle;
+    }
+    this.cancel();
+    this.playing = false;
+    this.sink.reset();
+    this.index = lo;
+    this.sink.applyNow(this.events.slice(0, lo));
+    this.virtualAnchor = target;
+    this.realAnchor = this.timers.now();
+    this.sink.setNow(target);
+    this.sink.setEnded(this.ended);
+    this.notify();
+    return true;
   }
 
   stop(): void {

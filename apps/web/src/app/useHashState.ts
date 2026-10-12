@@ -10,6 +10,8 @@ export interface HashState {
   mode: DataKind | null;
   q: string;
   source: string | null;
+  artifact: string | null;
+  at: string | null;
 }
 
 const MODES: readonly DataKind[] = ["stream", "recorded", "synthetic"];
@@ -24,6 +26,8 @@ export function parseHash(hash: string): HashState {
     mode: MODES.find((m) => m === params.get("mode")) ?? null,
     q: params.get("q") ?? "",
     source: params.get("source"),
+    artifact: params.get("artifact"),
+    at: params.get("at"),
   };
 }
 
@@ -38,6 +42,17 @@ export function formatHash(state: Partial<Record<keyof HashState, string | null>
   return query ? `#/?${query}` : "#/";
 }
 
+/** Keeps query parameters belonging to diagnostics and other optional views. */
+export function patchHash(hash: string, patch: Partial<HashState>): string {
+  const params = new URLSearchParams(hash.replace(/^#\/?\??/, ""));
+  for (const [key, value] of Object.entries(patch)) {
+    if (value && DEFAULTS[key] !== value) params.set(key, value);
+    else params.delete(key);
+  }
+  const query = params.toString();
+  return query ? `#/?${query}` : "#/";
+}
+
 function subscribe(callback: () => void): () => void {
   window.addEventListener("hashchange", callback);
   return () => window.removeEventListener("hashchange", callback);
@@ -47,8 +62,7 @@ export function useHashState(): [HashState, (patch: Partial<HashState>) => void]
   const hash = useSyncExternalStore(subscribe, () => window.location.hash);
   const state = parseHash(hash);
   const update = useCallback((patch: Partial<HashState>) => {
-    const next = { ...parseHash(window.location.hash), ...patch };
-    const target = formatHash(next);
+    const target = patchHash(window.location.hash, patch);
     if (target !== window.location.hash) window.history.replaceState(null, "", target);
     window.dispatchEvent(new HashChangeEvent("hashchange"));
   }, []);

@@ -61,6 +61,14 @@ Cada execução registrada no repositório, com o commit do código usado. Coman
 | CI: 354 testes Python, 69 unitários web, 14 E2E Pages, 11 E2E Compose e gitleaks sem segredos | [Publicação](publicacao.md) | [workflow ci](https://github.com/arthurjoanes/cycleops/actions/runs/38007237961) | 185e5af | 2026-10-10 |
 | Pages publicado; mapa, replay, logo e favicon conferidos no endereço público, em 1440 e 320 px | [Dados da verificação](data/public-pages-20261010.json) | [workflow pages](https://github.com/arthurjoanes/cycleops/actions/runs/38007708719); Playwright conforme roteiro em `publicacao.md` | 185e5af | 2026-10-10 00:08 |
 
+## Exploração dos dados em 2026-10-11
+
+O [relatório de exploração](exploracao-20261011.md) registra a revisão dos links de momentos, timeline, resumo da gravação, evolução dos indicadores e qualidade da coleta. Comandos, revisão do código e resultados dos testes ficam no relatório.
+
+A gravação usada nessa revisão é a mesma de 09/10/2026: 249 respostas HTTP 200, 225 publicações aceitas, 24 repetidas, 218 eventos, 40 incidentes confirmados e dois resolvidos. O [guia de exploração](../explorar-dados.md) explica as janelas e os denominadores.
+
+Capturas: [resumo da gravação](../media/analysis-summary.png), [qualidade da coleta](../media/analysis-quality.png) e [celular](../media/analysis-mobile.png).
+
 ## Pendente
 
 - A coleta de dia e de outras redes está em "Coleta pendente", em `feed-validation.md`. A gravação longa da demo passou no aceite e já tem artefato.

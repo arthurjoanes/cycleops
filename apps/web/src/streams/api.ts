@@ -2,9 +2,11 @@
 // Pages). Every payload is validated with the generated schema before it reaches the store.
 import {
   InvalidPayloadError,
+  type FeedDiagnostics,
   type Snapshot,
   type StationHistory,
   validateSnapshot,
+  validateFeedDiagnostics,
   validateStationHistory,
 } from "../lib/contracts";
 
@@ -51,6 +53,16 @@ export async function fetchHistory(
   const body = await getJson(`stations/${encodeURIComponent(stationId)}/history`, signal);
   if (!validateStationHistory(body)) throw new InvalidPayloadError("history");
   return body.streamId === streamId && body.stationId === stationId ? body : null;
+}
+
+/** The last 6 h of stored attempts. A late answer for a superseded stream is ignored. */
+export async function fetchDiagnostics(
+  streamId: string,
+  signal: AbortSignal,
+): Promise<FeedDiagnostics | null> {
+  const body = await getJson("feed-diagnostics", signal);
+  if (!validateFeedDiagnostics(body)) throw new InvalidPayloadError("feed diagnostics");
+  return body.streamId === streamId ? body : null;
 }
 
 /** Whether the API answers. Checked before reopening a closed stream. */

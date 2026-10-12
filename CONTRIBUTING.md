@@ -8,9 +8,9 @@ CycleOps lists Oslo Bysykkel stations with no bikes or no docks, in priority ord
   - `collection/`: HTTP client, attempt classification, breaker and quarantine, polling loop, recording format.
   - `adapters/gbfs.py`: GBFS 2.3 validation and normalization. `adapters/synthetic.py`: seeded synthetic source and its scenarios.
   - `domain/`: the engine. `step(state, input, policy) -> (state, events)`, pure, no I/O, no wall clock.
-  - `application/replay.py`: compile-replay (recording or synthetic, through the engine, to the replay artifact).
+  - `application/replay.py`: compile-replay (recording or synthetic, through the engine, to events, catalog, manifest and diagnostics). `application/feed_diagnostics.py` aggregates attempts and publication outcomes for recordings and PostgreSQL queries.
   - `application/ingest.py`: one worker entry as one transaction (state, `event_log`, `feed_publications`, `pg_notify`).
-  - `adapters/postgres/`: tables, connections and the advisory lock, StreamState load/save, read queries for the API (snapshot, history, feed-health, events), purge.
+  - `adapters/postgres/`: tables, connections and the advisory lock, StreamState load/save, read queries for the API (snapshot, history, feed-health, feed-diagnostics, events), purge.
   - `worker/`: `python -m cycleops.worker`. Source (live collector or synthetic on the wall clock), processor, ticker, purge and quota, raw archive, watchdog.
   - `api/`: `python -m cycleops.api`. FastAPI read-only routes, SSE stream, tailer (LISTEN + 1 s poll) and per-client queues.
   - `contracts.py`: Pydantic models of everything sent to the browser. Source of `packages/contracts/`.
@@ -20,6 +20,7 @@ CycleOps lists Oslo Bysykkel stations with no bikes or no docks, in priority ord
 - `apps/web/`: React, TypeScript strict, Vite, Zustand, MapLibre (corepack pnpm, Node 24).
   - `src/features/stations/store.ts`: the store and `applyEvents` (contiguous sequences). `src/streams/`: `ReplayPlayer`, `LiveSseSource` and `api.ts` (snapshot, history, feed-health), artifact loading, the seeded load generator (`#/?source=load`). `src/app/useDataSession.ts` picks the source: server stream first in the edge build, artifacts only on Pages.
   - `src/features/priorities/`: queue order, freeze, indicators. `src/features/stations/`: list, details, step chart, map.
+  - `src/features/replay/`: transport controls, timeline markers and shared moments with artifact identity and a paused virtual instant. `src/features/analysis/`: full-recording summary, observed availability rankings, up to 120 samples from accepted events and feed diagnostics. Source switches and snapshots reset the series; a replay seek rebuilds its prefix. The panels use engine decisions and validated attempts; they do not derive new domain incidents.
   - `src/app/`: layout, header, screen states, hash routing.
   - `tests/unit/` (Vitest), `tests/e2e/` (Playwright against the Pages build), `tests/compose/` (Playwright against the Compose stack, `playwright.compose.config.ts`), `tests/performance/` and `tests/media/` (by hand).
   - `scripts/`: `generate-contracts.mjs`, `serve-pages.mjs` (static server that behaves like Pages), `check-bundle.mjs`.
@@ -30,7 +31,7 @@ CycleOps lists Oslo Bysykkel stations with no bikes or no docks, in priority ord
 - `fixtures/recorded/`: recordings of the real feed (NDJSON.gz with a manifest) and the NLOD `NOTICE`. A `demo.yaml` there names the recording that becomes the recorded replay; it exists only once a recording passes acceptance.
 - `fixtures/synthetic/demo.yaml`: parameters of the synthetic demo artifact.
 - `data/recordings/`: full recordings, not versioned.
-- `docs/architecture.md` (processes, connections and the test covering each), `docs/adr/` (decisions; new ones start as Proposto), `docs/results/` (every run with commit and command, indexed in `index.md`; `a11y-manual.md` is filled by a person; `publicacao.md` lists what only Arthur can do), `docs/media/` (captures, made with the Playwright `media` project; `tests/media/demo.spec.ts` records `demo.webm` against the Compose stack with `CYCLEOPS_DEMO=1`).
+- `docs/architecture.md` (processes, connections and the test covering each), `docs/explorar-dados.md` (replay controls, rankings and diagnostic denominators), `docs/adr/` (decisions; new ones start as Proposto), `docs/results/` (every run with commit and command, indexed in `index.md`; `a11y-manual.md` is filled by a person; `publicacao.md` lists what only Arthur can do), `docs/media/` (captures, made with the Playwright `media` project; `tests/media/demo.spec.ts` records `demo.webm` against the Compose stack with `CYCLEOPS_DEMO=1`).
 
 ## Commands
 
@@ -74,7 +75,7 @@ corepack pnpm dev                 # http://localhost:5173
 corepack pnpm lint
 corepack pnpm typecheck
 corepack pnpm test
-corepack pnpm e2e                 # builds for Pages and runs Playwright under /cycleops/
+corepack pnpm e2e                 # builds Pages, starts its own server on 4188, tests /cycleops/
 corepack pnpm build:pages && corepack pnpm check:bundle
 corepack pnpm preview:pages       # http://127.0.0.1:4173/cycleops/
 corepack pnpm generate:contracts  # types.ts and validators from packages/contracts/schemas
@@ -82,7 +83,21 @@ corepack pnpm perf                # frontend load and lab Web Vitals, writes doc
 corepack pnpm exec playwright test --project=media  # captures in docs/media/
 ```
 
-`e2e`, `perf` and `media` reuse a server already on port 4173; stop `preview:pages` first or the run tests the old `dist/`.
+`e2e`, `perf` and `media` build Pages and start a fresh server on port 4188. Existing servers are never reused. Manual `preview:pages` stays on port 4173. Set `CYCLEOPS_WEB_TEST_PORT` when 4188 is already in use; valid ports are 1024 to 65535.
+
+```bash
+CYCLEOPS_WEB_TEST_PORT=4190 corepack pnpm e2e
+```
+
+PowerShell:
+
+```powershell
+$env:CYCLEOPS_WEB_TEST_PORT = '4190'
+corepack pnpm e2e
+Remove-Item Env:CYCLEOPS_WEB_TEST_PORT
+```
+
+The replay tools and analysis suites are `tests/e2e/replay-tools.spec.ts` and `tests/e2e/analysis.spec.ts`. They run with the same static server and require no live-feed calls. The [exploration report](docs/results/exploracao-20261011.md) records the commands and captures for this review.
 
 Against the Compose stack (port 8080, project `cycleops-e2e`; the last test resets that project's database with `down -v`):
 

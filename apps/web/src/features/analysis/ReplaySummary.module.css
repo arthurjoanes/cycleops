@@ -1,0 +1,134 @@
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  font-size: var(--size-s);
+}
+
+.summary h3,
+.summary h4,
+.summary p {
+  margin: 0;
+}
+
+.summary h3,
+.summary h4 {
+  color: var(--navy);
+  font-size: var(--size-m);
+  font-weight: 650;
+}
+
+.intro,
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.intro p,
+.section > p,
+.note {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.section {
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.metrics,
+.sourceTimes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3) var(--space-4);
+  margin: 0;
+}
+
+.metrics {
+  padding: var(--space-4);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.metrics dt,
+.sourceTimes dt {
+  font-size: var(--size-xs);
+  color: var(--muted);
+}
+
+.metrics dd,
+.sourceTimes dd {
+  margin: var(--space-1) 0 0;
+  color: var(--navy);
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+.tableWrap {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--size-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.table th,
+.table td {
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.table thead th {
+  background: var(--bg);
+  color: var(--navy);
+  font-weight: 650;
+}
+
+.table td {
+  white-space: nowrap;
+}
+
+.table tbody th {
+  min-width: 8em;
+  font-weight: 500;
+}
+
+.station,
+.expand {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--link);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.station {
+  overflow-wrap: anywhere;
+}
+
+.expand {
+  align-self: flex-start;
+  min-height: 40px;
+}
+
+@media (min-width: 600px) {
+  .metrics {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .sourceTimes {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
