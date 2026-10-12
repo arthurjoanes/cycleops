@@ -7,8 +7,8 @@ import styles from "./CityTrend.module.css";
 
 const WIDTH = 680;
 const HEIGHT = 190;
-const LEFT = 32;
-const TOP = 14;
+const LEFT = 88;
+const TOP = 20;
 const BOTTOM = HEIGHT - 26;
 
 function coverage(sample: CitySample): number | null {
@@ -46,11 +46,8 @@ export function CityTrend({ zone }: { zone: Zone }) {
   return (
     <section className={styles.trend}>
       <h3>Evolução dos indicadores</h3>
-      <p>
-        Até {CITY_SAMPLE_LIMIT} pontos de eventos aceitos. O histórico reinicia ao mudar a fonte ou sincronizar o stream; no replay, é reconstruído até a posição escolhida.
-        Os números usam as mesmas condições dos indicadores acima da lista.
-      </p>
-      {!samples.length ? <p>Aguardando o próximo evento para iniciar o histórico.</p> : (
+      <p>Incidentes confirmados, operação desabilitada e cobertura dos dados recebidos.</p>
+      {!samples.length ? <p className={styles.empty}>Aguardando o próximo evento para iniciar o histórico.</p> : (
         <>
           <div className={styles.choices} role="group" aria-label="Série do gráfico">
             <button type="button" aria-pressed={metric === "incidents"} onClick={() => setMetric("incidents")}>Incidentes e operação</button>
@@ -96,8 +93,8 @@ export function CityTrend({ zone }: { zone: Zone }) {
               <span className={styles.gapKey}>fonte indisponível ou sistema fechado</span>
             </figcaption>
           </figure>
-          <p>Fonte agora: {SOURCE_LABEL[feedState]}. Intervalos sem dado verificável aparecem como lacunas.</p>
-          <details>
+          <p className={styles.source}>Fonte agora: {SOURCE_LABEL[feedState]}. Intervalos sem dado verificável aparecem como lacunas.</p>
+          <details className={styles.values}>
             <summary>Tabela dos indicadores ({samples.length} pontos)</summary>
             <div className={styles.tableWrap} role="region" aria-label="Valores dos indicadores" tabIndex={0}>
               <table className={styles.table}>
@@ -116,6 +113,13 @@ export function CityTrend({ zone }: { zone: Zone }) {
           </details>
         </>
       )}
+      <details className={styles.method}>
+        <summary>Sobre este histórico</summary>
+        <p>
+          Até {CITY_SAMPLE_LIMIT} pontos de eventos aceitos. O histórico reinicia ao mudar a fonte ou sincronizar o stream; no replay, é reconstruído até a posição escolhida.
+          Os números usam as mesmas condições dos indicadores acima da lista.
+        </p>
+      </details>
     </section>
   );
 }

@@ -1,9 +1,10 @@
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
+import { ActionIcon } from "../../components/ui/ActionIcon";
 import { useStations } from "../stations/store";
 import { indicators } from "./queue";
 import styles from "./Indicators.module.css";
 
-export function Indicators() {
+export function Indicators({ action }: { action?: ReactNode }) {
   const stations = useStations((s) => s.stations);
   const coverage = useStations((s) => s.feedHealth?.coverage ?? null);
   const values = useMemo(() => indicators(stations, coverage), [stations, coverage]);
@@ -12,25 +13,29 @@ export function Indicators() {
     : null;
   return (
     <ul className={styles.indicators} aria-label="Indicadores">
-      <li>
-        <span className={styles.value}>{values.empty}</span>
-        <span className={styles.label}>sem bicicletas (confirmado)</span>
+      <li className={styles.confirmed}>
+        <span className={styles.context}>Incidentes confirmados</span>
+        <div className={styles.pair}>
+          <div>
+            <span className={styles.metric}><ActionIcon name="bike" /><span className={styles.value}>{values.empty}</span></span>
+            <span className={styles.label}>Sem bicicletas</span>
+          </div>
+          <div>
+            <span className={styles.metric}><ActionIcon name="dock" /><span className={styles.value}>{values.full}</span></span>
+            <span className={styles.label}>Sem vagas</span>
+          </div>
+        </div>
       </li>
       <li>
-        <span className={styles.value}>{values.full}</span>
-        <span className={styles.label}>sem vagas (confirmado)</span>
+        <span className={styles.metric}><ActionIcon name="disabled" /><span className={styles.value}>{values.disabled}</span></span>
+        <span className={styles.label}>Operação desabilitada</span>
       </li>
       <li>
-        <span className={styles.value}>{values.disabled}</span>
-        <span className={styles.label}>com operação desabilitada</span>
+        <span className={styles.metric}><ActionIcon name="coverage" /><span className={styles.value}>{percent === null ? "?" : `${percent}%`}</span></span>
+        <span className={styles.label} title={values.coverage ? `${values.coverage.valid} de ${values.coverage.total} estações com dados válidos` : undefined}>Cobertura válida</span>
+        {values.coverage && <span className="visually-hidden">{values.coverage.valid} de {values.coverage.total} estações</span>}
       </li>
-      <li>
-        <span className={styles.value}>{percent === null ? "?" : `${percent}%`}</span>
-        <span className={styles.label}>
-          cobertura válida
-          {values.coverage ? ` (${values.coverage.valid} de ${values.coverage.total})` : ""}
-        </span>
-      </li>
+      {action && <li className={styles.action}>{action}</li>}
     </ul>
   );
 }

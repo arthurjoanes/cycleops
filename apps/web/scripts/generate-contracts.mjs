@@ -1,7 +1,7 @@
 // Generates packages/contracts/types.ts and validators.js (+ .d.ts) from the JSON Schema
 // that the backend writes to packages/contracts/schemas/. Ajv runs here, at build time:
 // the output is plain ESM without require and without ajv at runtime (CSP has no eval).
-import { mkdtemp, readdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -67,26 +67,39 @@ const ajv = new Ajv2020({
   messages: false,
 });
 addFormats(ajv, ["date-time"]);
-const exportsMap = {};
 for (const { name, type, schema } of schemas) {
+  void type;
   ajv.addSchema({ ...schema, $id: name });
-  exportsMap[`validate${type}`] = name;
 }
 const work = await mkdtemp(join(tmpdir(), "cycleops-contracts-"));
 try {
   const entry = join(work, "validators.mjs");
-  await writeFile(entry, standaloneCode(ajv, exportsMap));
-  const result = await build({
-    entryPoints: [entry],
-    bundle: true,
-    format: "esm",
-    platform: "neutral",
-    nodePaths: [fileURLToPath(new URL("../node_modules", import.meta.url))],
-    write: false,
-    minify: true,
-    legalComments: "none",
-  });
-  await writeFile(join(contracts, "validators.js"), HEADER + result.outputFiles[0].text);
+  // Leaf modules keep validators used only by the API/SSE out of the initial chunk.
+  // The barrel preserves the public exports; each leaf retains its own pure factory.
+  const directory = join(contracts, "validators");
+  await mkdir(directory, { recursive: true });
+  for (const file of await readdir(directory)) {
+    if (file.endsWith(".js")) await rm(join(directory, file));
+  }
+  const validators = [];
+  for (const { name, type } of schemas) {
+    const exported = `validate${type}`;
+    await writeFile(entry, standaloneCode(ajv, { [exported]: name }));
+    const result = await build({
+      entryPoints: [entry],
+      bundle: true,
+      format: "iife",
+      globalName: "contract",
+      platform: "neutral",
+      nodePaths: [fileURLToPath(new URL("../node_modules", import.meta.url))],
+      write: false,
+      minify: true,
+      legalComments: "none",
+    });
+    await writeFile(join(directory, `${name}.js`), HEADER + `export const ${exported} = /*#__PURE__*/ (() => {${result.outputFiles[0].text}return contract.${exported};})();\n`);
+    validators.push(`export { ${exported} } from "./validators/${name}.js";\n`);
+  }
+  await writeFile(join(contracts, "validators.js"), HEADER + validators.join(""));
 } finally {
   await rm(work, { recursive: true, force: true });
 }

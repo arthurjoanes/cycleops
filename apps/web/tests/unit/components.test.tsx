@@ -6,6 +6,7 @@ import { MainMessage } from "../../src/app/MainMessage";
 import { StationPriorityList } from "../../src/features/priorities/StationPriorityList";
 import { StationDetails } from "../../src/features/stations/StationDetails";
 import { useStations } from "../../src/features/stations/store";
+import { renderCount } from "../../src/lib/renderCount";
 import { catalogStation, event, feedHealth, incident, iso, manifest, snapshot, stationState, T0 } from "./factory";
 
 const catalogs = new Map([["v1", ["A", "B", "C"].map((id) => catalogStation(id, `Estação ${id}`))]]);
@@ -42,6 +43,69 @@ const order = () =>
 beforeEach(begin);
 
 describe("priority list", () => {
+  it("renders a clock update only when its displayed age changes, while availability still updates", () => {
+    act(() => {
+      useStations.getState().apply([event(1, [queued("A", "0|1|A")], { at: 0 })]);
+      useStations.getState().setNow(T0 + 90_000);
+    });
+    renderQueue();
+    expect(screen.getByText("observado há 1 min")).toBeInTheDocument();
+    const initial = renderCount.rows;
+    act(() => useStations.getState().setNow(T0 + 100_000));
+    expect(renderCount.rows).toBe(initial);
+    expect(screen.getByText("observado há 1 min")).toBeInTheDocument();
+    act(() => {
+      useStations.getState().apply([event(2, [queued("A", "0|1|A", 1)], { at: 100 })]);
+    });
+    expect(renderCount.rows).toBe(initial + 1);
+    expect(screen.getByText("Bicicletas: 1")).toBeInTheDocument();
+    act(() => useStations.getState().setNow(T0 + 120_000));
+    expect(renderCount.rows).toBe(initial + 2);
+    expect(screen.getByText("observado há 2 min")).toBeInTheDocument();
+  });
+
+  it("keeps the seconds of a recent incident current after the initial agora label", () => {
+    act(() => {
+      useStations.getState().apply([event(1, [queued("A", "0|1|A")], { at: 0 })]);
+      useStations.getState().setNow(T0);
+    });
+    renderQueue();
+    expect(screen.getByText("observado agora")).toBeInTheDocument();
+    const initial = renderCount.rows;
+    act(() => useStations.getState().setNow(T0 + 4_000));
+    expect(renderCount.rows).toBe(initial);
+    act(() => useStations.getState().setNow(T0 + 5_000));
+    expect(renderCount.rows).toBe(initial + 1);
+    expect(screen.getByText("observado há 5 s")).toBeInTheDocument();
+    act(() => useStations.getState().setNow(T0 + 6_000));
+    expect(renderCount.rows).toBe(initial + 2);
+    expect(screen.getByText("observado há 6 s")).toBeInTheDocument();
+  });
+
+  it("does not call the queue empty after a catalog-only event with an unknown source", () => {
+    renderQueue();
+    const unknown = stationState("A", { primary: "unverifiable" });
+    unknown.availability.bikesAvailable = null;
+    unknown.availability.docksAvailable = null;
+    unknown.availability.quality = "unknown";
+    unknown.decision.quality = "unknown";
+    unknown.decision.unverifiableReason = "source_unknown";
+    act(() => {
+      useStations.getState().apply([{ ...event(1, [unknown], { at: 0, feed: feedHealth("unknown") }), cause: "catalog" }]);
+    });
+    expect(useStations.getState().lastSequence).toBe(1);
+    expect(screen.queryByText("Nenhuma estação em prioridade agora.")).not.toBeInTheDocument();
+    act(() => {
+      useStations.getState().apply([event(2, [stationState("A")], { at: 1, feed: feedHealth("fresh") })]);
+    });
+    expect(screen.getByText("Nenhuma estação em prioridade agora.")).toBeInTheDocument();
+    act(() => {
+      useStations.getState().apply([event(3, [], { at: 60, feed: feedHealth("stale") })]);
+    });
+    expect(screen.queryByText("Nenhuma estação em prioridade agora.")).not.toBeInTheDocument();
+    expect(screen.getByText("Dados vencidos. A fila é do último dado válido.")).toBeInTheDocument();
+  });
+
   it("freezes the order while the pointer is over it and keeps updating values", () => {
     act(() => {
       useStations.getState().apply([event(1, [queued("A", "0|1|A"), queued("B", "0|2|B")])]);
@@ -54,7 +118,9 @@ describe("priority list", () => {
       useStations.getState().apply([event(2, [queued("A", "0|3|A", 1), queued("C", "0|0|C")])]);
     });
     expect(order()).toEqual(["A", "B"]);
-    expect(screen.getByText(/sem bicicletas, confirmado, agora 1/)).toBeInTheDocument();
+    const rowA = screen.getByRole("list", { name: "Estações em prioridade" }).querySelector('[data-station="A"]') as HTMLElement;
+    expect(within(rowA).getByText("sem bicicletas, confirmado")).toBeInTheDocument();
+    expect(within(rowA).getByText("Bicicletas: 1")).toBeInTheDocument();
     expect(screen.getByText(/1 nova na fila/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Prioridades mudaram. Reordenar" }));
     expect(order()).toEqual(["C", "B", "A"]);

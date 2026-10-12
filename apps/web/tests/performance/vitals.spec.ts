@@ -41,7 +41,7 @@ test("lab Web Vitals", async ({ browser }) => {
       }).observe({ type: "event", buffered: true, durationThreshold: 16 } as PerformanceObserverInit);
     });
     await page.goto("./#/?mode=synthetic");
-    await page.getByText(/^Evento \d+ de \d+/).waitFor({ timeout: 60_000 });
+    await page.getByRole("button", { name: "Pausar", exact: true }).waitFor({ timeout: 60_000 });
     await page.waitForTimeout(3_000);
     // Scripted interaction: switch lists, search, back to the queue, open and close details.
     await page.getByRole("button", { name: "Todas as estações" }).click();

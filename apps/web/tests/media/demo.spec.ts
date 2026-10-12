@@ -66,7 +66,9 @@ test("demo: stream, confirmed incident, reconnection, file replay", async ({ bro
 
   await page.getByRole("button", { name: "Simulação (arquivo)" }).click();
   await expect(connection(page)).toHaveText("arquivo local, seed 42");
+  await page.getByTitle("Detalhes do replay", { exact: true }).click();
   await expect(page.getByText(/^Evento \d+ de \d+/)).toBeVisible();
+  await page.getByTitle("Detalhes do replay", { exact: true }).click();
   await hold(4_000);
   await page.getByRole("button", { name: "Pausar" }).click();
   await expect(page.getByRole("button", { name: "Continuar" })).toBeVisible();

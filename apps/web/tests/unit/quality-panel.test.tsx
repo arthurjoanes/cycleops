@@ -20,7 +20,8 @@ describe("feed quality report", () => {
     const artifact: Artifact = { manifest: manifest(), catalog: catalog({}), events: [], diagnostics: diagnostics as FeedDiagnostics };
     act(() => { useStations.setState({ feedHealth: feedHealth() }); });
     render(<FeedQualityPanel artifact={artifact} zone="oslo" />);
-    expect(screen.getByText("249 de 249 respostas")).toBeInTheDocument();
+    const http = screen.getByText("HTTP 200 ou 304").parentElement as HTMLElement;
+    expect(http.querySelector("dd")).toHaveTextContent("249 de 249 respostas");
     const valid = screen.getByText("Publicações válidas").parentElement as HTMLElement;
     expect(within(valid).getByText("225")).toBeInTheDocument();
     const rejected = screen.getByText("Publicações rejeitadas").parentElement as HTMLElement;

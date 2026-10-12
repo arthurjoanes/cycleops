@@ -101,7 +101,7 @@ test.afterAll(async ({ browser }) => {
       cpuSlowdown: CPU_SLOWDOWN,
       network: "none (events injected in the page)",
       seed: 7,
-      notes: "applyMs: store update for the batch; renderMs: store update plus the React render and commit (the list); the map updates in its own animation frame and is not in renderMs; receiveToPaintMs: from the batch leaving the generator to the first task after the next frame (100 ms coalescing window included).",
+      notes: "applyMs: store update for the batch; renderMs: store update plus the React render and commit (the list); the map updates in its own animation frame and is not in renderMs; receiveToPaintMs: from the batch leaving the generator to the first task after the next frame (100 ms coalescing window included). The all view starts with 50 visible rows; this test does not expand that prefix. All stations still reach the store and the map.",
     },
     results,
   });

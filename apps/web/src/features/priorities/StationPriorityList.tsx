@@ -1,8 +1,9 @@
 import { memo, type RefObject, useEffect, useMemo, useRef, useState } from "react";
 import ui from "../../components/ui/ui.module.css";
+import { ActionIcon } from "../../components/ui/ActionIcon";
 import type { IncidentItem } from "../../lib/contracts";
-import { incidentLine, openingLabels, REASON_LABEL } from "../../lib/labels";
-import { formatAge, formatDuration, formatTime, type Zone, zoneLabel } from "../../lib/time";
+import { CONDITION_LABEL, incidentLine, openingLabels, REASON_LABEL } from "../../lib/labels";
+import { formatAge, formatTime, type Zone, zoneLabel } from "../../lib/time";
 import { queueDimmed } from "../../app/screenState";
 import { countRowRender } from "../../lib/renderCount";
 import { useStations } from "../stations/store";
@@ -33,14 +34,12 @@ export const StationRow = memo(function StationRow(props: {
   countRowRender();
   const state = useStations((s) => s.stations.get(props.id));
   const name = useStations((s) => s.catalog.get(props.id)?.name ?? props.id);
-  const now = useStations((s) => s.now);
   const monitoringStart = useStations((s) => s.monitoringStart);
-  // With feed_generation (Oslo and the simulation) the age is the feed's last publication.
-  const published = useStations((s) => s.feedHealth?.lastSourceUpdatedAt ?? null);
+  const lead = state ? leadIncident(state.decision.incidents) : undefined;
+  const since = lead?.observedSince ?? null;
+  const age = useStations((s) => since === null ? null : formatAge(since, s.now));
   if (!state) return null;
   const { availability, decision } = state;
-  const lead = leadIncident(decision.incidents);
-  const since = lead?.observedSince ?? null;
   const fromStart = since !== null && since === monitoringStart;
   return (
     <li className={styles.row} data-station={props.id}>
@@ -50,46 +49,52 @@ export const StationRow = memo(function StationRow(props: {
         aria-current={props.selected ? "true" : undefined}
         onClick={() => props.onSelect(props.id)}
       >
-        <span className={styles.line}>
+        <span className={styles.identity}>
           <span className={styles.name}>{name}</span>
-          {props.gone && <span className={`${ui.badge} ${ui.ok}`}>saiu da fila</span>}
-          {decision.incidents.map((incident) => (
-            <span key={incident.id} className={badgeClass(incident)}>
-              {incidentLine(
-                incident.kind,
-                incident.state,
-                incident.kind === "pickup_unavailable"
-                  ? availability.bikesAvailable
-                  : availability.docksAvailable,
-              )}
-            </span>
-          ))}
-          {openingLabels(decision.reasonCodes).map((label) => (
-            <span key={label} className={`${ui.badge} ${ui.warning}`}>
-              {label}
-            </span>
-          ))}
+          <span className={styles.line}>
+            {props.gone && <span className={`${ui.badge} ${ui.ok}`}>saiu da fila</span>}
+            {decision.incidents.length === 0 && (
+              <span className={`${ui.badge} ${ui.stale}`}>{CONDITION_LABEL[decision.primaryCondition]}</span>
+            )}
+            {decision.incidents.map((incident) => (
+              <span key={incident.id} className={badgeClass(incident)}>
+                {incidentLine(incident.kind, incident.state, null)}
+              </span>
+            ))}
+            {openingLabels(decision.reasonCodes).map((label) => (
+              <span key={label} className={`${ui.badge} ${ui.warning}`}>
+                {label}
+              </span>
+            ))}
+          </span>
+          <span className={styles.detail}>
+            {since && (
+              <span title={fromStart ? "Desde o início do monitoramento" : `Observado desde ${formatTime(since, props.zone)}`}>
+                {fromStart ? "monitorado " : "observado "}{age}
+                {fromStart && <span className="visually-hidden"> desde o início do monitoramento</span>}
+              </span>
+            )}
+            {props.selected && decision.reasonText && (
+              <span className={styles.reason}>
+                {decision.reasonText}
+              </span>
+            )}
+            {decision.unverifiableReason && !decision.sortKey && (
+              <span>{REASON_LABEL[decision.unverifiableReason]}</span>
+            )}
+          </span>
         </span>
-        <span className={`${styles.line} ${styles.detail}`}>
-          {since && (
-            <span>
-              {fromStart
-                ? "desde o início do monitoramento"
-                : `observado desde ${formatTime(since, props.zone)}`}
-            </span>
-          )}
-          {(published ?? availability.sourceUpdatedAt) && (
-            <span>publicação {formatAge(published ?? availability.sourceUpdatedAt ?? "", now)}</span>
-          )}
-          {decision.reasonText && (
-            <span>
-              {decision.reasonText}
-              {since ? `, há ${formatDuration(now - Date.parse(since))}` : ""}
-            </span>
-          )}
-          {decision.unverifiableReason && !decision.sortKey && (
-            <span>{REASON_LABEL[decision.unverifiableReason]}</span>
-          )}
+        <span className={styles.counts}>
+          <span title="Bicicletas">
+            <ActionIcon name="bike" />
+            <strong aria-hidden="true">{availability.bikesAvailable ?? "?"}</strong>
+            <span className="visually-hidden">Bicicletas: {availability.bikesAvailable ?? "não informado"}</span>
+          </span>
+          <span title="Vagas">
+            <ActionIcon name="dock" />
+            <strong aria-hidden="true">{availability.docksAvailable ?? "?"}</strong>
+            <span className="visually-hidden">Vagas: {availability.docksAvailable ?? "não informado"}</span>
+          </span>
         </span>
       </button>
     </li>
@@ -149,7 +154,7 @@ export function StationPriorityList(props: {
   const wasInQueue = useRef<string | null>(null);
   const { headingRef } = props;
   useEffect(() => {
-    if (wasInQueue.current === props.selected && !selectedInQueue && document.activeElement === document.body) {
+    if (wasInQueue.current !== null && wasInQueue.current === props.selected && !selectedInQueue && document.activeElement === document.body) {
       headingRef.current?.focus();
     }
     wasInQueue.current = selectedInQueue ? props.selected : null;
@@ -205,7 +210,7 @@ export function StationPriorityList(props: {
           </ol>
         ) : status === "ready" && started && source === "closed" ? (
           <p className={ui.notice}>Sistema fechado. Abre às 05:00 (horário de Oslo).</p>
-        ) : status === "ready" && started ? (
+        ) : status === "ready" && started && (source === "fresh" || source === "late") ? (
           <p className={ui.notice}>Nenhuma estação em prioridade agora.</p>
         ) : null}
         {/* Inside the frozen area (focus on the button keeps the order frozen) and after the rows,

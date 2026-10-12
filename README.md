@@ -37,17 +37,17 @@ O motor confirma a falta ao longo de publicações do feed e acompanha sua resol
 
 [Abrir demo no navegador](https://arthurjoanes.github.io/cycleops/) · Replay gravado, sem login.
 
-![CycleOps no replay gravado: fila de prioridades, mapa de Oslo e controles para acompanhar os incidentes](docs/media/identity-desktop.png)
+![CycleOps no replay gravado: mapa de Oslo, estações prioritárias e indicadores de disponibilidade](docs/media/uiux-desktop.png)
 
-Captura de 09/10/2026 (UTC), feita com Playwright no build do Pages, reproduzindo dados reais gravados. O período e os horários exibidos pertencem à gravação. [Visualização no celular](docs/media/identity-mobile.png) · [Gravação e aceite](docs/results/feed-validation.md).
+Captura de 12/10/2026, feita com Playwright no build do Pages. O período e os horários exibidos pertencem à gravação real. [Celular](docs/media/uiux-mobile.png) · [Tablet](docs/media/uiux-tablet.png) · [Gravação e aceite](docs/results/feed-validation.md).
 
-Escolha um horário na linha do tempo ou use “Ir para o incidente”. Os marcos mostram confirmação e resolução; ao abrir uma estação, você pode filtrar os marcos dela. “Copiar este momento” cria um link que abre a mesma estação e horário, com o replay pausado.
+Escolha um horário na linha do tempo ou use “Ir para o incidente”. “Incidentes” abre os marcos de confirmação e resolução. O ícone de link copia a estação e o horário, com o replay pausado.
 
-Em “Analisar dados”, o resumo mostra o tempo observado sem bicicletas ou vagas por estação e os incidentes resolvidos. “Evolução da cidade” acompanha os indicadores dos eventos aceitos nessa sessão; “Qualidade do feed” explica as respostas HTTP e as publicações aceitas ou repetidas.
+O botão de gráfico abre “Analisar dados”: tempo observado sem bicicletas ou vagas por estação, evolução dos indicadores e qualidade da coleta. Na tela principal, as contagens acompanham o mapa; detalhes da sessão e legendas ficam em painéis expansíveis.
 
-![Resumo da gravação: cobertura do período, incidentes e tempo observado por estação](docs/media/analysis-summary.png)
+![Análise da gravação: duração observada, incidentes e rankings de disponibilidade](docs/media/uiux-analysis.png)
 
-[Qualidade da coleta](docs/media/analysis-quality.png) · [Análise no celular](docs/media/analysis-mobile.png) · [Como explorar os dados](docs/explorar-dados.md).
+[Como explorar os dados](docs/explorar-dados.md) · [Interface e navegação](docs/ui-ux.md) · [Revisão da interface](docs/results/uiux-20261012.md).
 
 Na gravação de 09/10/2026, o motor produziu estes eventos. Os links abrem os instantes registrados, no horário de Oslo:
 
@@ -269,6 +269,7 @@ O `e2e` gera o build do Pages sob `/cycleops/` e inicia seu próprio servidor em
 | Pergunta | Registro e resultado | Alcance |
 |---|---|---|
 | Backend e navegador passaram nos testes? | [CI da publicação](docs/results/publicacao.md), 09/10/2026 no horário de Brasília, commit `185e5af`: 354 testes Python, 69 unitários web, 14 E2E Pages e 11 E2E Compose. | A execução identifica a revisão testada; o job Compose usa a fonte sintética sem internet. |
+| A revisão da interface foi verificada? | [Revisão de 12/10/2026](docs/results/uiux-20261012.md): 110 unitários web, 28 cenários de navegação e quatro capturas. | Teclado, alinhamento e legenda conferidos em 1440, 768 e 320 px; métricas de laboratório registradas no relatório. |
 | A gravação contém incidentes resolvidos? | [Coleta real](docs/results/feed-validation.md), 09/10/2026: 249 respostas em 60 min, todas 200; 218 eventos e dois incidentes resolvidos no replay. | A janela inclui o fechamento noturno e não representa o movimento diurno. |
 | Como conferir o que entrou no motor? | [Relatório de exploração](docs/results/exploracao-20261011.md): a gravação contém 225 publicações aceitas e 24 repetidas, além de 40 incidentes confirmados e dois resolvidos. | Resposta HTTP, publicação aceita e evento do motor têm contagens distintas. |
 | A demo publicada abre em desktop e celular? | [Roteiro no endereço público](docs/results/data/public-pages-20261010.json), 09/10/2026 às 21:08 em Brasília: pausa, salto para incidente e mapa em 1440×900 e 320×900. | Sem overflow ou erros no roteiro; a revisão manual de acessibilidade continua pendente. |
@@ -294,6 +295,7 @@ O [índice de resultados](docs/results/index.md) reúne comandos, commits e data
 | Fonte, licença e coleta | [Fontes de dados](DATA_SOURCES.md) · [Validação do feed](docs/results/feed-validation.md) |
 | Implementação e decisões | [Arquitetura](docs/architecture.md) · [ADRs](docs/adr/) · [Comandos](CONTRIBUTING.md) |
 | Replay, indicadores e qualidade | [Explorar os dados](docs/explorar-dados.md) · [Validação da exploração](docs/results/exploracao-20261011.md) |
+| Interface e navegação | [Guia da interface](docs/ui-ux.md) · [Revisão da interface](docs/results/uiux-20261012.md) |
 | Execuções e medições | [Resultados](docs/results/index.md) · [Desempenho](docs/results/performance.md) |
 | Publicação e revisão manual | [Checklist de publicação](docs/results/publicacao.md) · [Acessibilidade](docs/results/a11y-manual.md) |
 | Apresentação | [Identidade visual](docs/brand/README.md) · [Padrão documental](docs/padrao-documentacao.md) |

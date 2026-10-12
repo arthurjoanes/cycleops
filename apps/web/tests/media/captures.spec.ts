@@ -7,7 +7,7 @@ const OUT = new URL("../../../../docs/media/", import.meta.url);
 
 async function open(page: Page) {
   await page.goto("./#/?mode=synthetic");
-  await page.getByText(/^Evento \d+ de \d+/).waitFor({ timeout: 60_000 });
+  await page.getByRole("button", { name: "Pausar", exact: true }).waitFor({ timeout: 60_000 });
   // Pause first: on narrow screens the drawer hides the controls from the accessibility tree.
   await page.getByRole("button", { name: "Pausar" }).click();
   await page.getByRole("button", { name: "Ir para o incidente" }).click();

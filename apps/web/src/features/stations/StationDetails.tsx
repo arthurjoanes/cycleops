@@ -103,35 +103,11 @@ export function StationDetails(props: { id: string; zone: Zone }) {
           ))}
         </ul>
       )}
-      <section aria-labelledby={`reason-${id}`}>
-        <h3 id={`reason-${id}`} className={styles.subtitle}>
-          Motivo da prioridade
-        </h3>
-        <p>{d.reasonText ?? "Nenhum incidente nesta estação."}</p>
-        {d.facts && (
-          <dl className={styles.facts}>
-            <dt>Bicicletas e vagas na transição</dt>
-            <dd>
-              {d.facts.bikesAvailable ?? "?"} e {d.facts.docksAvailable ?? "?"}
-            </dd>
-            <dt>Capacidade usada</dt>
-            <dd>{d.facts.capacityUsed ?? "não informada"}</dd>
-            <dt>Mínimo para recuperar</dt>
-            <dd>{d.facts.recoveryMinUnits ?? "não se aplica"}</dd>
-            <dt>Publicações usadas</dt>
-            <dd>
-              {d.facts.publicationsUsed} em {d.facts.spanSeconds} s
-            </dd>
-            <dt>Publicação da transição</dt>
-            <dd>{at(d.facts.sourceUpdatedAt)}</dd>
-          </dl>
-        )}
-      </section>
       <section aria-labelledby={`availability-${id}`}>
         <h3 id={`availability-${id}`} className={styles.subtitle}>
           Disponibilidade
         </h3>
-        <dl className={styles.facts}>
+        <dl className={`${styles.facts} ${styles.availability}`}>
           <dt>Bicicletas</dt>
           <dd>{a.bikesAvailable ?? "não informado"}</dd>
           <dt>Vagas</dt>
@@ -165,6 +141,30 @@ export function StationDetails(props: { id: string; zone: Zone }) {
             {a.qualityFlags.length > 0 && ` (${a.qualityFlags.map((f) => QUALITY_LABEL[f] ?? f).join(", ")})`}
           </dd>
         </dl>
+      </section>
+      <section aria-labelledby={`reason-${id}`}>
+        <h3 id={`reason-${id}`} className={styles.subtitle}>
+          Motivo da prioridade
+        </h3>
+        <p>{d.reasonText ?? "Nenhum incidente nesta estação."}</p>
+        {d.facts && (
+          <dl className={styles.facts}>
+            <dt>Bicicletas e vagas na transição</dt>
+            <dd>
+              {d.facts.bikesAvailable ?? "?"} e {d.facts.docksAvailable ?? "?"}
+            </dd>
+            <dt>Capacidade usada</dt>
+            <dd>{d.facts.capacityUsed ?? "não informada"}</dd>
+            <dt>Mínimo para recuperar</dt>
+            <dd>{d.facts.recoveryMinUnits ?? "não se aplica"}</dd>
+            <dt>Publicações usadas</dt>
+            <dd>
+              {d.facts.publicationsUsed} em {d.facts.spanSeconds} s
+            </dd>
+            <dt>Publicação da transição</dt>
+            <dd>{at(d.facts.sourceUpdatedAt)}</dd>
+          </dl>
+        )}
       </section>
       <section aria-labelledby={`timeline-${id}`}>
         <h3 id={`timeline-${id}`} className={styles.subtitle}>

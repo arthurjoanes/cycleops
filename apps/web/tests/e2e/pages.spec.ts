@@ -22,6 +22,7 @@ test.beforeEach(async ({ page }) => {
 async function open(page: Page, hash = "#/?mode=synthetic") {
   await page.goto(`./${hash}`);
   await expect(page.getByTestId("mode")).toContainText("Simulação");
+  await page.getByTitle("Detalhes do replay", { exact: true }).click();
   await expect(page.getByText(/^Evento \d+ de \d+/)).toBeVisible();
 }
 
@@ -31,6 +32,7 @@ test("opens the accepted recorded replay by default, or the simulation when abse
   const recorded = existsSync(new URL("../../dist/replay/recorded/manifest.json", import.meta.url));
   await page.goto("./");
   await expect(page.getByTestId("mode")).toContainText(recorded ? "Replay gravado" : "Simulação");
+  await page.getByTitle("Detalhes do replay", { exact: true }).click();
   await expect(page.getByText(/^Evento \d+ de \d+/)).toBeVisible();
   await expect(page.getByTestId("connection")).toContainText(recorded ? "arquivo gravado em" : "arquivo local, seed");
   if (recorded) {
@@ -49,7 +51,11 @@ test("opens without login, with the mode and the seed always visible", async ({ 
   await open(page);
   await expect(page.getByTestId("mode")).toContainText("seed 42");
   await expect(page.getByTestId("connection")).toHaveText("arquivo local, seed 42");
-  await expect(page.getByText(/^Simulação: estações e contagens geradas/)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Simulação", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await page.getByTitle("Dados da sessão", { exact: true }).click();
+  await expect(page.getByTestId("quality")).toContainText("gerado pelo motor");
+  await page.getByRole("button", { name: "Fechar dados da sessão", exact: true }).click();
+  await page.locator("footer summary").click();
   await expect(page.getByText(/Norwegian Licence for Open Government Data/)).toBeVisible();
   await expect(page.getByText("© OpenStreetMap contributors").first()).toBeVisible();
   expect(api).toEqual([]);
@@ -105,6 +111,8 @@ test("recorded replay confirms and resolves a real incident without API calls or
   await expect(page.getByTestId("mode")).toContainText("Replay gravado");
   await expect(page.getByTestId("connection")).toContainText("arquivo gravado em");
   await page.getByRole("button", { name: "Pausar" }).click();
+  await page.getByTitle("Detalhes do replay", { exact: true }).click();
+  await page.getByTitle("Explorar incidentes", { exact: true }).click();
   await page.getByLabel("Incidente", { exact: true }).selectOption(incident.incidentId);
   await page.getByRole("button", { name: "Ir para o incidente" }).click();
   await expect(page.getByText(/^Evento \d+ de \d+/)).toContainText(`Evento ${incident.confirmedSequence} de`);

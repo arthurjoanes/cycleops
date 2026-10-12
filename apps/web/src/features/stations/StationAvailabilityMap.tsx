@@ -209,12 +209,15 @@ export default function StationAvailabilityMap(props: {
   return (
     <div className={styles.wrap}>
       <div ref={container} className={styles.map} />
-      {/* The details panel covers the right side of the map; the legend stays to its left. */}
-      <ul
-        className={styles.legend}
-        aria-label="Legenda do mapa"
-        style={props.rightPadding ? { paddingRight: `min(${props.rightPadding}px, 50%)` } : undefined}
-      >
+      <div className={styles.legendBar}>
+        <ul className={styles.preview} aria-label="Estados principais do mapa">
+          {(["ok", "pickup_unavailable", "return_unavailable", "unverifiable", "outside_service_hours"] as const).map((condition) => <li key={condition}>
+            <span className={styles.symbol} data-tone={CONDITION_STYLE[condition].tone} aria-hidden="true">{CONDITION_STYLE[condition].glyph}</span>{CONDITION_STYLE[condition].label}
+          </li>)}
+        </ul>
+        <details className={styles.legendDetails}>
+          <summary>Legenda</summary>
+      <ul className={styles.legend} aria-label="Legenda do mapa">
         {Object.entries(CONDITION_STYLE).map(([condition, style]) => (
           <li key={condition}>
             <span className={styles.symbol} data-tone={style.tone} aria-hidden="true">
@@ -230,6 +233,8 @@ export default function StationAvailabilityMap(props: {
           </li>
         ))}
       </ul>
+        </details>
+      </div>
     </div>
   );
 }

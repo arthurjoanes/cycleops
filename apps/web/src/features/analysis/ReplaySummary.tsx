@@ -23,6 +23,7 @@ function Ranking(props: {
   return (
     <section className={styles.section}>
       <h4>{label}</h4>
+      <p className={styles.tableNote}>Percentual calculado sobre o tempo com contagem verificável.</p>
       {rows.length ? (
         <>
           <div className={styles.tableWrap} role="region" aria-label={label} tabIndex={0}>
@@ -81,10 +82,10 @@ export function ReplaySummary(props: {
     <div className={styles.summary}>
       <div className={styles.intro}>
         <h3>{artifact.manifest.mode === "recorded_replay" ? "Resumo da gravação" : "Resumo da simulação"}</h3>
-        <p>
+        <p className={styles.period}>
           {formatDate(report.from, zone)}, {formatTime(report.from, zone, true)} até {formatDate(report.to, zone)}, {formatTime(report.to, zone, true)}.
-          {" "}Os números cobrem todo esse período, independente da posição do replay.
         </p>
+        <p>Os números cobrem todo esse período, independente da posição do replay.</p>
       </div>
       <dl className={styles.metrics}>
         <div><dt>Duração</dt><dd>{formatObservedDuration(report.durationMs)}</dd></div>
@@ -99,21 +100,28 @@ export function ReplaySummary(props: {
           <div><dt>Sem dado verificável</dt><dd>{formatObservedDuration(report.sourceGapMs)}</dd></div>
           <div><dt>Sistema fechado</dt><dd>{formatObservedDuration(report.sourceClosedMs)}</dd></div>
         </dl>
-        <p>
-          A cobertura soma o tempo com dado válido de cada estação e divide pelo tempo em que ela consta no catálogo com o sistema aberto.
-          Intervalos sem dado entram nessa base; o período fechado e estações fora do catálogo ficam separados.
-        </p>
       </section>
-      <p className={styles.note}>
-        Os rankings usam bicicletas e vagas em zero nas observações válidas.
-        O percentual de cada linha usa apenas o tempo observado daquele campo; valores desconhecidos ficam fora.
-        Estações virtuais e capacidade de devolução desconhecida ficam fora do ranking de vagas.
-        A fila de prioridades mantém as confirmações e regras do motor.
-      </p>
-      <Ranking rows={empty} kind="empty" onSelectStation={onSelectStation} />
-      <Ranking rows={full} kind="full" onSelectStation={onSelectStation} />
+      <details className={styles.method}>
+        <summary>Como ler a cobertura e os rankings</summary>
+        <div>
+          <p>
+            A cobertura soma o tempo com dado válido de cada estação e divide pelo tempo em que ela consta no catálogo com o sistema aberto.
+            Intervalos sem dado entram nessa base; o período fechado e estações fora do catálogo ficam separados.
+          </p>
+          <p>
+            Os rankings usam bicicletas e vagas em zero nas observações válidas.
+            O percentual de cada linha usa apenas o tempo observado daquele campo; valores desconhecidos ficam fora.
+            Estações virtuais e capacidade de devolução desconhecida ficam fora do ranking de vagas.
+            A fila de prioridades mantém as confirmações e regras do motor.
+          </p>
+        </div>
+      </details>
+      <div className={styles.rankings}>
+        <Ranking rows={empty} kind="empty" onSelectStation={onSelectStation} />
+        <Ranking rows={full} kind="full" onSelectStation={onSelectStation} />
+      </div>
       <section className={styles.section}>
-        <h4>Incidentes resolvidos</h4>
+        <h4>{allIncidents ? "Incidentes confirmados" : "Incidentes resolvidos"}</h4>
         <p>Tempo entre a confirmação e a resolução registradas pelo motor.</p>
         {incidents.length ? (
           <div className={styles.tableWrap} role="region" aria-label="Incidentes da gravação" tabIndex={0}>

@@ -60,7 +60,7 @@ export function FeedQualityPanel({ artifact, zone }: { artifact: Artifact | null
       <div className={styles.heading}>
         <div>
           <h3 id="quality-title">Qualidade do feed</h3>
-          <p>Respostas recebidas, validação e publicações usadas pelo motor.</p>
+          <p>Confira quais respostas foram recebidas e quais publicações entraram no motor.</p>
         </div>
         {!artifact && (
           <button type="button" className={ui.button} onClick={() => { setRemote(null); setStatus("loading"); setRefresh((n) => n + 1); }} disabled={status === "loading"}>
@@ -70,8 +70,9 @@ export function FeedQualityPanel({ artifact, zone }: { artifact: Artifact | null
       </div>
       {health && (
         <p className={styles.coverage}>
-          Registros válidos na publicação: {health.coverage.valid} de {health.coverage.total} estações. Fonte no instante exibido: {SOURCE_LABEL[health.state]}.
-          {(health.quarantinedFeeds?.length ?? 0) > 0 && ` Em quarentena: ${(health.quarantinedFeeds ?? []).map((feed) => FEED_NAMES[feed] ?? feed).join(", ")}.`}
+          <span>Registros válidos na publicação: <strong>{health.coverage.valid} de {health.coverage.total}</strong> estações.</span>{" "}
+          <span>Fonte no instante exibido: <strong>{SOURCE_LABEL[health.state]}</strong>.</span>
+          {(health.quarantinedFeeds?.length ?? 0) > 0 && <span>Em quarentena: {(health.quarantinedFeeds ?? []).map((feed) => FEED_NAMES[feed] ?? feed).join(", ")}.</span>}
         </p>
       )}
       {!diagnostic ? (
@@ -88,14 +89,10 @@ export function FeedQualityPanel({ artifact, zone }: { artifact: Artifact | null
           </p>
           <dl className={styles.counts}>
             <div><dt>Tentativas</dt><dd>{diagnostic.totals.attempts}</dd></div>
-            <div><dt>HTTP 200 ou 304</dt><dd>{diagnostic.totals.successfulResponses} de {diagnostic.totals.httpResponses} respostas</dd></div>
+            <div><dt>HTTP 200 ou 304</dt><dd><span className={styles.responseValue}>{diagnostic.totals.successfulResponses}</span><span className={styles.responseBase}> de {diagnostic.totals.httpResponses} respostas</span></dd></div>
             <div><dt>Publicações válidas</dt><dd>{diagnostic.totals.acceptedPublications}</dd></div>
             <div><dt>Publicações rejeitadas</dt><dd>{diagnostic.totals.rejectedPublications}</dd></div>
           </dl>
-          <p className={styles.explanation}>
-            Uma resposta HTTP 200 pode conter dados inválidos. Tentativas sem resposta HTTP contam nas falhas de transporte.
-            Publicações repetidas, corrigidas, fora de ordem ou com horário futuro são separadas das falhas de contrato.
-          </p>
           <div className={styles.tableWrap} role="region" aria-label="Coleta por feed" tabIndex={0}>
             <table>
               <caption>Coleta por feed no período</caption>
@@ -111,7 +108,14 @@ export function FeedQualityPanel({ artifact, zone }: { artifact: Artifact | null
               </tbody>
             </table>
           </div>
-          <p className={styles.explanation}>As colunas HTTP, transporte e contrato contam falhas. Registros são somados por resposta validada e podem incluir a mesma estação em publicações diferentes.</p>
+          <details className={styles.method}>
+            <summary>Como ler as contagens</summary>
+            <p className={styles.explanation}>
+              Uma resposta HTTP 200 pode conter dados inválidos. Tentativas sem resposta HTTP contam nas falhas de transporte.
+              Publicações repetidas, corrigidas, fora de ordem ou com horário futuro são separadas das falhas de contrato.
+            </p>
+            <p className={styles.explanation}>As colunas HTTP, transporte e contrato contam falhas. Registros são somados por resposta validada e podem incluir a mesma estação em publicações diferentes.</p>
+          </details>
           {diagnostic.feeds.map((feed) => (
             <details key={feed.feed} className={styles.feed}>
               <summary>{FEED_NAMES[feed.feed] ?? feed.feed}: resultados e últimas tentativas</summary>

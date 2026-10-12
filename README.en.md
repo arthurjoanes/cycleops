@@ -37,17 +37,17 @@ This is a portfolio project using open data. The public demo uses a real recordi
 
 [Open the demo](https://arthurjoanes.github.io/cycleops/) · Recorded replay, no login.
 
-![CycleOps playing a real recording: priority queue, Oslo map and incident replay controls](docs/media/identity-desktop.png)
+![CycleOps playing a real recording: Oslo map, priority stations and availability indicators](docs/media/uiux-desktop.png)
 
-Captured on 2026-10-09 (UTC) with Playwright against the Pages build, replaying recorded real data. Its period and timestamps belong to the recording. [Mobile view](docs/media/identity-mobile.png) · [Recording and acceptance](docs/results/feed-validation.md).
+Captured on 2026-10-12 with Playwright against the Pages build. The period and timestamps belong to the real recording. [Mobile](docs/media/uiux-mobile.png) · [Tablet](docs/media/uiux-tablet.png) · [Recording and acceptance](docs/results/feed-validation.md).
 
-Choose a time on the timeline or use “Ir para o incidente”. Markers show confirmation and resolution; opening a station lets you filter its markers. “Copiar este momento” creates a link that opens the same station and time with playback paused.
+Choose a time on the timeline or use “Ir para o incidente”. “Incidentes” opens confirmation and resolution markers. The link icon copies the station and time with playback paused.
 
-In “Analisar dados”, the summary shows observed time without bikes or docks per station and resolved incidents. “Evolução da cidade” tracks indicators from accepted events in this session; “Qualidade do feed” explains HTTP responses and accepted or repeated publications.
+The chart button opens “Analisar dados”: observed time without bikes or docks per station, indicator trends and collection quality. On the main page, counts sit alongside the map; session details and legends open on demand.
 
-![Recording summary: period coverage, incidents and observed time per station](docs/media/analysis-summary.png)
+![Recording analysis: observed duration, incidents and availability rankings](docs/media/uiux-analysis.png)
 
-[Collection quality](docs/media/analysis-quality.png) · [Analysis on mobile](docs/media/analysis-mobile.png) · [How to explore the data](docs/explorar-dados.md).
+[How to explore the data](docs/explorar-dados.md) · [Interface and navigation](docs/ui-ux.md) · [Interface review](docs/results/uiux-20261012.md).
 
 The engine produced these events from the recording made on 2026-10-09. Links open the recorded instants in Oslo time:
 
@@ -269,6 +269,7 @@ The `e2e` command builds Pages under `/cycleops/` and starts its own server on p
 | Question | Record and result | Scope |
 |---|---|---|
 | Did the backend and browser tests pass? | [Publication CI](docs/results/publicacao.md), 2026-10-09 in Brasília time, commit `185e5af`: 354 Python tests, 69 web unit tests, 14 Pages E2E and 11 Compose E2E. | The run identifies the tested revision; the Compose job uses the synthetic source without internet access. |
+| Was the interface revision checked? | [2026-10-12 review](docs/results/uiux-20261012.md): 110 web unit tests, 28 navigation scenarios and four captures. | Keyboard controls, alignment and the legend checked at 1440, 768 and 320 px; lab measurements are recorded in the report. |
 | Does the recording contain resolved incidents? | [Real collection](docs/results/feed-validation.md), 2026-10-09: 249 responses over 60 min, all HTTP 200; 218 events and two resolved incidents in the replay. | The window includes overnight closure and does not represent daytime activity. |
 | How can I check what reached the engine? | [Exploration report](docs/results/exploracao-20261011.md): the recording contains 225 accepted publications and 24 repeated publications, with 40 confirmed incidents and two resolved. | HTTP responses, accepted publications and engine events have distinct counts. |
 | Does the published demo open on desktop and mobile? | [Public URL check](docs/results/data/public-pages-20261010.json), 2026-10-09 at 21:08 Brasília time: pause, incident jump and map at 1440×900 and 320×900. | No overflow or errors in this walkthrough; manual accessibility review is still pending. |
@@ -292,6 +293,7 @@ The [results index](docs/results/index.md) lists commands, commits and dates. [R
 | Sources, licensing and collection | [Data sources](DATA_SOURCES.md) · [Feed validation](docs/results/feed-validation.md) |
 | Implementation and decisions | [Architecture](docs/architecture.md) · [ADRs](docs/adr/) · [Commands](CONTRIBUTING.md) |
 | Replay, indicators and quality | [Explore the data](docs/explorar-dados.md) · [Exploration validation](docs/results/exploracao-20261011.md) |
+| Interface and navigation | [Interface guide](docs/ui-ux.md) · [Interface review](docs/results/uiux-20261012.md) |
 | Runs and measurements | [Results](docs/results/index.md) · [Performance](docs/results/performance.md) |
 | Publication and manual review | [Publication checklist](docs/results/publicacao.md) · [Accessibility](docs/results/a11y-manual.md) |
 | Presentation | [Visual identity](docs/brand/README.md) · [Documentation pattern](docs/padrao-documentacao.md) |

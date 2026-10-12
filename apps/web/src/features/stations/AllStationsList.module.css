@@ -12,7 +12,7 @@
 }
 
 .search input {
-  min-height: 36px;
+  min-height: 44px;
   padding: var(--space-1) var(--space-2);
   border: 1px solid var(--border-control);
   border-radius: var(--radius);
@@ -26,19 +26,21 @@
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
 
 .row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: var(--space-1) var(--space-2);
   width: 100%;
-  min-height: 32px;
-  padding: var(--space-1) var(--space-2);
-  border: 1px solid transparent;
-  border-radius: var(--radius);
+  min-height: 60px;
+  padding: var(--space-2) var(--space-3);
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
   background: var(--surface);
   text-align: left;
   cursor: pointer;
@@ -49,8 +51,25 @@
 }
 
 .row[aria-current="true"] {
-  border-color: var(--focus);
   background: var(--brand-soft);
+  box-shadow: inset 3px 0 0 var(--focus);
+}
+
+.row:focus-visible {
+  outline-offset: -3px;
+}
+
+.rows li:first-child .row {
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.rows li:last-child .row {
+  border-bottom: 0;
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+
+.rows li:only-child .row {
+  border-radius: var(--radius);
 }
 
 .name {
@@ -59,7 +78,48 @@
   overflow-wrap: anywhere;
 }
 
+.identity {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
 .meta {
   color: var(--muted);
-  font-size: var(--size-s);
+  font-size: var(--size-xs);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.counts {
+  display: grid;
+  align-self: center;
+  gap: var(--space-1);
+  min-width: 48px;
+  color: var(--navy);
+}
+
+.counts > span {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.counts strong {
+  min-width: 2ch;
+  text-align: right;
+  font-weight: 650;
+}
+
+.more {
+  width: 100%;
+  min-height: 44px;
+}
+
+@media (max-width: 767px) {
+  .row {
+    padding-inline: var(--space-2);
+  }
 }
