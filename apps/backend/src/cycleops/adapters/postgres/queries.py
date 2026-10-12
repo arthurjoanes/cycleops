@@ -12,17 +12,20 @@ from sqlalchemy.ext.asyncio import AsyncConnection
 
 from cycleops.adapters.postgres.tables import (
     event_log,
+    feed_publications,
     station_current,
     station_incidents,
     station_observations,
     stations,
     stream_heads,
 )
+from cycleops.application.feed_diagnostics import feed_diagnostics as summarize_diagnostics
 from cycleops.contracts import (
     SCHEMA_VERSION,
     CatalogStation,
     Coverage,
     DataMode,
+    FeedDiagnostics,
     FeedHealth,
     HistoryPoint,
     IncidentItem,
@@ -158,6 +161,33 @@ async def active_stream(conn: AsyncConnection) -> str | None:
 async def feed_health(conn: AsyncConnection) -> FeedHealth | None:
     found = await head(conn)
     return found.feed_health if found else None
+
+
+async def feed_diagnostics(
+    conn: AsyncConnection, start: datetime, end: datetime
+) -> FeedDiagnostics | None:
+    """The active stream and its attempts from one read-only database snapshot.
+    The bounded route window limits the read; the connection is returned before JSON
+    serialization and never kept for the lifetime of the browser's stream."""
+    p = feed_publications.c
+    async with _snapshot_read(conn):
+        found = await _active(conn)
+        if found is None:
+            return None
+        rows = (
+            (
+                await conn.execute(
+                    select(feed_publications)
+                    .where(
+                        p.stream_id == found.stream_id, p.received_at >= start, p.received_at <= end
+                    )
+                    .order_by(p.received_at, p.attempt_at, p.feed)
+                )
+            )
+            .mappings()
+            .all()
+        )
+    return summarize_diagnostics(found.stream_id, found.mode, start, end, [dict(r) for r in rows])
 
 
 async def snapshot(conn: AsyncConnection) -> Snapshot | None:

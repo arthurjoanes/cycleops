@@ -2,6 +2,10 @@
 export type {
   CatalogStation,
   FeedHealth,
+  FeedDiagnostics,
+  FeedDiagnosticCounts,
+  FeedDiagnosticSummary,
+  FeedAttemptSample,
   Heartbeat,
   IncidentItem,
   Interval,
@@ -19,6 +23,7 @@ export type {
 } from "@contracts/types";
 export {
   validateHeartbeat,
+  validateFeedDiagnostics,
   validateReplayCatalog,
   validateReplayManifest,
   validateResyncRequired,

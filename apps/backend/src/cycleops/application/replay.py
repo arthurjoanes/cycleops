@@ -1,14 +1,15 @@
 """compile-replay: the adapter and the engine on a virtual clock, over a recording or the
 synthetic source, written as the artifact the browser plays.
 
-Output: events.ndjson.gz, catalog.json and manifest.json. Same input, same content.
+Output: events.ndjson.gz, catalog.json, diagnostics.json and manifest.json.
+Same input, same content.
 """
 
 import gzip
 import hashlib
 import io
 import json
-from collections.abc import Iterable, Iterator, Mapping
+from collections.abc import Callable, Iterable, Iterator, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from importlib.metadata import version
@@ -18,6 +19,8 @@ from zoneinfo import ZoneInfo
 
 from cycleops.adapters.gbfs import ADAPTER_VERSION, GBFS_VERSION, InfoPublication, StatusPublication
 from cycleops.adapters.synthetic import SyntheticConfig, SyntheticFeed, collect
+from cycleops.application.feed_diagnostics import feed_diagnostics
+from cycleops.application.ingest import publication_row
 from cycleops.canonical import HASH_VERSION, sha256_hex
 from cycleops.collection.client import FEEDS, Attempt
 from cycleops.collection.guard import FeedGuard
@@ -27,6 +30,7 @@ from cycleops.contracts import (
     SCHEMA_VERSION,
     CatalogStation,
     CatalogVersion,
+    FeedDiagnostics,
     ManifestIncident,
     ReplayCatalog,
     ReplayManifest,
@@ -54,6 +58,8 @@ class Artifact:
     events_ndjson: bytes
     catalog_json: bytes
     manifest: ReplayManifest
+    diagnostics: FeedDiagnostics
+    diagnostics_json: bytes
 
 
 def attempt_from_line(line: dict[str, Any]) -> Attempt:
@@ -75,7 +81,11 @@ def attempt_from_line(line: dict[str, Any]) -> Attempt:
 Entry = tuple[datetime, Input | None, frozenset[str]]
 
 
-def entries(attempts: Iterable[Attempt], policy: Policy) -> Iterator[Entry]:
+def entries(
+    attempts: Iterable[Attempt],
+    policy: Policy,
+    after_attempt: Callable[[Attempt, Outcome, Input | None], None] | None = None,
+) -> Iterator[Entry]:
     """For each attempt, in receivedAt order: its instant, the engine input it makes (None
     for a successful discovery feed) and the feeds other than station_status in quarantine
     after it. Breaker and quarantine are the collection module's, run here over the
@@ -85,7 +95,10 @@ def entries(attempts: Iterable[Attempt], policy: Policy) -> Iterator[Entry]:
     for attempt in sorted(attempts, key=lambda a: a.received_at):
         outcome = engine_outcome(attempt, policy)
         guards[attempt.feed].record(attempt.feed, outcome, attempt.received_at)
-        yield attempt.received_at, *attempt_input(attempt, outcome, guards)
+        entry, quarantined = attempt_input(attempt, outcome, guards)
+        yield attempt.received_at, entry, quarantined
+        if after_attempt is not None:
+            after_attempt(attempt, outcome, entry)
 
 
 def engine_outcome(attempt: Attempt, policy: Policy) -> Outcome:
@@ -163,8 +176,9 @@ def compile_recording(path: Path, policy: Policy) -> Artifact:
     end = max(a.received_at for a in attempts)
     system_id = policy.provider.system_id
     state = new_stream(system_id, "recorded_replay", f"{system_id}:{recording_hash[:8]}")
-    events, catalogs = run(entries(attempts, policy), policy, state, end)
-    return _artifact(events, catalogs, policy, "recorded_replay", recording_hash, start, end)
+    rows: list[dict[str, Any]] = []
+    events, catalogs = run(_diagnostic_entries(attempts, policy, state, rows), policy, state, end)
+    return _artifact(events, catalogs, policy, "recorded_replay", recording_hash, start, end, rows)
 
 
 def compile_synthetic(config: SyntheticConfig, policy: Policy) -> Artifact:
@@ -175,7 +189,10 @@ def compile_synthetic(config: SyntheticConfig, policy: Policy) -> Artifact:
     system_id = policy.provider.system_id
     state = new_stream(system_id, "synthetic", f"{system_id}:{config_hash[:8]}", config.seed)
     attempts = collect(SyntheticFeed(config), policy)
-    events, catalogs = run(entries(attempts, policy), policy, state, config.end)
+    rows: list[dict[str, Any]] = []
+    events, catalogs = run(
+        _diagnostic_entries(attempts, policy, state, rows), policy, state, config.end
+    )
     parameters = config.model_dump(by_alias=True, mode="json")
     return _artifact(
         events,
@@ -185,9 +202,26 @@ def compile_synthetic(config: SyntheticConfig, policy: Policy) -> Artifact:
         config_hash,
         config.start,
         config.end,
+        rows,
         config.seed,
         parameters,
     )
+
+
+def _diagnostic_entries(
+    attempts: Iterable[Attempt],
+    policy: Policy,
+    state: StreamState,
+    rows: list[dict[str, Any]],
+) -> Iterator[Entry]:
+    def record(attempt: Attempt, outcome: Outcome, entry: Input | None) -> None:
+        # The generator resumes after run() applied the input. This is the same
+        # outcome override the worker persists after step(), including valid HTTP
+        # responses that the engine refuses as duplicate, correction or out of order.
+        code = state.last_outcome if isinstance(entry, PublicationReceived) else None
+        rows.append(publication_row(state.stream_id, attempt, outcome, code))
+
+    return entries(attempts, policy, record)
 
 
 def _artifact(
@@ -198,6 +232,7 @@ def _artifact(
     recording_hash: str,
     start: datetime,
     end: datetime,
+    rows: list[dict[str, Any]],
     seed: int | None = None,
     parameters: dict[str, Any] | None = None,
 ) -> Artifact:
@@ -212,6 +247,13 @@ def _artifact(
     )
     catalog_json = (
         json.dumps(catalog.model_dump(mode="json"), sort_keys=True, ensure_ascii=False, indent=2)
+        + "\n"
+    ).encode()
+    diagnostics = feed_diagnostics(events[0].stream_id, events[0].mode, start, end, rows)
+    diagnostics_json = (
+        json.dumps(
+            diagnostics.model_dump(mode="json"), sort_keys=True, ensure_ascii=False, indent=2
+        )
         + "\n"
     ).encode()
     tz = ZoneInfo(policy.provider.timezone)
@@ -229,6 +271,7 @@ def _artifact(
         recording_hash=recording_hash,
         events_sha256=hashlib.sha256(ndjson).hexdigest(),
         catalog_sha256=hashlib.sha256(catalog_json).hexdigest(),
+        diagnostics_sha256=hashlib.sha256(diagnostics_json).hexdigest(),
         gbfs_version=GBFS_VERSION,
         adapter_version=ADAPTER_VERSION,
         engine_version=version("cycleops"),
@@ -239,7 +282,7 @@ def _artifact(
         incidents=_incidents(events),
         event_count=len(events),
     )
-    return Artifact(events, ndjson, catalog_json, manifest)
+    return Artifact(events, ndjson, catalog_json, manifest, diagnostics, diagnostics_json)
 
 
 def _incidents(events: list[StationBatchEvent]) -> list[ManifestIncident]:
@@ -287,6 +330,7 @@ def write(artifact: Artifact, out: Path) -> None:
         raise ValueError(f"events.ndjson.gz is {buffer.tell()} bytes, over the 2 MB cap")
     (out / "events.ndjson.gz").write_bytes(buffer.getvalue())
     (out / "catalog.json").write_bytes(artifact.catalog_json)
+    (out / "diagnostics.json").write_bytes(artifact.diagnostics_json)
     manifest = artifact.manifest.model_dump(mode="json")
     (out / "manifest.json").write_bytes(
         (json.dumps(manifest, sort_keys=True, ensure_ascii=False, indent=2) + "\n").encode()

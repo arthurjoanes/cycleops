@@ -1,6 +1,7 @@
 {
   "adapterVersion": "gbfs-2.3/1",
   "catalogSha256": "96846d0dc9fe9f939d18261ae40ba3cf9d6ce86c9f5309d57986dc570e91090f",
+  "diagnosticsSha256": "9abc7dc7125d7a11b3a3e615aa2e98ae3a9921f2258a112801f0f86e6550f3ce",
   "engineVersion": "0.1.0",
   "eventCount": 218,
   "eventSchemaVersion": 1,

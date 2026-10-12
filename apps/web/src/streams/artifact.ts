@@ -1,9 +1,11 @@
 import {
   InvalidPayloadError,
+  type FeedDiagnostics,
   type ReplayCatalog,
   type ReplayManifest,
   type StationBatchEvent,
   validateReplayCatalog,
+  validateFeedDiagnostics,
   validateReplayManifest,
   validateStationBatchEvent,
 } from "../lib/contracts";
@@ -12,6 +14,7 @@ export interface Artifact {
   manifest: ReplayManifest;
   catalog: ReplayCatalog;
   events: StationBatchEvent[];
+  diagnostics?: FeedDiagnostics | null;
 }
 
 export type ArtifactKind = "recorded" | "synthetic";
@@ -24,6 +27,11 @@ async function fetchOk(url: string, signal?: AbortSignal): Promise<Response> {
   const response = await fetch(url, { signal });
   if (!response.ok) throw new Error(`${url}: ${response.status}`);
   return response;
+}
+
+async function sha256(text: string): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(digest), (n) => n.toString(16).padStart(2, "0")).join("");
 }
 
 /** The recorded replay exists only when a recording passed acceptance. */
@@ -72,5 +80,22 @@ export async function loadArtifact(kind: ArtifactKind, signal?: AbortSignal): Pr
     events.length === manifest.eventCount &&
     events.every((e, i) => e.streamId === manifest.streamId && e.sequence === i + 1 && versions.has(e.catalogVersion));
   if (!consistent) throw new InvalidPayloadError("events");
-  return { manifest, catalog, events };
+  let diagnostics: FeedDiagnostics | null = null;
+  if (manifest.diagnosticsSha256) {
+    const content = await (await fetchOk(`${base}diagnostics.json`, signal)).text();
+    const body: unknown = JSON.parse(content);
+    if (!validateFeedDiagnostics(body) || (await sha256(content)) !== manifest.diagnosticsSha256) {
+      throw new InvalidPayloadError("feed diagnostics");
+    }
+    if (
+      body.streamId !== manifest.streamId ||
+      body.mode !== manifest.mode ||
+      Date.parse(body.windowStart) !== Date.parse(manifest.periodStart) ||
+      Date.parse(body.windowEnd) !== Date.parse(manifest.periodEnd)
+    ) {
+      throw new InvalidPayloadError("feed diagnostics period");
+    }
+    diagnostics = body;
+  }
+  return { manifest, catalog, events, diagnostics };
 }

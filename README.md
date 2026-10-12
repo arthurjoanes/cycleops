@@ -41,14 +41,20 @@ O motor confirma a falta ao longo de publicações do feed e acompanha sua resol
 
 Captura de 09/10/2026 (UTC), feita com Playwright no build do Pages, reproduzindo dados reais gravados. O período e os horários exibidos pertencem à gravação. [Visualização no celular](docs/media/identity-mobile.png) · [Gravação e aceite](docs/results/feed-validation.md).
 
-Para acompanhar uma ocorrência, pause o replay e use “Ir para o incidente”. Abra a estação, confira o motivo da prioridade e avance com “Passo” ou em 20× até a resolução. O seletor também permite explorar a simulação.
+Escolha um horário na linha do tempo ou use “Ir para o incidente”. Os marcos mostram confirmação e resolução; ao abrir uma estação, você pode filtrar os marcos dela. “Copiar este momento” cria um link que abre a mesma estação e horário, com o replay pausado.
 
-Na gravação de 09/10/2026, o motor produziu os seguintes eventos. Os offsets contam do início do replay:
+Em “Analisar dados”, o resumo mostra o tempo observado sem bicicletas ou vagas por estação e os incidentes resolvidos. “Evolução da cidade” acompanha os indicadores dos eventos aceitos nessa sessão; “Qualidade do feed” explica as respostas HTTP e as publicações aceitas ou repetidas.
+
+![Resumo da gravação: cobertura do período, incidentes e tempo observado por estação](docs/media/analysis-summary.png)
+
+[Qualidade da coleta](docs/media/analysis-quality.png) · [Análise no celular](docs/media/analysis-mobile.png) · [Como explorar os dados](docs/explorar-dados.md).
+
+Na gravação de 09/10/2026, o motor produziu estes eventos. Os links abrem os instantes registrados, no horário de Oslo:
 
 | Estação e condição | Confirmação | Resolução |
 |---|---|---|
-| St. Olavs gate (537), sem vagas | Evento 69 · 1.125,368 s | Evento 95 · 1.560,568 s |
-| Jakob kirke (412), sem bicicletas | Evento 106 · 1.740,683 s | Evento 124 · 2.040,832 s |
+| St. Olavs gate (537), sem vagas | [Evento 69 · 00:44:14](https://arthurjoanes.github.io/cycleops/#/?mode=recorded&station=537&artifact=48e2c7d55854510f1845b9ef2950aa0274a7c0f4363f090a71032f3b0eed0031&at=1126.445) | [Evento 95 · 00:51:29](https://arthurjoanes.github.io/cycleops/#/?mode=recorded&station=537&artifact=48e2c7d55854510f1845b9ef2950aa0274a7c0f4363f090a71032f3b0eed0031&at=1561.645) |
+| Jakob kirke (412), sem bicicletas | [Evento 106 · 00:54:29](https://arthurjoanes.github.io/cycleops/#/?mode=recorded&station=412&artifact=48e2c7d55854510f1845b9ef2950aa0274a7c0f4363f090a71032f3b0eed0031&at=1741.76) | [Evento 124 · 00:59:29](https://arthurjoanes.github.io/cycleops/#/?mode=recorded&station=412&artifact=48e2c7d55854510f1845b9ef2950aa0274a7c0f4363f090a71032f3b0eed0031&at=2041.909) |
 
 O [manifesto do replay](apps/web/public/replay/recorded/manifest.json) registra esses pontos e os hashes dos arquivos; a [validação da coleta](docs/results/feed-validation.md) descreve a janela e seus limites. O [vídeo da demonstração](docs/media/identity-demo.webm) acompanha Jakob kirke da confirmação à resolução em 20×.
 
@@ -92,7 +98,7 @@ flowchart TB
         end
         DB[("PostgreSQL · volume persistente<br/>estado das estações · feed_publications<br/>event_log · histórico")]:::storage
         subgraph API["FastAPI · somente leitura"]
-            Rest["REST<br/>snapshot · histórico · saúde do feed"]:::delivery
+            Rest["REST<br/>snapshot · histórico · saúde do feed<br/>diagnóstico da coleta por janela"]:::delivery
             Tailer["Tailer + distribuição SSE<br/>LISTEN e leitura a cada 1 s<br/>filas limitadas por conexão"]:::delivery
         end
         Edge["Caddy · 127.0.0.1:8080<br/>SPA e arquivos locais · proxy REST/SSE<br/>CSP · SSE sem buffer nem compressão"]:::delivery
@@ -105,11 +111,14 @@ flowchart TB
     subgraph Browser["Navegador"]
         Live["LiveSseSource + Ajv<br/>snapshot → SSE → reconexão por cursor"]:::delivery
         UI["Zustand · eventos em sequência<br/>fila · mapa MapLibre · histórico"]:::core
+        Analysis["Análise React<br/>até 120 pontos de eventos aceitos<br/>diagnóstico da coleta sob demanda"]:::delivery
         Live --> UI
+        UI -->|"indicadores da sessão"| Analysis
     end
     Oslo -->|"HTTPS · Client-Identifier"| Collector
     Synthetic -->|"mesma adaptação GBFS"| Collector
     Edge -->|"mesma origem · HTTP / SSE"| Live
+    Edge -->|"JSON · GET /api/v1/feed-diagnostics"| Analysis
     classDef source font-family:Arial,font-size:14px,fill:#F1F6F7,stroke:#78919A,color:#19333D
     classDef core font-family:Arial,font-size:14px,fill:#123E4A,stroke:#123E4A,color:#FFFFFF
     classDef storage font-family:Arial,font-size:14px,fill:#E3F0F2,stroke:#086978,color:#19333D
@@ -147,12 +156,20 @@ config:
 flowchart TB
     Recording["Gravação real · NDJSON.gz<br/>ou cenário sintético com seed"]:::source
     Compile["compile-replay · processamento offline<br/>mesmo adaptador, motor e políticas<br/>relógio virtual"]:::core
-    Artifacts[("Artefatos versionados<br/>events.ndjson.gz<br/>catalog.json + manifest.json")]:::storage
+    Artifacts[("Artefatos versionados<br/>events.ndjson.gz · catalog.json<br/>manifest.json · diagnostics.json")]:::storage
     Hosting["GitHub Pages ou arquivos do Caddy<br/>interface + replay + base local do mapa"]:::delivery
-    Player["Navegador · validação Ajv + ReplayPlayer<br/>pausa · velocidade · passo · salto para incidente<br/>mesmo store e componentes React"]:::core
+    Player["Navegador · validação Ajv + ReplayPlayer<br/>relógio virtual · transporte · timeline<br/>marcos de confirmação e resolução"]:::core
+    Store["Zustand · eventos em sequência<br/>fila · mapa · histórico da sessão"]:::core
+    Analysis["Análise React<br/>resumo do artefato · ranking observado<br/>série da sessão · qualidade da coleta"]:::delivery
+    Shared["Link compartilhado<br/>estação · visão · fuso<br/>hash dos eventos + instante"]:::storage
     Recording --> Compile --> Artifacts
     Artifacts -->|"incluídos no build"| Hosting
     Hosting -->|"GET estático · descompressão no navegador"| Player
+    Player --> Store
+    Player -->|"artefato inteiro + diagnóstico validado"| Analysis
+    Store -->|"até 120 pontos de eventos aceitos"| Analysis
+    Player -->|"copiar momento"| Shared
+    Shared -->|"conferir versão · restaurar pausado"| Player
     classDef source font-family:Arial,font-size:14px,fill:#F1F6F7,stroke:#78919A,color:#19333D
     classDef core font-family:Arial,font-size:14px,fill:#123E4A,stroke:#123E4A,color:#FFFFFF
     classDef storage font-family:Arial,font-size:14px,fill:#E3F0F2,stroke:#086978,color:#19333D
@@ -160,6 +177,8 @@ flowchart TB
 ```
 
 Os contratos Pydantic geram JSON Schema e tipos TypeScript; o Ajv valida as respostas e os artefatos no navegador. A política e suas versões acompanham os dados gerados.
+
+O resumo usa os eventos da gravação inteira. Os rankings contam apenas intervalos observados com dados válidos; períodos sem dados e fechamento aparecem separados. O diagnóstico acompanha o artefato em `diagnostics.json` e, no stream, vem de uma consulta REST. A evolução da cidade guarda até 120 pontos de eventos aceitos; ao saltar no replay, reconstrói os últimos pontos até o instante escolhido.
 
 [Transação, entrega SSE e recuperação em sequência](docs/architecture.md#da-entrada-ao-navegador) · [Processos, conexões e testes](docs/architecture.md) · [Decisões de arquitetura](docs/adr/).
 
@@ -169,6 +188,7 @@ Os contratos Pydantic geram JSON Schema e tipos TypeScript; o Ajv valida as resp
 | Decidir e persistir | [Motor](apps/backend/src/cycleops/domain/engine.py) e [ingestão](apps/backend/src/cycleops/application/ingest.py): incidentes, prioridade e commit do estado com os eventos. |
 | Entregar e recuperar | [Tailer](apps/backend/src/cycleops/api/tailer.py) e [stream SSE](apps/backend/src/cycleops/api/stream.py): leitura do log, filas por conexão e recuperação pelo cursor. |
 | Reproduzir e apresentar | [Compilador](apps/backend/src/cycleops/application/replay.py), [sessão de dados](apps/web/src/app/useDataSession.ts) e [store](apps/web/src/features/stations/store.ts): live e replay chegam aos mesmos componentes. |
+| Explorar e diagnosticar | [Análise no navegador](apps/web/src/features/analysis/), [link do replay](apps/web/src/features/replay/replayMoment.ts) e [relatório da coleta](apps/backend/src/cycleops/application/feed_diagnostics.py): resumo, indicadores e motivos por tentativa. |
 
 ## Stack e decisões
 
@@ -192,7 +212,7 @@ Os contratos Pydantic geram JSON Schema e tipos TypeScript; o Ajv valida as resp
 | Vite + GitHub Pages | A demo pública reproduz uma gravação sem backend ativo. Novos dados gravados dependem de compilação e publicação dos artefatos. |
 | Docker Compose + Caddy | Reúne banco, worker, API e web em uma instalação local. Os serviços compartilham o mesmo host. |
 
-[Alternativas para entrega de eventos](docs/adr/0003-entrega-de-eventos-sem-broker.md#alternativas) · [Escolhas do replay](docs/adr/0004-replay-no-navegador.md#alternativas) · [Estado e renderização](docs/adr/0005-estado-e-renderizacao.md).
+[Alternativas para entrega de eventos](docs/adr/0003-entrega-de-eventos-sem-broker.md#alternativas) · [Escolhas do replay](docs/adr/0004-replay-no-navegador.md#alternativas) · [Estado e renderização](docs/adr/0005-estado-e-renderizacao.md) · [Exploração e diagnóstico](docs/adr/0006-exploracao-e-diagnostico.md).
 
 Dependências fixadas: [Python](apps/backend/uv.lock), [web](apps/web/pnpm-lock.yaml) e [imagens do Compose](compose.yaml).
 
@@ -244,12 +264,13 @@ corepack pnpm e2e
 corepack pnpm check:bundle
 ```
 
-O `e2e` gera o build do Pages sob `/cycleops/`; `check:bundle` confere esse build. Os comandos do backend e do E2E contra o Compose estão no [CONTRIBUTING.md](CONTRIBUTING.md). O `e2e:compose` usa o projeto isolado `cycleops-e2e` e apaga seu banco no último teste.
+O `e2e` gera o build do Pages sob `/cycleops/` e inicia seu próprio servidor em 4188. Ele não reutiliza um servidor aberto; `CYCLEOPS_WEB_TEST_PORT` permite escolher outra porta. O preview manual continua em 4173. `check:bundle` confere o build gerado. Os comandos do backend e do E2E contra o Compose estão no [CONTRIBUTING.md](CONTRIBUTING.md). O `e2e:compose` usa o projeto isolado `cycleops-e2e` e apaga seu banco no último teste.
 
 | Pergunta | Registro e resultado | Alcance |
 |---|---|---|
 | Backend e navegador passaram nos testes? | [CI da publicação](docs/results/publicacao.md), 09/10/2026 no horário de Brasília, commit `185e5af`: 354 testes Python, 69 unitários web, 14 E2E Pages e 11 E2E Compose. | A execução identifica a revisão testada; o job Compose usa a fonte sintética sem internet. |
 | A gravação contém incidentes resolvidos? | [Coleta real](docs/results/feed-validation.md), 09/10/2026: 249 respostas em 60 min, todas 200; 218 eventos e dois incidentes resolvidos no replay. | A janela inclui o fechamento noturno e não representa o movimento diurno. |
+| Como conferir o que entrou no motor? | [Relatório de exploração](docs/results/exploracao-20261011.md): a gravação contém 225 publicações aceitas e 24 repetidas, além de 40 incidentes confirmados e dois resolvidos. | Resposta HTTP, publicação aceita e evento do motor têm contagens distintas. |
 | A demo publicada abre em desktop e celular? | [Roteiro no endereço público](docs/results/data/public-pages-20261010.json), 09/10/2026 às 21:08 em Brasília: pausa, salto para incidente e mapa em 1440×900 e 320×900. | Sem overflow ou erros no roteiro; a revisão manual de acessibilidade continua pendente. |
 | Como a interface se comportou no laboratório? | [Revisão visual](docs/results/identity-20261009.md), 09/10/2026: bundle de 119.270 bytes gzip; medianas de LCP 3.248 ms, CLS 0,004 e INP 240 ms em três execuções. | Chromium com CPU e rede emuladas; os números não são métricas de visitas reais. |
 
@@ -262,6 +283,7 @@ O [índice de resultados](docs/results/index.md) reúne comandos, commits e data
 - Projeto independente, sem vínculo com Oslo Bysykkel; somente leitura, sem reserva nem despacho de equipe.
 - O feed não tem SLA. O live roda só no Compose local; os critérios de coleta e frescor estão na [política da fonte](policy/provider-oslo.yaml) e na [política de prioridade](policy/priority-policy.yaml).
 - A base do mapa é simplificada e não serve para navegação.
+- Rankings usam apenas a janela da gravação e as contagens observadas. Eles não estimam viagens ou padrões semanais; a série da cidade cobre até 120 pontos de eventos aceitos na sessão ou no prefixo reproduzido.
 - No Compose, cada aba usa uma conexão SSE. A API permite quatro por IP e encerra a mais antiga ao abrir a quinta. [Limites e recuperação](docs/architecture.md#ligações).
 - A CSP do Pages vai por meta e é mais limitada que a enviada pelo Caddy. Controles e retenção estão em [SECURITY.md](SECURITY.md).
 
@@ -271,6 +293,7 @@ O [índice de resultados](docs/results/index.md) reúne comandos, commits e data
 |---|---|
 | Fonte, licença e coleta | [Fontes de dados](DATA_SOURCES.md) · [Validação do feed](docs/results/feed-validation.md) |
 | Implementação e decisões | [Arquitetura](docs/architecture.md) · [ADRs](docs/adr/) · [Comandos](CONTRIBUTING.md) |
+| Replay, indicadores e qualidade | [Explorar os dados](docs/explorar-dados.md) · [Validação da exploração](docs/results/exploracao-20261011.md) |
 | Execuções e medições | [Resultados](docs/results/index.md) · [Desempenho](docs/results/performance.md) |
 | Publicação e revisão manual | [Checklist de publicação](docs/results/publicacao.md) · [Acessibilidade](docs/results/a11y-manual.md) |
 | Apresentação | [Identidade visual](docs/brand/README.md) · [Padrão documental](docs/padrao-documentacao.md) |

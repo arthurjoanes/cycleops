@@ -1,4 +1,5 @@
 import gzip
+import hashlib
 import json
 from collections.abc import Iterable
 from dataclasses import replace
@@ -26,7 +27,7 @@ from cycleops.application.replay import (
 from cycleops.cli import compile_replay, generate_artifacts
 from cycleops.collection.outcome import classify_attempt
 from cycleops.collection.recording import RecordingWriter, read_recording, recording_line
-from cycleops.contracts import CatalogVersion, ReplayCatalog, StationBatchEvent
+from cycleops.contracts import CatalogVersion, FeedDiagnostics, ReplayCatalog, StationBatchEvent
 from cycleops.domain.engine import new_stream
 from cycleops.domain.model import PublicationFailed
 from cycleops.policy import ServiceHours, load_policy
@@ -191,6 +192,7 @@ def test_recording_compiles_the_same_twice() -> None:
     first, second = compile_recording(SAMPLE, policy), compile_recording(SAMPLE, policy)
     assert first.manifest == second.manifest
     assert first.events_ndjson == second.events_ndjson
+    assert first.diagnostics_json == second.diagnostics_json
 
 
 def test_short_sample_does_not_pass_acceptance() -> None:
@@ -290,3 +292,35 @@ def test_schemas_require_the_version_fields() -> None:
     assert {"schemaVersion", "eventSchemaVersion", "cursor"} <= set(snapshot["required"])
     manifest = json.loads((schemas / "replay-manifest.schema.json").read_text("utf-8"))
     assert {"schemaVersion", "eventSchemaVersion"} <= set(manifest["required"])
+
+
+@pytest.mark.parametrize("kind", ["synthetic", "recorded"])
+def test_generated_replay_diagnostics_are_bound_to_the_same_manifest(kind: str) -> None:
+    base = REPO / "apps/web/public/replay" / kind
+    manifest = json.loads((base / "manifest.json").read_bytes())
+    content = (base / "diagnostics.json").read_bytes()
+    diagnostics = FeedDiagnostics.model_validate_json(content)
+    assert hashlib.sha256(content).hexdigest() == manifest["diagnosticsSha256"]
+    assert diagnostics.stream_id == manifest["streamId"] and diagnostics.mode == manifest["mode"]
+    assert (
+        diagnostics.window_start.isoformat()
+        == datetime.fromisoformat(manifest["periodStart"]).isoformat()
+    )
+    assert (
+        diagnostics.window_end.isoformat()
+        == datetime.fromisoformat(manifest["periodEnd"]).isoformat()
+    )
+    assert diagnostics.totals.attempts == sum(f.counts.attempts for f in diagnostics.feeds)
+    assert sum(s.count for f in diagnostics.feeds for s in f.statuses) == (
+        diagnostics.totals.http_responses
+    )
+
+
+def test_replay_diagnostics_preserve_invalid_contracts_and_duplicate_publications() -> None:
+    frozen = compiled(config("frozen_source")).diagnostics
+    assert frozen.totals.duplicate_publications > 0 and frozen.totals.rejected_publications > 0
+    invalid = compiled(config("contract_quarantine")).diagnostics
+    assert invalid.totals.contract_failures > 0 and invalid.totals.http_failures == 0
+    assert invalid.totals.successful_responses == invalid.totals.attempts
+    timeouts = compiled(config("timeout_breaker")).diagnostics
+    assert timeouts.totals.transport_failures == 3 and timeouts.totals.http_failures == 0

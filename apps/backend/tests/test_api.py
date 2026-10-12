@@ -266,6 +266,7 @@ def test_route_inventory_is_read_only() -> None:
         ("/api/v1/stations/snapshot", frozenset({"GET"})),
         ("/api/v1/stations/{station_id}/history", frozenset({"GET"})),
         ("/api/v1/feed-health", frozenset({"GET"})),
+        ("/api/v1/feed-diagnostics", frozenset({"GET"})),
         ("/api/v1/stream/stations", frozenset({"GET"})),
     }
     assert all(methods <= {"GET", "HEAD"} for _, methods in routes)
@@ -320,8 +321,14 @@ def test_error_format_and_request_id() -> None:
             window = {"from": "2026-10-07T10:00:00Z", "to": "2026-10-08T10:00:01Z"}
             r = await http.get("/api/v1/stations/100/history", params=window)
             assert_error(r, 422, "invalid_request")
+            r = await http.get("/api/v1/feed-diagnostics", params=window)
+            assert_error(r, 422, "invalid_request")
             window = {"from": "2026-10-08T10:00:00Z", "to": "2026-10-08T09:00:00Z"}
             r = await http.get("/api/v1/stations/100/history", params=window)
+            assert_error(r, 422, "invalid_request")
+            r = await http.get("/api/v1/feed-diagnostics", params=window)
+            assert_error(r, 422, "invalid_request")
+            r = await http.get("/api/v1/feed-diagnostics", params={"from": "2026-10-08T10:00"})
             assert_error(r, 422, "invalid_request")
 
     run(go)
@@ -366,7 +373,12 @@ def test_rest_rate_limit_per_ip() -> None:
 def test_database_down_is_a_503() -> None:
     async def go() -> None:
         async with client(create_app(Settings(DEAD)), lifespan=True) as http:
-            for path in ("/health/ready", "/api/v1/stations/snapshot", "/api/v1/feed-health"):
+            for path in (
+                "/health/ready",
+                "/api/v1/stations/snapshot",
+                "/api/v1/feed-health",
+                "/api/v1/feed-diagnostics",
+            ):
                 assert_error(await http.get(path), 503, "database_unavailable")
             assert (await http.get("/health/live")).json() == {"status": "ok"}
 

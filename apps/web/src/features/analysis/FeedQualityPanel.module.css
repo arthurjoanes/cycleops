@@ -1,0 +1,31 @@
+.panel { display: grid; gap: var(--space-3); }
+.heading { display: flex; flex-wrap: wrap; align-items: start; justify-content: space-between; gap: var(--space-2); }
+.heading h3 { color: var(--navy); font-size: var(--size-l); }
+.heading p, .period, .explanation { margin: var(--space-1) 0 0; color: var(--muted); font-size: var(--size-s); max-width: 75ch; }
+.coverage { margin: 0; padding: var(--space-2) var(--space-3); border-left: 3px solid var(--brand); background: var(--brand-soft); font-size: var(--size-s); }
+.counts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0; border-block: 1px solid var(--border); }
+.counts > div { padding: var(--space-3); border-right: 1px solid var(--border); }
+.counts > div:last-child { border-right: 0; }
+.counts dt { color: var(--muted); font-size: var(--size-xs); }
+.counts dd { margin: var(--space-1) 0 0; color: var(--navy); font-size: var(--size-m); font-weight: 650; }
+.tableWrap { overflow-x: auto; }
+.tableWrap table { width: 100%; border-collapse: collapse; font-size: var(--size-s); }
+.tableWrap caption { text-align: left; padding-bottom: var(--space-2); font-weight: 600; color: var(--navy); }
+.tableWrap th, .tableWrap td { padding: var(--space-2); text-align: right; border-bottom: 1px solid var(--border); }
+.tableWrap th:first-child { text-align: left; }
+.tableWrap thead { background: var(--bg); }
+.feed { padding-block: var(--space-2); border-bottom: 1px solid var(--border); font-size: var(--size-s); }
+.feed summary { cursor: pointer; color: var(--brand); font-weight: 600; }
+.outcomes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
+.outcomes > div { display: flex; justify-content: space-between; gap: var(--space-2); }
+.outcomes dd { margin: 0; font-weight: 600; }
+.attempts { padding: 0; list-style: none; }
+.attempts li { display: grid; gap: var(--space-1); padding-block: var(--space-2); border-top: 1px solid var(--border); }
+.attempts time { color: var(--muted); font-size: var(--size-xs); }
+.errorCode { overflow-wrap: anywhere; color: var(--muted); font-size: var(--size-xs); }
+@media (max-width: 767px) {
+  .counts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .counts > div:nth-child(2) { border-right: 0; }
+  .counts > div:nth-child(n + 3) { border-top: 1px solid var(--border); }
+  .outcomes { grid-template-columns: minmax(0, 1fr); }
+}

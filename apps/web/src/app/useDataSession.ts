@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { replayMomentOffset, ReplayMomentError } from "../features/replay/replayMoment";
 import { createEventBuffer, useStations } from "../features/stations/store";
 import { InvalidPayloadError, type ReplayManifest } from "../lib/contracts";
 import { type ArtifactKind, artifactExists, loadArtifact } from "../streams/artifact";
 import { ReplayPlayer, type ReplaySink } from "../streams/replayPlayer";
 import type { StationEventSource } from "../streams/source";
+import { parseHash, useHashState } from "./useHashState";
 
 /** "stream" is the server's SSE (worker live or synthetic); the others are artifacts. */
 export type DataKind = "stream" | ArtifactKind;
@@ -13,12 +15,13 @@ export interface DataSession {
   available: DataKind[];
   player: ReplayPlayer | null;
   manifest: ReplayManifest | null;
+  replayLinkError: string | null;
 }
 
 // Compile-time constant: the Pages build drops the stream code and never calls the API.
 const SERVER = import.meta.env.MODE !== "pages";
 
-const EMPTY: DataSession = { kind: null, available: [], player: null, manifest: null };
+const EMPTY: DataSession = { kind: null, available: [], player: null, manifest: null, replayLinkError: null };
 
 const hashParams = () => new URLSearchParams(window.location.hash.replace(/^#\/?\??/, ""));
 
@@ -30,6 +33,8 @@ const hashParams = () => new URLSearchParams(window.location.hash.replace(/^#\/?
  */
 export function useDataSession(requested: DataKind | null, retry: number, source: string | null): DataSession {
   const [session, setSession] = useState<DataSession>(EMPTY);
+  const [route] = useHashState();
+  const restored = useRef<string | null>(null);
 
   useEffect(() => {
     const abort = new AbortController();
@@ -55,12 +60,18 @@ export function useDataSession(requested: DataKind | null, retry: number, source
         available = SERVER ? ["stream", ...artifacts] : artifacts;
         const kind = requested && available.includes(requested) ? requested : (available[0] as DataKind);
         if (SERVER && kind === "stream") {
+          const route = parseHash(window.location.hash);
+          if (route.at !== null || route.artifact !== null) {
+            useStations.getState().setStatus("idle");
+            setSession({ ...EMPTY, kind, available, replayLinkError: "Este link de um momento precisa de um replay gravado ou de uma simulação. Escolha o arquivo para abri-lo." });
+            return;
+          }
           const { LiveSseSource } = await import("../streams/liveSse");
           if (abort.signal.aborted) return;
           const live = new LiveSseSource(hashParams().get("measure") === "1");
           running = live;
           live.start();
-          setSession({ kind, available, player: null, manifest: null });
+          setSession({ kind, available, player: null, manifest: null, replayLinkError: null });
           return;
         }
         const artifact = await loadArtifact(kind as ArtifactKind, abort.signal);
@@ -101,8 +112,19 @@ export function useDataSession(requested: DataKind | null, retry: number, source
         clock = setInterval(() => {
           if (player.playing) useStations.getState().setNow(player.virtualNow());
         }, 1000);
-        player.start(5);
-        setSession({ kind, available, player, manifest });
+        const link = parseHash(window.location.hash);
+        let replayLinkError: string | null = null;
+        try {
+          const offset = replayMomentOffset(link, manifest);
+          if (offset === null) player.start(5);
+          else player.seekOffset(offset);
+        } catch (error) {
+          if (!(error instanceof ReplayMomentError)) throw error;
+          player.seekOffset(0);
+          replayLinkError = error.message;
+        }
+        restored.current = `${link.artifact ?? ""}|${link.at ?? ""}`;
+        setSession({ kind, available, player, manifest, replayLinkError });
       } catch (error) {
         if (abort.signal.aborted) return;
         useStations
@@ -120,6 +142,25 @@ export function useDataSession(requested: DataKind | null, retry: number, source
       if (clock) clearInterval(clock);
     };
   }, [requested, retry, source]);
+
+  // Changing a station, zone or search does not reload the artifact or move its clock.
+  // History navigation to another shared moment applies once to the existing player.
+  useEffect(() => {
+    const player = session.player;
+    if (!player || (requested !== null && requested !== session.kind)) return;
+    const key = `${route.artifact ?? ""}|${route.at ?? ""}`;
+    if (restored.current === key) return;
+    restored.current = key;
+    let replayLinkError: string | null = null;
+    try {
+      player.seekOffset(replayMomentOffset({ artifact: route.artifact, at: route.at }, player.artifact.manifest) ?? 0);
+    } catch (error) {
+      if (!(error instanceof ReplayMomentError)) throw error;
+      player.seekOffset(0);
+      replayLinkError = error.message;
+    }
+    setSession((current) => current.player === player ? { ...current, replayLinkError } : current);
+  }, [session.player, session.kind, requested, route.artifact, route.at]);
 
   return session;
 }

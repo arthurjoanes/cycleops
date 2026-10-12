@@ -27,6 +27,11 @@ function MapLoadFailed(props: { onUnavailable(): void }) {
 const StationAvailabilityMap = lazy(() =>
   import("../features/stations/StationAvailabilityMap").catch(() => ({ default: MapLoadFailed })),
 );
+const AnalysisPanel = lazy(() => import("../features/analysis/AnalysisPanel").catch(() => ({
+  default: function AnalysisLoadFailed() {
+    return <p role="alert" className={ui.notice}>Não foi possível carregar a análise. Recarregue a página para tentar novamente.</p>;
+  },
+})));
 
 const NARROW = "(max-width: 767px)";
 
@@ -47,6 +52,8 @@ export function App() {
   const session = useDataSession(hash.mode, retry, hash.source);
   const narrow = useNarrow();
   const [mapUnavailable, setMapUnavailable] = useState(false);
+  const [analysisOpen, setAnalysisOpen] = useState(false);
+  const analysisStation = useRef<string | null>(null);
   const status = useStations((s) => s.status);
   const data = useStations((s) => s.session);
   const selectedName = useStations((s) => (hash.station ? (s.catalog.get(hash.station)?.name ?? hash.station) : null));
@@ -105,7 +112,7 @@ export function App() {
         onZone={(zone) => setHash({ zone })}
         available={session.available}
         kind={session.kind}
-        onKind={(mode) => setHash({ mode, station: null })}
+        onKind={(mode) => setHash({ mode, station: null, artifact: null, at: null })}
         manifest={session.manifest}
       />
       {data?.mode === "synthetic" && (
@@ -120,6 +127,7 @@ export function App() {
           player={player}
           manifest={session.manifest}
           zone={hash.zone}
+          selectedStation={hash.station}
           onIncident={(incident) => select(incident.stationId)}
         />
       )}
@@ -129,11 +137,52 @@ export function App() {
         </p>
       )}
       <Indicators />
+      {session.replayLinkError && (
+        <div className={styles.linkError} role="alert">
+          <p>{session.replayLinkError}</p>
+          <button type="button" className={ui.button} onClick={() => setHash({ at: null, artifact: null })}>Abrir do início</button>
+        </div>
+      )}
+      <Dialog.Root open={analysisOpen} onOpenChange={setAnalysisOpen}>
+        <div className={styles.analysisActions}>
+          <Dialog.Trigger asChild>
+            <button type="button" className={ui.button} disabled={status !== "ready"}>Analisar dados</button>
+          </Dialog.Trigger>
+        </div>
+        <Dialog.Portal>
+          <Dialog.Overlay className={styles.overlay} />
+          <Dialog.Content className={styles.analysisDialog} aria-describedby="analysis-description" onCloseAutoFocus={(event) => {
+            if (analysisStation.current) {
+              event.preventDefault();
+              select(analysisStation.current);
+              analysisStation.current = null;
+              if (!narrow) requestAnimationFrame(() => detailsHeading.current?.focus());
+            }
+          }}>
+            <div className={styles.analysisHead}>
+              <div>
+                <Dialog.Title>Análise dos dados</Dialog.Title>
+                <Dialog.Description id="analysis-description">
+                  {player ? "Resumo da gravação, evolução dos indicadores e qualidade da coleta." : "Indicadores recebidos nesta sessão e qualidade da coleta."}
+                </Dialog.Description>
+              </div>
+              <Dialog.Close className={ui.button}>Fechar análise</Dialog.Close>
+            </div>
+            {detailsContext && <p className={styles.analysisContext}>{detailsContext}</p>}
+            <Suspense fallback={<p role="status">Carregando a análise.</p>}>
+              <AnalysisPanel key={data?.streamId ?? "loading"} player={player} zone={hash.zone} onSelectStation={(id) => {
+                analysisStation.current = id;
+                setAnalysisOpen(false);
+              }} />
+            </Suspense>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
       <div className={styles.message}>
         <MainMessage
           zone={hash.zone}
           onRetry={() => setRetry((n) => n + 1)}
-          onReplay={replay && (() => setHash({ mode: replay, station: null }))}
+          onReplay={replay && (() => setHash({ mode: replay, station: null, artifact: null, at: null }))}
         />
       </div>
       {narrow && (

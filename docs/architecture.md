@@ -98,11 +98,62 @@ O snapshot e o stream podem observar commits diferentes. A inscrição na fila a
 | Entrada GBFS | Valida e normaliza o catálogo e as contagens; classifica falhas de coleta | `collection/`, `adapters/gbfs.py`, `application/replay.py` |
 | Domínio | Aplica a política a publicações, falhas e ticks; produz decisões e eventos | `domain/engine.py`, `policy/` |
 | Persistência live ou sintética | Executa o motor dentro da transação e salva estado, publicações e eventos | `application/ingest.py`, `adapters/postgres/` |
-| Compilação offline | Executa o mesmo motor com relógio virtual e gera eventos, catálogo e manifesto | `application/replay.py`, `cli/compile_replay.py` |
+| Compilação offline | Executa o mesmo motor com relógio virtual e gera eventos, catálogo, manifesto e diagnóstico da coleta | `application/replay.py`, `application/feed_diagnostics.py`, `cli/compile_replay.py` |
 | Contrato Python → web | Gera JSON Schema e tipos TypeScript a partir de Pydantic; valida com Ajv | `contracts.py`, `packages/contracts/`, `apps/web/src/lib/contracts.ts` |
 | Aplicação no navegador | Seleciona stream ou arquivo e aplica os eventos ao mesmo store | `useDataSession.ts`, `LiveSseSource`, `ReplayPlayer`, `features/stations/store.ts` |
+| Análise no navegador | Integra os intervalos observados do replay e guarda a evolução dos indicadores dos eventos aceitos na sessão | `features/analysis/recordingReport.ts`, `features/analysis/cityHistory.ts`, `features/analysis/AnalysisPanel.tsx` |
+| Diagnóstico da coleta | Conta tentativas, respostas, falhas de contrato e resultados de publicação; a mesma função atende gravações e linhas do banco | `application/feed_diagnostics.py`, `adapters/postgres/queries.py`, `api/routes.py` |
 
 Os caminhos do backend na tabela são relativos a `apps/backend/src/cycleops/`, exceto `policy/` e `packages/contracts/`, que ficam na raiz. O replay publicado dispensa os processos worker e API em execução: as decisões já estão nos artefatos. A base do mapa também é servida como arquivo local.
+
+## Exploração do replay e da coleta
+
+“Copiar este momento” grava na URL o modo, a estação, as opções da tela, `artifact` com o SHA-256 dos eventos e `at` em segundos desde `manifest.periodStart`, com precisão de milissegundos. O navegador confere a versão antes de restaurar o instante pausado. Um hash diferente ou um horário inválido gera uma mensagem e a opção de abrir do início. Mudar estação, busca ou fuso mantém o player; voltar ou avançar para outro momento da URL reposiciona o player existente.
+
+A timeline percorre o período inteiro, incluindo intervalos sem dados e fechamento. Os marcos usam o `committedAt` dos eventos de confirmação e resolução indicados no manifesto. Os offsets dos incidentes no manifesto contam do primeiro evento; o início da gravação pode preceder esse commit.
+
+```mermaid
+---
+config:
+  sequence:
+    wrap: true
+    width: 180
+    actorMargin: 45
+    messageFontSize: 16
+    noteFontSize: 16
+    mirrorActors: false
+---
+sequenceDiagram
+    autonumber
+    actor Reader as Visitante
+    participant Web as Sessão do navegador
+    participant Files as Pages / arquivos Caddy
+    participant Player as ReplayPlayer + store
+    participant Analysis as Análise React
+
+    Reader->>Web: Abre link com estação, artifact e at
+    Web->>Files: GET manifesto, catálogo, eventos e diagnostics.json
+    Files-->>Web: Artefato e diagnóstico da gravação
+    Web->>Web: Ajv, sequência e vínculo do diagnóstico por SHA-256
+    alt Hash do link corresponde ao manifesto e at está no período
+        Web->>Player: seekOffset(at), pausa e aplica eventos até o instante
+        Player-->>Reader: Estação e horário restaurados
+    else Link inválido ou artefato de outra versão
+        Web-->>Reader: Mensagem e opção de abrir do início
+    end
+    Reader->>Web: Abre Analisar dados
+    Web->>Analysis: Artefato inteiro, diagnóstico e amostras da sessão
+    Analysis->>Analysis: Intervalos observados e ranking por estação
+    Analysis-->>Reader: Resumo, evolução e qualidade da coleta
+```
+
+O resumo integra as contagens entre commits da gravação inteira, usando `applyEvents` para recuperar os estados já decididos pelo motor. Zero bicicletas e zero vagas entram no ranking apenas em intervalos observados válidos. Tempo fechado, estações fora do catálogo, vagas desconhecidas e lacunas ficam fora desses denominadores. A cobertura do período aberto usa o tempo válido dividido pelo tempo válido mais as lacunas das estações no catálogo.
+
+A série da cidade guarda até 120 pontos de eventos aceitos e usa as mesmas contagens dos indicadores. Eventos repetidos, de outro fluxo ou com lacuna na sequência não entram. Troca de fonte e snapshot novo reiniciam a série. Um salto no replay reconstrói os últimos 120 pontos do prefixo até o instante escolhido. Fonte indisponível ou fechada aparece como lacuna, com uma tabela alternativa ao gráfico.
+
+No replay, o compilador gera `diagnostics.json` a partir das tentativas da gravação. O loader valida contrato, SHA-256, fluxo, modo e período contra o manifesto. Manifestos antigos sem `diagnosticsSha256` continuam reproduzíveis e informam que o relatório não está disponível. No stream, “Qualidade do feed” consulta `GET /api/v1/feed-diagnostics` pelo Caddy: seis horas por padrão, janela `from`/`to` de até 24 horas. A API lê `feed_publications` com o papel somente leitura e usa o mesmo limite REST por IP.
+
+O [guia de exploração](explorar-dados.md) descreve os controles e denominadores. O [ADR 0006](adr/0006-exploracao-e-diagnostico.md) registra as decisões dessa análise. O [registro da revisão](results/exploracao-20261011.md) reúne os comandos e as capturas da interface.
 
 ## Processos
 
@@ -124,7 +175,7 @@ Testes do backend em `apps/backend/tests/`, da web em `apps/web/tests/`.
 |---|---|---|---|
 | Navegador e Caddy: interface estática | HTTP em `127.0.0.1:8080`. CSP por header, `nosniff`, `Referrer-Policy` e `Permissions-Policy` em toda resposta; `index.html` com `no-cache`, `/assets/*` com cache longo. Rota desconhecida vira `index.html`, menos em `/assets`, `/replay` e `/basemap` | Edge fora: a página não abre, e o restart sobe o Caddy. Arquivo ausente em `/assets`, `/replay` ou `/basemap` dá 404 | `compose/stack.spec.ts`: "edge headers: CSP, nosniff, referrer, permissions, no-cache on index.html" e "no CSP violation with the stream and the map running" |
 | Navegador e GitHub Pages | Build `pages` com a CSP em `<meta>` e sem fallback de SPA | Arquivo ausente dá 404 | `e2e/pages.spec.ts`: "dist/index.html has the CSP meta before any script or link" e "no CSP violation with the map and the replay running", contra `apps/web/scripts/serve-pages.mjs`, que imita o Pages |
-| Navegador e API REST, pelo Caddy | GET na mesma origem: snapshot, history e feed-health. JSON validado com Ajv, timeout de 10 s, 60 requisições por minuto por IP | API fora: 502 do Caddy, tratado como falha. Banco fora: 503. Primeiro snapshot com erro: a tela mostra o erro, com "Tentar de novo" e o replay em arquivo, e para. Snapshot com erro depois do primeiro: nova tentativa com backoff. Resposta de outro fluxo ou estação é descartada | `scripts/smoke`; `integration/test_api.py::test_rest_routes`; `test_api.py::test_database_down_is_a_503` e `::test_rest_rate_limit_per_ip`; `unit/live.test.ts`: "rejects an event, a snapshot and a history of another stream" e "shows the bootstrap error when the first snapshot fails, and stops" |
+| Navegador e API REST, pelo Caddy | GET na mesma origem: snapshot, history, feed-health e feed-diagnostics. JSON validado com Ajv, timeout de 10 s, 60 requisições por minuto por IP | API fora: 502 do Caddy, tratado como falha. Banco fora: 503. Primeiro snapshot com erro: a tela mostra o erro, com "Tentar de novo" e o replay em arquivo, e para. Snapshot com erro depois do primeiro: nova tentativa com backoff. Resposta de outro fluxo ou estação é descartada | `scripts/smoke`; `integration/test_api.py::test_rest_routes`; `test_api.py::test_database_down_is_a_503` e `::test_rest_rate_limit_per_ip`; `unit/live.test.ts`: "rejects an event, a snapshot and a history of another stream" e "shows the bootstrap error when the first snapshot fails, and stops" |
 | SSE: cursor, catch-up e resync | `EventSource` em `/api/v1/stream/stations`, cursor por `Last-Event-ID` ou `?after=`, sempre 200, `id:` só em `station_batch` | Cursor malformado, de outro fluxo ou à frente: `resync_required`. Mais de 40 eventos atrás: `resync_required`. O catch-up lê o `event_log` em sessões curtas e não repete o que já saiu. No navegador só entra `last + 1`; um salto reconecta do último cursor, e dois seguidos pedem snapshot | `integration/test_api.py::test_resync_rules_and_catch_up` e `::test_buffer_above_head_and_gaps_are_written_once`; `test_api.py::test_control_messages_never_carry_an_id`; `unit/live.test.ts`: "applies only last + 1 and reconnects from the last applied cursor on a gap" e "takes a new snapshot when the gap repeats" |
 | SSE pelo Caddy | Rota do stream sem compressão e com flush imediato; `Cache-Control: no-store, no-transform` | Se o edge comprimisse ou segurasse buffer, os eventos chegariam em bloco | `compose/stack.spec.ts`: "the SSE response through the edge has no Content-Encoding" e "opens the simulation over SSE, connected"; `scripts/smoke` |
 | SSE: heartbeat e vigia do navegador | Heartbeat a cada 15 s com o estado da fonte pela regra de vencimento da API | Tailer sem ler o banco há mais de 3 s: o stream termina sem mensagem. Navegador 40 s sem mensagem: conexão "suspeita" e reconexão. Conexão fechada: consulta o feed-health e reconecta com backoff de 1 a 30 s com jitter. Aba oculta por mais de 5 min: snapshot novo | `integration/test_api.py::test_worker_stopped_is_stale_in_heartbeat_snapshot_and_feed_health`; `unit/live.test.ts`: "marks the connection suspect after 40 s without heartbeat or event, then reconnects" e "takes a new snapshot after more than 5 min hidden"; `compose/stack.spec.ts`: "a frozen connection turns suspect within 40 s and reconnects" e "with the worker stopped the page shows the source stale" |
@@ -139,8 +190,11 @@ Testes do backend em `apps/backend/tests/`, da web em `apps/web/tests/`.
 | `migrate` e PostgreSQL | Como superusuário: papéis, senhas como verificador SCRAM, dono do banco, `REVOKE CONNECT`. Depois `alembic upgrade head` como `cycleops_migrator` | Idempotente. Sai com 2 sem variável e com 1 em erro de banco; sem ele, `worker` e `api` não sobem | `integration/test_migrate.py::test_migrate_twice_is_safe_and_logs_json` e `::test_migrate_exit_codes`; `integration/test_roles.py::test_ownership_connect_and_default_privileges` |
 | CLIs de coleta e lock | Com `DATABASE_URL`: o mesmo advisory lock do worker, conferido a cada 5 s durante a coleta | Lock com outro processo: sai com 4 sem chamar o feed. Lock perdido no meio: para e guarda o que já gravou | `integration/test_worker.py::test_collection_clis_refuse_to_run_next_to_a_leader` e `::test_a_cli_that_loses_its_lock_session_stops_collecting` |
 | `record-feed --from-archive` | Lê o arquivo bruto, sem rede e sem lock, filtrando por `receivedAt` | Intervalo sem tentativas: sai com 1 | `test_worker_archive.py::test_record_feed_from_archive_writes_a_recording_with_its_manifest` |
-| `compile-replay` e artefatos | `events.ndjson.gz` com gzip determinístico, `catalog.json`, `manifest.json` | Gravação sem incidente resolvido: sai com 3 sem escrever. Artefato desatualizado: `generate-artifacts --check` e o teste falham | `test_replay.py::test_recording_compiles_the_same_twice` e `::test_generated_files_are_current` |
-| Navegador e artefatos | `.gz` sem `Content-Encoding`, aberto com `DecompressionStream`. Ajv valida cada arquivo e cada evento, e os três arquivos são conferidos entre si | Linha inválida ou mistura de deploys: mensagem de versão nova. Falha de rede: erro com troca manual de fonte | `e2e/pages.spec.ts`: "pause, 5x, step and go to the incident, with confirmation and resolution"; `unit/logic.test.ts`: "rejects an artifact with one bad line" e "refuses another stream, a hole in the sequence, an unknown catalog or a wrong count"; `compose/stack.spec.ts`: "switching between the server stream and an artifact does not mix events" |
+| `compile-replay` e artefatos | `events.ndjson.gz` com gzip determinístico, `catalog.json`, `diagnostics.json` e `manifest.json` com hashes | Gravação sem incidente resolvido: sai com 3 sem escrever. Artefato desatualizado: `generate-artifacts --check` e o teste falham | `test_replay.py::test_recording_compiles_the_same_twice` e `::test_generated_files_are_current` |
+| Navegador e artefatos | `.gz` sem `Content-Encoding`, aberto com `DecompressionStream`. Ajv valida os arquivos e eventos; sequência, fluxo e catálogo devem corresponder ao manifesto. `diagnostics.json` tem SHA-256, modo, fluxo e período conferidos | Linha inválida ou mistura de deploys: mensagem de versão nova. Falha de rede: erro com troca manual de fonte. Manifesto antigo sem diagnóstico continua reproduzível | `e2e/pages.spec.ts`: "pause, 5x, step and go to the incident, with confirmation and resolution"; `unit/logic.test.ts`; `unit/diagnostics.test.ts`; `compose/stack.spec.ts`: "switching between the server stream and an artifact does not mix events" |
+| URL e replay | Hash routing com `artifact` e `at`; restaura eventos até o instante escolhido, pausa e mantém a estação e as opções da tela | Versão diferente ou horário inválido: mensagem e abertura do início. Alterar visão não recarrega o artefato; voltar e avançar reposiciona o mesmo player | `unit/replay-tools.test.tsx`, `unit/replay-session.test.tsx` e `e2e/replay-tools.spec.ts` |
+| Análise e eventos | Resumo da gravação inteira com intervalos por estação; série de até 120 pontos de eventos aceitos pelo store; gráficos e tabelas | Lacunas e fechamento têm intervalos próprios. Troca de fonte e snapshot reiniciam a série; seek reconstrói o prefixo. Eventos repetidos ou fora da sequência ficam fora | `unit/analysis.test.tsx`, `unit/analysis-artifacts.test.ts` e `e2e/analysis.spec.ts` |
+| Diagnóstico REST e PostgreSQL | `GET /api/v1/feed-diagnostics`, janela por `receivedAt`; padrão de 6 h e máximo de 24 h; consulta somente leitura a `feed_publications` | Janela inválida: 422. Banco ou fluxo ausente: 503. Navegador descarta resposta de outro fluxo e permite atualizar o relatório | `test_feed_diagnostics.py`; `test_api.py::test_error_format_and_request_id` e `::test_database_down_is_a_503`; `unit/diagnostics.test.ts` |
 | GitHub Actions e Pages | `pages.yml` depois de um `ci` verde em push na `main`, ou à mão na `main` | CI vermelho impede o deploy automático. O disparo manual publica o commit selecionado da `main` sem conferir o CI. Deploy com falha deixa o site anterior | sem teste automatizado |
 | `feed-check` e feed de Oslo | Só à mão (`workflow_dispatch`) e só em `arthurjoanes/cycleops`: `inspect-feed` com 5 requisições e o identificador `arthurjoanes-cycleops` | Falha de transporte ou de contrato aparece no relatório do job. Nenhum outro workflow depende dele | sem teste automatizado; rodar uma vez está em `docs/results/publicacao.md` |
 

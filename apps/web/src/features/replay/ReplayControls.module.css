@@ -42,6 +42,145 @@
   font-size: var(--size-xs);
 }
 
+.share,
+.timeline {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+.share {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.shareStatus,
+.shareFallback {
+  color: var(--muted);
+  font-size: var(--size-xs);
+}
+
+.shareFallback {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+.shareFallback input {
+  width: 100%;
+  margin-top: var(--space-1);
+  padding: var(--space-2);
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius);
+}
+
+.timeline {
+  border-top: 1px solid var(--border);
+  padding-top: var(--space-2);
+}
+
+.timelineHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: var(--size-s);
+  font-weight: 550;
+}
+
+.filter {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-weight: 400;
+}
+
+.markers {
+  display: block;
+  width: 100%;
+  height: 24px;
+  margin-top: var(--space-1);
+  overflow: visible;
+}
+
+.confirmedMarker {
+  stroke: var(--empty);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.resolvedMarker {
+  stroke: var(--ok);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.confirmedText {
+  color: var(--empty);
+}
+
+.resolvedText {
+  color: var(--ok);
+}
+
+.range {
+  display: block;
+  width: 100%;
+  min-height: 24px;
+  margin: 0;
+  accent-color: var(--brand);
+  cursor: pointer;
+}
+
+.bounds {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-2);
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--size-xs);
+}
+
+.milestones {
+  margin-top: var(--space-2);
+  font-size: var(--size-s);
+}
+
+.milestones summary {
+  width: fit-content;
+  cursor: pointer;
+}
+
+.legend {
+  margin: var(--space-2) 0;
+  color: var(--muted);
+  font-size: var(--size-xs);
+}
+
+.markerList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  max-height: 180px;
+  overflow: auto;
+  gap: var(--space-1);
+  margin: 0;
+  padding: var(--space-1);
+  list-style: none;
+}
+
+.markerList button {
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.markerList time {
+  margin-left: auto;
+}
+
 @media (min-width: 768px) and (max-width: 1199px) {
   .controls {
     grid-template-columns: auto auto minmax(0, 1fr);

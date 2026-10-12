@@ -75,6 +75,18 @@
       "title": "Catalogsha256",
       "type": "string"
     },
+    "diagnosticsSha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Diagnosticssha256"
+    },
     "engineVersion": {
       "title": "Engineversion",
       "type": "string"

@@ -6,6 +6,8 @@ import { formatTime, type Zone } from "../../lib/time";
 import { useStations } from "../stations/store";
 import type { ReplayPlayer, Speed } from "../../streams/replayPlayer";
 import styles from "./ReplayControls.module.css";
+import { replayMomentUrl } from "./replayMoment";
+import { ReplayTimeline } from "./ReplayTimeline";
 
 const SPEEDS: Speed[] = [1, 5, 20];
 
@@ -21,6 +23,7 @@ export function ReplayControls(props: {
   player: ReplayPlayer;
   manifest: ReplayManifest;
   zone: Zone;
+  selectedStation?: string | null;
   onIncident(incident: ManifestIncident): void;
 }) {
   const { player, manifest, zone } = props;
@@ -30,6 +33,7 @@ export function ReplayControls(props: {
   // Incidents that resolve: the visitor sees both the confirmation and the resolution.
   const incidents = manifest.incidents.filter((i) => i.resolvedSequence !== null);
   const [chosen, setChosen] = useState(incidents[0]?.incidentId ?? "");
+  const [share, setShare] = useState<{ url: string; copied: boolean } | null>(null);
   const name = (stationId: string) => {
     for (const stations of catalog.values()) {
       const found = stations.find((s) => s.stationId === stationId);
@@ -37,7 +41,7 @@ export function ReplayControls(props: {
     }
     return stationId;
   };
-  const origin = Date.parse(manifest.periodStart);
+  const origin = Date.parse(player.events[0]?.committedAt ?? manifest.periodStart);
 
   return (
     <section className={styles.controls} aria-label="Controles do replay">
@@ -112,6 +116,33 @@ export function ReplayControls(props: {
         <span className={ui.muted}>{formatTime(now, zone, true)}</span>
         {player.ended && <span className={ui.badge}>Replay terminado</span>}
       </p>
+      <div className={styles.share}>
+        <button type="button" className={ui.button} onClick={() => {
+          // Reapply through this instant so a delayed timer cannot leave its state behind the clock.
+          player.seekOffset(player.offsetSeconds);
+          const url = replayMomentUrl(window.location.href, manifest, player.offsetSeconds);
+          void (async () => {
+            try {
+              await navigator.clipboard.writeText(url);
+              setShare({ url, copied: true });
+            } catch {
+              setShare({ url, copied: false });
+            }
+          })();
+        }}>
+          Copiar este momento
+        </button>
+        {share && <span role="status" className={styles.shareStatus}>{share.copied ? "Link copiado. O replay abre pausado neste horário." : "Copie o link abaixo para abrir este momento."}</span>}
+        {share && !share.copied && (
+          <label className={styles.shareFallback}>Link deste momento
+            <input readOnly value={share.url} onFocus={(event) => event.target.select()} />
+          </label>
+        )}
+      </div>
+      <ReplayTimeline
+        player={player} manifest={manifest} now={now} zone={zone}
+        selectedStation={props.selectedStation} stationName={name} onIncident={props.onIncident}
+      />
     </section>
   );
 }

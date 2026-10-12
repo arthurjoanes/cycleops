@@ -256,6 +256,9 @@ class ReplayManifest(Contract):
     recording_hash: str
     events_sha256: str
     catalog_sha256: str
+    # Older artifacts have no diagnostics file. When present, its bytes are bound to
+    # this manifest, and the reader also checks its stream, mode and exact period.
+    diagnostics_sha256: str | None = None
     gbfs_version: str
     adapter_version: str
     engine_version: str
@@ -310,6 +313,70 @@ class StationHistory(Contract):
     closed: list[Interval]
 
 
+class FeedDiagnosticCounts(Contract):
+    attempts: int
+    http_responses: int
+    successful_responses: int
+    http_failures: int
+    transport_failures: int
+    contract_failures: int
+    accepted_publications: int
+    rejected_publications: int
+    duplicate_publications: int
+    correction_publications: int
+    out_of_order_publications: int
+    future_publications: int
+    not_modified: int
+    # Null means no station envelope could be parsed. Counts are records across
+    # parsed attempts, including repeats, rather than unique stations.
+    station_records: int | None
+    valid_station_records: int | None
+    invalid_station_records: int | None
+
+
+class FeedOutcomeCount(Contract):
+    outcome: str
+    count: int
+
+
+class FeedStatusCount(Contract):
+    status: int
+    count: int
+
+
+class FeedAttemptSample(Contract):
+    attempt_at: Instant
+    received_at: Instant
+    status: int | None
+    outcome: str
+    source_updated_at: Instant | None
+    error_code: str | None
+    station_records: int | None
+    valid_station_records: int | None
+    duration_ms: int
+
+
+class FeedDiagnosticSummary(Contract):
+    feed: str
+    counts: FeedDiagnosticCounts
+    outcomes: list[FeedOutcomeCount]
+    statuses: list[FeedStatusCount]
+    latest_attempt: FeedAttemptSample
+    recent_attempts: list[FeedAttemptSample]
+
+
+class FeedDiagnostics(Contract):
+    schema_version: Literal[1]
+    stream_id: str
+    mode: DataMode
+    window_start: Instant
+    window_end: Instant
+    observed_start: Instant | None
+    observed_end: Instant | None
+    totals: FeedDiagnosticCounts
+    feeds: list[FeedDiagnosticSummary]
+
+
 # Generated into packages/contracts/schemas/<name>.schema.json.
 SCHEMA_MODELS: dict[str, type[Contract]] = {
     "station-batch-event": StationBatchEvent,
@@ -318,6 +385,7 @@ SCHEMA_MODELS: dict[str, type[Contract]] = {
     "stream-closed": StreamClosed,
     "snapshot": Snapshot,
     "station-history": StationHistory,
+    "feed-diagnostics": FeedDiagnostics,
     "replay-catalog": ReplayCatalog,
     "replay-manifest": ReplayManifest,
 }
