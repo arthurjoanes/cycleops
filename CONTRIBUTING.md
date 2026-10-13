@@ -36,6 +36,8 @@ CycleOps lists Oslo Bysykkel stations with no bikes or no docks, in priority ord
 
 ## Commands
 
+Development and reviewed dependency updates go directly to `main`. Scheduled Dependabot version PRs are paused with `open-pull-requests-limit: 0`; security alerts remain enabled. Check package engine and peer requirements before updating the lockfiles.
+
 Run from the repository root. If `uv` is not on PATH, use `python -m uv`.
 
 ```bash

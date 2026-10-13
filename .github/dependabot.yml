@@ -1,7 +1,9 @@
 version: 2
+# Version updates are reviewed manually on main. Security alerts remain enabled.
 updates:
   - package-ecosystem: uv
     directory: /apps/backend
+    open-pull-requests-limit: 0
     schedule:
       interval: weekly
     groups:
@@ -10,6 +12,7 @@ updates:
 
   - package-ecosystem: npm
     directory: /apps/web
+    open-pull-requests-limit: 0
     schedule:
       interval: weekly
     groups:
@@ -18,6 +21,7 @@ updates:
 
   - package-ecosystem: github-actions
     directory: /
+    open-pull-requests-limit: 0
     schedule:
       interval: weekly
     groups:
@@ -28,6 +32,7 @@ updates:
   # image in the CI service container is not covered: update it by hand with these.
   - package-ecosystem: docker
     directory: /infra
+    open-pull-requests-limit: 0
     schedule:
       interval: weekly
     groups:
@@ -36,6 +41,7 @@ updates:
 
   - package-ecosystem: docker-compose
     directory: /
+    open-pull-requests-limit: 0
     schedule:
       interval: weekly
     groups:
