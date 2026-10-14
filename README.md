@@ -200,6 +200,8 @@ O resumo usa os eventos da gravação inteira. Os rankings contam apenas interva
   <img src="docs/stack/postgresql.svg" alt="PostgreSQL" width="64" height="64">
   <img src="docs/stack/typescript.svg" alt="TypeScript" width="64" height="64">
   <img src="docs/stack/react.svg" alt="React" width="64" height="64">
+  <img src="docs/stack/vite.svg" alt="Vite" width="64" height="64">
+  <img src="docs/stack/maplibre.svg" alt="MapLibre GL" width="64" height="64">
   <img src="docs/stack/docker.svg" alt="Docker" width="64" height="64">
 </p>
 
@@ -313,4 +315,4 @@ Desenvolvido por Arthur Joanes. Para conversar sobre dados abertos, eventos e op
 
 Código sob [licença MIT](LICENSE). Dados do Oslo Bysykkel sob NLOD 2.0 e base do OpenStreetMap sob ODbL: [fontes e atribuições](DATA_SOURCES.md). Bibliotecas e demais licenças em [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-Ícones da stack e LinkedIn: [Devicon, licença MIT](docs/stack/LICENSE.devicon).
+Ícones Devicon e Simple Icons: [fontes e licenças](THIRD_PARTY_NOTICES.md#documentation-icons).
