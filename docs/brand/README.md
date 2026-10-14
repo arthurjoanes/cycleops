@@ -4,20 +4,13 @@
 
 O símbolo combina C e O como duas rodas. O percurso entre elas termina em um ponto de estação. A abertura do C e o traço curvo dão direção ao desenho; o ponto liga a ideia de movimento ao estado de uma estação.
 
-## Cores
+<a id="cores"></a>
 
-| Uso | Cor |
-|---|---|
-| Marca e cabeçalho | petróleo `#123E4A` |
-| Seleção, ação e links | azul do fiorde `#086978` |
-| Detalhe do símbolo | turquesa `#56BDC4` |
-| Fundo | gelo `#F1F6F7` |
-| Texto | ardósia `#19333D` |
-| Texto secundário | cinza azulado `#526C77` |
+## Legibilidade
 
-Vermelho, âmbar, verde e os demais estados continuam com seus significados próprios. O turquesa é decorativo: não é usado sozinho para transmitir estado ou como texto sobre branco.
+Os estados mantêm rótulos e símbolos próprios. A cor não transmite uma condição sozinha.
 
-Texto sobre branco tem contraste de 13,27:1; texto secundário, 5,57:1; botão azul com texto branco, 6,36:1. Contornos necessários de controles usam `#78919A`, com 3,33:1 sobre branco. O foco é azul em superfícies claras e branco no cabeçalho escuro.
+Texto sobre branco tem contraste de 13,27:1; texto secundário, 5,57:1; botão com texto branco, 6,36:1. Contornos necessários de controles têm contraste de 3,33:1 sobre branco. O foco permanece visível em superfícies claras e no cabeçalho escuro.
 
 ## Tipografia e uso
 
@@ -37,10 +30,10 @@ Pausa e retomada mantêm texto junto do símbolo. Passo, compartilhamento e aná
 
 O modo e o estado da fonte permanecem no cabeçalho. Metadados, legendas e licenças abrem em controles próprios. A fila reúne condição e contagens; selecionar uma estação mostra a justificativa e o histórico. A faixa de indicadores concentra as contagens da cidade e o acesso à análise.
 
-O petróleo organiza o cabeçalho e os horários; o azul identifica ações e foco. As condições continuam com cores e rótulos próprios. Espaçamento, alinhamento e contraste sustentam a leitura; o [guia da interface](../ui-ux.md) registra os controles e sua verificação.
+Espaçamento, alinhamento e contraste sustentam a leitura; o [guia da interface](../ui-ux.md) registra os controles e sua verificação.
 
 ## Apresentação no GitHub
 
-A navegação do README segue as cores do portfólio: azul `#0969DA` para demo, roxo `#8250DF` para arquitetura, verde `#167D4A` para execução, ocre `#9A6700` para resultados e azul `#0A66C2` para LinkedIn. Os rótulos identificam o destino e os SVGs ficam em `docs/readme/badges/`.
+A navegação do README reúne demo, arquitetura, execução, resultados e LinkedIn. Os rótulos identificam o destino e os SVGs ficam em `docs/readme/badges/`.
 
 A stack usa ícones Devicon locais de 64 × 64 px com texto alternativo; o contato usa LinkedIn de 24 × 24 px acompanhado do nome. As cores originais dos ícones são preservadas. A [licença MIT](../stack/LICENSE.devicon) acompanha os arquivos e cada SVG registra a origem.

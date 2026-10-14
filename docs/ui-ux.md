@@ -64,4 +64,4 @@ corepack pnpm exec playwright test --project=media tests/media/uiux.spec.ts test
 
 O Playwright gera o build e abre um servidor próprio em 4188. `CYCLEOPS_WEB_TEST_PORT` seleciona outra porta disponível. As capturas ficam em `docs/media/`; testes e medições têm seus registros em [resultados](results/index.md). A revisão manual segue o [checklist de acessibilidade](results/a11y-manual.md).
 
-Na revisão visual, conferir o modo e a data ou seed, textos das estações, contagens, foco e conteúdo dos painéis. Verificar também a lista ampliada, busca, legendas e créditos. As [cores e regras da marca](brand/README.md) acompanham essa revisão.
+Na revisão visual, conferir o modo e a data ou seed, textos das estações, contagens, foco e conteúdo dos painéis. Verificar também a lista ampliada, busca, legendas e créditos. As [regras de marca e legibilidade](brand/README.md) acompanham essa revisão.
