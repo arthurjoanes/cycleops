@@ -197,12 +197,17 @@ O resumo usa os eventos da gravação inteira. Os rankings contam apenas interva
 <p>
   <img src="docs/stack/python.svg" alt="Python" width="64" height="64">
   <img src="docs/stack/fastapi.svg" alt="FastAPI" width="64" height="64">
+  <img src="docs/stack/pydantic.svg" alt="Pydantic" width="64" height="64">
   <img src="docs/stack/postgresql.svg" alt="PostgreSQL" width="64" height="64">
+  <img src="docs/stack/sqlalchemy.svg" alt="SQLAlchemy" width="64" height="64">
   <img src="docs/stack/typescript.svg" alt="TypeScript" width="64" height="64">
   <img src="docs/stack/react.svg" alt="React" width="64" height="64">
+  <img src="docs/stack/zustand.svg" alt="Zustand" width="64" height="64">
   <img src="docs/stack/vite.svg" alt="Vite" width="64" height="64">
   <img src="docs/stack/maplibre.svg" alt="MapLibre GL" width="64" height="64">
+  <img src="docs/stack/ajv.svg" alt="Ajv" width="64" height="64">
   <img src="docs/stack/docker.svg" alt="Docker" width="64" height="64">
+  <img src="docs/stack/caddy.svg" alt="Caddy" width="64" height="64">
 </p>
 
 | Escolha | Motivo e compromisso |
@@ -216,7 +221,7 @@ O resumo usa os eventos da gravação inteira. Os rankings contam apenas interva
 
 [Alternativas para entrega de eventos](docs/adr/0003-entrega-de-eventos-sem-broker.md#alternativas) · [Escolhas do replay](docs/adr/0004-replay-no-navegador.md#alternativas) · [Estado e renderização](docs/adr/0005-estado-e-renderizacao.md) · [Exploração e diagnóstico](docs/adr/0006-exploracao-e-diagnostico.md).
 
-Dependências fixadas: [Python](apps/backend/uv.lock), [web](apps/web/pnpm-lock.yaml) e [imagens do Compose](compose.yaml).
+Dependências fixadas: [Python](apps/backend/uv.lock), [web](apps/web/pnpm-lock.yaml) e [imagens do Compose](compose.yaml). [Fontes e licenças dos ícones](docs/stack/README.md).
 
 ## Executar localmente
 

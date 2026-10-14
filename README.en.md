@@ -197,12 +197,17 @@ The summary uses events from the entire recording. Rankings count only observed 
 <p>
   <img src="docs/stack/python.svg" alt="Python" width="64" height="64">
   <img src="docs/stack/fastapi.svg" alt="FastAPI" width="64" height="64">
+  <img src="docs/stack/pydantic.svg" alt="Pydantic" width="64" height="64">
   <img src="docs/stack/postgresql.svg" alt="PostgreSQL" width="64" height="64">
+  <img src="docs/stack/sqlalchemy.svg" alt="SQLAlchemy" width="64" height="64">
   <img src="docs/stack/typescript.svg" alt="TypeScript" width="64" height="64">
   <img src="docs/stack/react.svg" alt="React" width="64" height="64">
+  <img src="docs/stack/zustand.svg" alt="Zustand" width="64" height="64">
   <img src="docs/stack/vite.svg" alt="Vite" width="64" height="64">
   <img src="docs/stack/maplibre.svg" alt="MapLibre GL" width="64" height="64">
+  <img src="docs/stack/ajv.svg" alt="Ajv" width="64" height="64">
   <img src="docs/stack/docker.svg" alt="Docker" width="64" height="64">
+  <img src="docs/stack/caddy.svg" alt="Caddy" width="64" height="64">
 </p>
 
 | Choice | Reason and trade-off |
@@ -216,7 +221,7 @@ The summary uses events from the entire recording. Rankings count only observed 
 
 [Event delivery alternatives](docs/adr/0003-entrega-de-eventos-sem-broker.md#alternativas) · [Replay choices](docs/adr/0004-replay-no-navegador.md#alternativas) · [State and rendering](docs/adr/0005-estado-e-renderizacao.md) · [Exploration and diagnostics](docs/adr/0006-exploracao-e-diagnostico.md).
 
-Pinned dependencies: [Python](apps/backend/uv.lock), [web](apps/web/pnpm-lock.yaml) and [Compose images](compose.yaml).
+Pinned dependencies: [Python](apps/backend/uv.lock), [web](apps/web/pnpm-lock.yaml) and [Compose images](compose.yaml). [Icon sources and licenses](docs/stack/README.md).
 
 ## Run locally
 
