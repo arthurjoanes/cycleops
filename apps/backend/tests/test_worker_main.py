@@ -67,6 +67,22 @@ def test_settings_refused(env: dict[str, str]) -> None:
         Settings.from_env(base | env)
 
 
+@pytest.mark.parametrize("quota", ["NaN", "inf", "-inf", "1e999", "0", "-1"])
+def test_settings_reject_non_finite_or_non_positive_quota(quota: str) -> None:
+    with pytest.raises(ConfigError, match="finite and above 0"):
+        Settings.from_env(
+            {"DATABASE_URL": "postgresql://w@db/cycleops", "CYCLEOPS_DB_QUOTA_MB": quota}
+        )
+
+
+@pytest.mark.parametrize("quota", ["0.5", "1024"])
+def test_settings_accept_positive_finite_quota(quota: str) -> None:
+    settings = Settings.from_env(
+        {"DATABASE_URL": "postgresql://w@db/cycleops", "CYCLEOPS_DB_QUOTA_MB": quota}
+    )
+    assert settings.quota_mb == float(quota)
+
+
 @pytest.mark.parametrize(
     "env",
     [

@@ -5,7 +5,7 @@
   <img src="docs/brand/cycleops-lockup.svg" alt="Marca CycleOps" width="288" height="64">
 </picture>
 
-Estações do Oslo Bysykkel sem bicicleta ou sem vaga, em ordem de prioridade, com o motivo e os dados usados no cálculo. Feed GBFS aberto, mapa de Oslo e replay de uma gravação real.
+O CycleOps lista estações do Oslo Bysykkel sem bicicleta ou sem vaga, em ordem de prioridade, com o motivo e os dados usados no cálculo. Usa o feed GBFS aberto, um mapa de Oslo e o replay de uma gravação real.
 
 [Read in English](README.en.md)
 
@@ -234,7 +234,7 @@ docker compose -p cycleops-live --env-file .env.live up --build
 
 Só uma pilha publica a porta 8080 por vez. Pare a anterior antes de trocar: `docker compose down` para a simulação ou `docker compose -p cycleops-live down` para o live. Use `--build` depois de mudar o código.
 
-Para abrir só o replay, precisa de Node 24 com corepack:
+Para abrir só o replay, use Node 24 com corepack:
 
 ```bash
 cd apps/web

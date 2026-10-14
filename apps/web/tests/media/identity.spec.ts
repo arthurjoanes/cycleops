@@ -24,7 +24,7 @@ test("identity: recorded mobile", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 800 });
   await openRecorded(page);
   await page.getByRole("button", { name: "Fechar" }).click();
-  await page.getByRole("tab", { name: "Mapa" }).click();
+  await page.getByRole("button", { name: "Mapa", exact: true }).click();
   await page.locator("canvas.maplibregl-canvas").waitFor();
   await page.waitForTimeout(1500);
   await page.screenshot({ path: fileURLToPath(new URL("identity-mobile.png", OUT)), fullPage: true });

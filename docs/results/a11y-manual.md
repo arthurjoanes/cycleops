@@ -61,7 +61,7 @@ Com o NVDA, no replay a 1×: no máximo um resumo a cada 10 s, sem narrar cada e
 
 ### 7. Alvos de toque
 
-Num telefone ou com a emulação de toque do navegador: botões, abas Lista e Mapa, linhas da fila e da lista, "Fechar" e o seletor de incidente têm pelo menos 24×24 px e não se sobrepõem.
+Num telefone ou com a emulação de toque do navegador: botões Lista e Mapa, demais botões, linhas da fila e da lista, "Fechar" e o seletor de incidente têm pelo menos 24×24 px e não se sobrepõem.
 
 | Resultado | Navegador | Leitor de tela | Data | Quem testou |
 |---|---|---|---|---|

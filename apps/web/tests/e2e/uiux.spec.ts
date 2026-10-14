@@ -50,7 +50,7 @@ for (const width of [1440, 768, 320]) {
     await page.goto(`./${paused}&station=537`);
     if (width < 768) {
       await page.getByRole("button", { name: "Fechar", exact: true }).click();
-      await page.getByRole("tab", { name: "Mapa", exact: true }).click();
+      await page.getByRole("button", { name: "Mapa", exact: true }).click();
     }
     await expect(page.getByRole("button", { name: "Continuar", exact: true })).toBeVisible();
     await page.evaluate(() => document.fonts.ready);
@@ -95,3 +95,26 @@ test("session information opens on demand and Escape restores its trigger", asyn
   await expect(page.getByTestId("publication")).toBeHidden();
   await expect(trigger).toBeFocused();
 });
+
+for (const width of [320, 390]) {
+  test(`view buttons expose their state and work with the keyboard at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(`./${paused}`);
+    const views = page.getByRole("group", { name: "Visão", exact: true });
+    const list = views.getByRole("button", { name: "Lista", exact: true });
+    const map = views.getByRole("button", { name: "Mapa", exact: true });
+    await expect(list).toHaveAttribute("aria-pressed", "true");
+    await list.focus();
+    await page.keyboard.press("Tab");
+    await expect(map).toBeFocused();
+    await expect(map).toHaveCSS("outline-style", "solid");
+    await page.keyboard.press("Enter");
+    await expect(map).toHaveAttribute("aria-pressed", "true");
+    await expect(list).toHaveAttribute("aria-pressed", "false");
+    await page.keyboard.press("Shift+Tab");
+    await expect(list).toBeFocused();
+    await page.keyboard.press("Space");
+    await expect(list).toHaveAttribute("aria-pressed", "true");
+    await expect(map).toHaveAttribute("aria-pressed", "false");
+  });
+}

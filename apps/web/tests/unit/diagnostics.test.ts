@@ -62,13 +62,17 @@ describe("replay diagnostics binding", () => {
     vi.stubGlobal("crypto", webcrypto);
     const content = JSON.stringify(body);
     const checksum = createHash("sha256").update(content).digest("hex");
+    const catalogText = JSON.stringify(catalog({ v1: [catalogStation("A")] }));
+    const eventText = JSON.stringify(event(1, []));
     const files: Record<string, BodyInit> = {
       "manifest.json": JSON.stringify(manifest({
         eventCount: 1,
+        catalogSha256: createHash("sha256").update(catalogText).digest("hex"),
+        eventsSha256: createHash("sha256").update(eventText).digest("hex"),
         ...(body ? { diagnosticsSha256: overrideHash ?? checksum } : {}),
       })),
-      "catalog.json": JSON.stringify(catalog({ v1: [catalogStation("A")] })),
-      "events.ndjson.gz": gzipSync(JSON.stringify(event(1, []))),
+      "catalog.json": catalogText,
+      "events.ndjson.gz": gzipSync(eventText),
       "diagnostics.json": content,
     };
     const fetch = vi.fn(async (url: string) => new Response(files[url.split("/").pop() ?? ""]));

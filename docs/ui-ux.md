@@ -13,7 +13,7 @@ O CycleOps concentra na tela principal o estado da fonte, as contagens da cidade
 | Mapa | Abrir uma estação pela posição. “Legenda” mostra os estados e símbolos usados. |
 | Rodapé | Consultar “Fontes e licenças”, com atribuições de Oslo Bysykkel e OpenStreetMap. |
 
-No celular, lista e mapa têm abas próprias. Os detalhes da estação abrem em uma gaveta. Ao fechar, o foco retorna à ação que abriu esses detalhes.
+No celular, “Lista” e “Mapa” são botões de um grupo de visualização; o botão pressionado indica a visão atual. Tab percorre os dois e Enter ou espaço ativa a escolha. Os detalhes da estação abrem em uma gaveta. Ao fechar, o foco retorna à ação que abriu esses detalhes.
 
 ## Controles do replay
 

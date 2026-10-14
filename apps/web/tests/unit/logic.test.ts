@@ -1,4 +1,5 @@
 import fixture from "@contracts/fixtures/sort-keys.json";
+import { createHash, webcrypto } from "node:crypto";
 import { gzipSync } from "node:zlib";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mainMessage, queueDimmed } from "../../src/app/screenState";
@@ -231,10 +232,17 @@ describe("contract validation", () => {
   describe("loadArtifact", () => {
     afterEach(() => vi.unstubAllGlobals());
     const serve = (events: ReturnType<typeof event>[], eventCount = events.length) => {
+      vi.stubGlobal("crypto", webcrypto);
+      const catalogText = JSON.stringify(catalog({ v1: [catalogStation("A")] }));
+      const eventText = events.map((e) => JSON.stringify(e)).join("\n");
       const files: Record<string, BodyInit> = {
-        "manifest.json": JSON.stringify(manifest({ eventCount })),
-        "catalog.json": JSON.stringify(catalog({ v1: [catalogStation("A")] })),
-        "events.ndjson.gz": gzipSync(events.map((e) => JSON.stringify(e)).join("\n")),
+        "manifest.json": JSON.stringify(manifest({
+          eventCount,
+          catalogSha256: createHash("sha256").update(catalogText).digest("hex"),
+          eventsSha256: createHash("sha256").update(eventText).digest("hex"),
+        })),
+        "catalog.json": catalogText,
+        "events.ndjson.gz": gzipSync(eventText),
       };
       vi.stubGlobal("fetch", async (url: string) => new Response(files[url.split("/").pop() ?? ""] ?? null));
     };

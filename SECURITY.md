@@ -8,7 +8,9 @@ Use o relato privado do GitHub, em Security > Report a vulnerability, no reposit
 
 A web só lê. Não tem login, cookie, analytics nem armazenamento no navegador; o estado da tela fica no hash da URL. A CSP limita as conexões à própria origem (`connect-src 'self'`).
 
-No Compose, a API e o worker guardam só logs técnicos em JSON (rota, status, duração, ids de evento, contagens, erro por categoria), sem payload, no driver `local` do Docker com o padrão dele: até 5 arquivos de 20 MB por container, e o mais antigo sai. O banco guarda dados do feed e o que o motor calcula: eventos por 24 h, observações, tentativas de coleta e incidentes encerrados por 7 dias, e o arquivo bruto do feed no live por 48 h, com teto de 500 MB. Não há dado de visitante: a API não grava IP nem user agent, e os limites por IP ficam só na memória do processo.
+No Compose, a API e o worker guardam só logs técnicos em JSON (rota, status, duração, ids de evento, contagens, erro por categoria), sem payload, no driver `local` do Docker com o padrão dele: até 5 arquivos de 20 MB por container, e o mais antigo sai. O banco guarda dados do feed e o que o motor calcula: eventos por 24 h, observações, tentativas de coleta e incidentes encerrados por 7 dias. Não há dado de visitante: a API não grava IP nem user agent, e os limites por IP ficam só na memória do processo.
+
+O arquivo bruto do live é dividido por hora. Ao abrir um novo arquivo, a limpeza remove arquivos anteriores com última escrita há mais de 48 horas e depois os mais antigos enquanto o conjunto ultrapassa 500 MiB. O arquivo em uso é preservado; por isso o volume pode passar desse valor entre rotações.
 
 A API é somente leitura e conecta com um papel que só tem SELECT. O PostgreSQL não publica porta, e a senha do superusuário fica só nos containers do banco e do `migrate`.
 

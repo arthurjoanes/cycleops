@@ -21,7 +21,7 @@ Como o CycleOps usa o feed:
 - toda requisição manda `Client-Identifier`, lido de `CYCLEOPS_CLIENT_IDENTIFIER`, como o operador pede;
 - uma requisição em voo por feed, na cadência do TTL, sem teste de carga contra o operador;
 - só um coletor por deployment: o worker do Compose live coleta com um lock no PostgreSQL, e as CLIs de coleta respeitam o mesmo lock quando rodam com `DATABASE_URL`, dentro do Compose; sem ela, não conferem o lock e o `record-feed` avisa no log;
-- no live, o worker guarda cada resposta num arquivo bruto (NDJSON com gzip, um arquivo por hora, 48 h e no máximo 500 MB), no volume `archive`, que não sai da máquina. Uma gravação para o replay sai desse arquivo com `record-feed --from-archive`, sem nova requisição;
+- no live, o worker guarda cada resposta num arquivo bruto (NDJSON com gzip, um arquivo por hora), no volume `archive`, que não sai da máquina. Ao abrir um arquivo, a limpeza remove os anteriores com última escrita há mais de 48 h e depois os mais antigos enquanto o conjunto ultrapassa 500 MiB; o arquivo ativo é preservado e pode passar desse valor entre rotações. Uma gravação para o replay sai desse arquivo com `record-feed --from-archive`, sem nova requisição;
 - as gravações em `fixtures/recorded/` são respostas do feed, uma linha por requisição, com o `NOTICE` da NLOD. O campo `station_area` é removido na gravação;
 - os resultados da coleta estão em `docs/results/feed-validation.md` e o teste curto do live em `docs/results/live-manual.md`.
 
