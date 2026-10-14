@@ -6,7 +6,9 @@ As imagens `cycleops-backend:local` e `cycleops-edge:local` são construídas lo
 
 ## Documentation icons
 
-The local SVGs in `docs/stack/` (Python, FastAPI, PostgreSQL, TypeScript, React and Docker) and `docs/contact/linkedin.svg` come from Devicon, commit `7330accdbc47e2dc0c19789a48533c4a3c50fe58`. Each SVG preserves its source URL in a comment. They use the same files as the author's other portfolio READMEs. Copyright (c) 2015 konpa; distributed under the [MIT license](docs/stack/LICENSE.devicon).
+The local SVGs in `docs/stack/` (Python, FastAPI, PostgreSQL, TypeScript, React, Vite and Docker) and `docs/contact/linkedin.svg` come from Devicon, commit `7330accdbc47e2dc0c19789a48533c4a3c50fe58`. Each SVG preserves its source URL in a comment. They use the same files as the author's other portfolio READMEs. Copyright (c) 2015 konpa; distributed under the [MIT license](docs/stack/LICENSE.devicon).
+
+`docs/stack/maplibre.svg` uses the MapLibre symbol from [Simple Icons 14.15.0](https://github.com/simple-icons/simple-icons/blob/5664507081ffb65b5a2a0ed2bf2ee2b3b327cb4e/icons/maplibre.svg), distributed under [CC0-1.0](docs/stack/LICENSE.simple-icons). The source comment records the pinned revision and original brand reference. The surrounding card layout is covered by this repository's [MIT license](LICENSE).
 
 ## Software
 

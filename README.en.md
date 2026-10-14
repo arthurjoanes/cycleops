@@ -200,6 +200,8 @@ The summary uses events from the entire recording. Rankings count only observed 
   <img src="docs/stack/postgresql.svg" alt="PostgreSQL" width="64" height="64">
   <img src="docs/stack/typescript.svg" alt="TypeScript" width="64" height="64">
   <img src="docs/stack/react.svg" alt="React" width="64" height="64">
+  <img src="docs/stack/vite.svg" alt="Vite" width="64" height="64">
+  <img src="docs/stack/maplibre.svg" alt="MapLibre GL" width="64" height="64">
   <img src="docs/stack/docker.svg" alt="Docker" width="64" height="64">
 </p>
 
@@ -311,4 +313,4 @@ Developed by Arthur Joanes. Get in touch to discuss open data, event delivery an
 
 Code under the [MIT license](LICENSE). Oslo Bysykkel data under NLOD 2.0 and the OpenStreetMap base under ODbL: [sources and attribution](DATA_SOURCES.md). Libraries and other licenses are listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-Stack and LinkedIn icons: [Devicon, MIT license](docs/stack/LICENSE.devicon).
+Devicon and Simple Icons: [sources and licenses](THIRD_PARTY_NOTICES.md#documentation-icons).

@@ -36,4 +36,4 @@ Espaçamento, alinhamento e contraste sustentam a leitura; o [guia da interface]
 
 A navegação do README reúne demo, arquitetura, execução, resultados e LinkedIn. Os rótulos identificam o destino e os SVGs ficam em `docs/readme/badges/`.
 
-A stack usa ícones Devicon locais de 64 × 64 px com texto alternativo; o contato usa LinkedIn de 24 × 24 px acompanhado do nome. As cores originais dos ícones são preservadas. A [licença MIT](../stack/LICENSE.devicon) acompanha os arquivos e cada SVG registra a origem.
+A stack usa ícones Devicon e o símbolo MapLibre do Simple Icons, locais e exibidos em 64 × 64 px com texto alternativo. O contato usa LinkedIn de 24 × 24 px acompanhado do nome. As cores originais dos ícones são preservadas. As [fontes e licenças](../../THIRD_PARTY_NOTICES.md#documentation-icons) identificam os símbolos Devicon, Simple Icons e o quadro próprio; cada SVG registra sua origem.
