@@ -26,7 +26,7 @@ Uma captura mostra a interface naquele estado. Resultados de coleta, testes e de
 
 - Manter as nove seções, os cinco atalhos de navegação e a marca com alternativa para fundo escuro.
 - Usar os SVGs locais da stack em 64 × 64 px, com texto alternativo, e o ícone de contato em 24 × 24 px junto ao nome. Preservar origem e licença.
-- Aplicar as cores de navegação e as regras de marca descritas em [Identidade visual](brand/README.md).
+- Seguir as regras de marca e legibilidade descritas em [Identidade visual](brand/README.md).
 - Manter capturas legíveis; imagens muito altas ficam como links. Diagramas de componentes ficam no README e sequências detalhadas em [Arquitetura](architecture.md).
 - Conferir links relativos, âncoras e imagens ao editar. Preservar âncoras antigas quando mudar títulos.
 - Não acrescentar testes, métricas, ferramentas ou serviços ao texto sem uma implementação ou um registro correspondente.
