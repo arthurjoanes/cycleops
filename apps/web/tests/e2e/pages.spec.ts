@@ -161,17 +161,17 @@ test("keyboard: open the details from the queue and get focus back on close", as
   await expect(row).toBeFocused();
 });
 
-test("narrow screen: tabs, drawer, and focus back after Escape", async ({ page }) => {
+test("narrow screen: view buttons, drawer, and focus back after Escape", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 800 });
   await open(page);
-  await expect(page.getByRole("tab", { name: "Lista" })).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByRole("button", { name: "Lista", exact: true })).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("button", { name: "Ir para o incidente" }).click();
   await expect(page.getByRole("dialog")).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toBeHidden();
   await expect(page.getByRole("button", { name: "Ir para o incidente" })).toBeFocused();
-  await page.getByRole("tab", { name: "Mapa" }).click();
-  await expect(page.getByRole("tab", { name: "Mapa" })).toHaveAttribute("aria-selected", "true");
+  await page.getByRole("button", { name: "Mapa", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Mapa", exact: true })).toHaveAttribute("aria-pressed", "true");
 });
 
 test("without WebGL the list still works", async ({ page }) => {

@@ -1,5 +1,6 @@
 """Raw archive of the live source: every attempt as a recording line (recordingSchema 1),
-in hourly NDJSON.gz files, kept 48 h and at most 500 MB.
+in hourly NDJSON.gz files. On rotation, prune older files by a 48-hour retention target
+and a 500 MiB size threshold, preserving the active file; this is not a hard disk quota.
 
 The hour of a file is the receivedAt hour of its lines. A restart within the hour opens a
 new file (raw-<hour>-1.ndjson.gz): appending to a file a crash left without its gzip

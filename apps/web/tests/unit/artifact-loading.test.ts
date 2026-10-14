@@ -1,10 +1,10 @@
 import { webcrypto } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { gunzipSync } from "node:zlib";
+import { gunzipSync, gzipSync } from "node:zlib";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { InvalidPayloadError } from "../../src/lib/contracts";
-import { loadArtifact } from "../../src/streams/artifact";
+import { InvalidPayloadError, validateReplayCatalog } from "../../src/lib/contracts";
+import { loadArtifact, parseEvents } from "../../src/streams/artifact";
 
 const base = resolve("public", "replay", "synthetic");
 const content = {
@@ -65,7 +65,46 @@ describe("artifact downloads", () => {
   it("refuses an invalid manifest before requesting any artifact files", async () => {
     const fetch = vi.fn(async () => Response.json({ schemaVersion: 2 }));
     vi.stubGlobal("fetch", fetch);
-    await expect(loadArtifact("synthetic")).rejects.toThrow(InvalidPayloadError);
+    await expect(loadArtifact("synthetic").then(() => undefined)).rejects.toThrow(InvalidPayloadError);
     expect(fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(["catalog", "events"] as const)("rejects schema-valid changes to %s before returning an artifact", async (changed) => {
+    vi.stubGlobal("crypto", webcrypto);
+    const catalog = content["catalog.json"].replace("Estação sintética 001", "Estação renomeada");
+    const events = gunzipSync(content["events.ndjson.gz"]).toString("utf8")
+      .replace(/"bikesAvailable":(\d+)/, (_match, count: string) => `"bikesAvailable":${Number(count) + 1}`);
+    expect(catalog).not.toBe(content["catalog.json"]);
+    expect(validateReplayCatalog(JSON.parse(catalog))).toBe(true);
+    expect(events).not.toBe(gunzipSync(content["events.ndjson.gz"]).toString("utf8"));
+    expect(parseEvents(events)).toHaveLength(JSON.parse(content["manifest.json"]).eventCount);
+    vi.stubGlobal("fetch", vi.fn(async (url: string) => {
+      const name = url.split("/").pop() as keyof typeof content;
+      if (name === "catalog.json" && changed === "catalog") return new Response(catalog);
+      if (name === "events.ndjson.gz" && changed === "events") return new Response(gzipSync(events));
+      return new Response(content[name]);
+    }));
+    await expect(loadArtifact("synthetic").then(() => undefined)).rejects.toThrow(InvalidPayloadError);
+  });
+
+  it.each([
+    ["catalog.json", false], ["catalog.json", true],
+    ["diagnostics.json", false], ["diagnostics.json", true],
+    ["events.ndjson.gz", false], ["events.ndjson.gz", true],
+  ] as const)("rejects an added UTF-8 BOM in %s, encoded=%s", async (changed, encoded) => {
+    vi.stubGlobal("crypto", webcrypto);
+    const bom = Buffer.from([0xef, 0xbb, 0xbf]);
+    vi.stubGlobal("fetch", vi.fn(async (url: string) => {
+      const name = url.split("/").pop() as keyof typeof content;
+      if (name === "events.ndjson.gz") {
+        const original = gunzipSync(content[name]);
+        const bytes = changed === name ? Buffer.concat([bom, original]) : original;
+        return new Response(encoded ? bytes : gzipSync(bytes), {
+          headers: encoded ? { "Content-Encoding": "gzip" } : {},
+        });
+      }
+      return new Response(changed === name ? Buffer.concat([bom, Buffer.from(content[name])]) : content[name]);
+    }));
+    await expect(loadArtifact("synthetic").then(() => undefined)).rejects.toThrow(InvalidPayloadError);
   });
 });

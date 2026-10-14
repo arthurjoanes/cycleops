@@ -184,13 +184,12 @@ export function App() {
         />
       </div>
       {narrow && (
-        <div className={styles.tabs} role="tablist" aria-label="Visão">
+        <div className={styles.tabs} role="group" aria-label="Visão">
           {(["list", "map"] as const).map((tab) => (
             <button
               key={tab}
               type="button"
-              role="tab"
-              aria-selected={hash.tab === tab}
+              aria-pressed={hash.tab === tab}
               className={ui.button}
               onClick={() => setHash({ tab })}
             >

@@ -5,7 +5,7 @@
   <img src="docs/brand/cycleops-lockup.svg" alt="CycleOps brand" width="288" height="64">
 </picture>
 
-Oslo Bysykkel stations with no bikes or no free docks, ordered by priority, with the reason and the data behind each decision. Open GBFS data, an Oslo map and a replay of a real recording.
+CycleOps lists Oslo Bysykkel stations with no bikes or no free docks, ordered by priority, with the reason and the data behind each decision. It uses open GBFS data, an Oslo map and a replay of a real recording.
 
 [Leia em português](README.md)
 
@@ -234,7 +234,7 @@ docker compose -p cycleops-live --env-file .env.live up --build
 
 Only one stack publishes port 8080 at a time. Stop the previous one before switching: `docker compose down` for simulation or `docker compose -p cycleops-live down` for live. Use `--build` after changing the code.
 
-The standalone replay needs Node 24 with corepack:
+To run the standalone replay, use Node 24 with corepack:
 
 ```bash
 cd apps/web

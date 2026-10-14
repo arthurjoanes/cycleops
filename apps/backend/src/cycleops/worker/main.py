@@ -12,6 +12,7 @@ holds another stream, 3 watchdog (a loop stalled).
 
 import asyncio
 import logging
+import math
 import os
 import signal
 import sys
@@ -95,8 +96,8 @@ class Settings:
             quota = float(get("CYCLEOPS_DB_QUOTA_MB") or 1024)
         except ValueError as exc:
             raise ConfigError(f"CYCLEOPS_SYNTHETIC_SEED / CYCLEOPS_DB_QUOTA_MB: {exc}") from exc
-        if quota <= 0:
-            raise ConfigError("CYCLEOPS_DB_QUOTA_MB must be above 0")
+        if not math.isfinite(quota) or quota <= 0:
+            raise ConfigError("CYCLEOPS_DB_QUOTA_MB must be finite and above 0")
         return cls(
             database_url=url,
             source="live" if source == "live" else "synthetic",

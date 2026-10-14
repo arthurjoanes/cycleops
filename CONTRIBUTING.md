@@ -7,7 +7,7 @@ CycleOps lists Oslo Bysykkel stations with no bikes or no docks, in priority ord
 - `apps/backend/`: Python package `cycleops` (uv, Ruff, mypy, pytest).
   - `collection/`: HTTP client, attempt classification, breaker and quarantine, polling loop, recording format.
   - `adapters/gbfs.py`: GBFS 2.3 validation and normalization. `adapters/synthetic.py`: seeded synthetic source and its scenarios.
-  - `domain/`: the engine. `step(state, input, policy) -> (state, events)`, pure, no I/O, no wall clock.
+  - `domain/`: the engine. `step(state, input, policy) -> (state, events)` is deterministic, performs no database/network access or system-clock reads, and updates the supplied state in place. It may emit diagnostic warnings through logging. Callers that need the previous state must copy it before calling `step`.
   - `application/replay.py`: compile-replay (recording or synthetic, through the engine, to events, catalog, manifest and diagnostics). `application/feed_diagnostics.py` aggregates attempts and publication outcomes for recordings and PostgreSQL queries.
   - `application/ingest.py`: one worker entry as one transaction (state, `event_log`, `feed_publications`, `pg_notify`).
   - `adapters/postgres/`: tables, connections and the advisory lock, StreamState load/save, read queries for the API (snapshot, history, feed-health, feed-diagnostics, events), purge.
