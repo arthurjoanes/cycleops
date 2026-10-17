@@ -91,6 +91,8 @@ sequenceDiagram
 
 O snapshot e o stream podem observar commits diferentes. A inscrição na fila antes da leitura do head permite recuperar o intervalo pelo banco e depois consumir o que chegou durante a consulta, descartando eventos já enviados. Nenhuma conexão SSE mantém uma sessão de banco aberta durante toda sua duração.
 
+A substituição por limite de IP só encerra a conexão anterior depois de conferir a capacidade da instância. Se uma resposta antiga ainda estiver drenando e a nova tentativa receber `capacity`, a conexão atual continua entregando eventos.
+
 ## Motor compartilhado e contratos
 
 | Fronteira | Responsabilidade | Implementação |

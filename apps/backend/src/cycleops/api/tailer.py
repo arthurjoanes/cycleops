@@ -130,13 +130,13 @@ class Hub:
             return client
         same = [c for c in self.clients if c.ip == ip and c.end is None]
         replaced = same[: max(0, len(same) + 1 - self.per_ip)]
-        for old in replaced:
-            self._close(old, "superseded")
-        # What it replaces is on its way out: over its own IP limit a connection is never
-        # refused.
+        # A draining response still occupies capacity. Refusing a replacement must
+        # leave its current connection open until another response releases a slot.
         if len(self.clients) - len(replaced) >= self.per_instance:
             client.end = "capacity"
             return client
+        for old in replaced:
+            self._close(old, "superseded")
         self.clients.append(client)
         return client
 

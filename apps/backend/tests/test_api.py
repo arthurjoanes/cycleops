@@ -119,6 +119,20 @@ def test_queue_over_200_messages_overflows() -> None:
     assert fast.end is None and [f.sequence for f in fast.frames] == [201]
 
 
+def test_rejected_replacement_keeps_the_current_connection_open() -> None:
+    hub = Hub(per_ip=1, per_instance=1)
+    draining = hub.register("a")
+    current = hub.register("a")
+    assert draining.end == "superseded" and current.end is None
+
+    rejected = hub.register("a")
+
+    assert rejected.end == "capacity" and rejected not in hub.clients
+    assert current.end is None
+    hub.publish(frames(1))
+    assert [item.sequence for item in current.frames] == [1]
+
+
 def test_queue_over_4_mib_overflows() -> None:
     hub = Hub(per_ip=4, per_instance=10)
     client = hub.register("a")
