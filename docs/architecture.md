@@ -153,6 +153,8 @@ A série da cidade guarda até 120 pontos de eventos aceitos e usa as mesmas con
 
 No replay, o compilador gera `diagnostics.json` a partir das tentativas da gravação. O loader valida contrato, SHA-256, fluxo, modo e período contra o manifesto. Manifestos antigos sem `diagnosticsSha256` continuam reproduzíveis e informam que o relatório não está disponível. No stream, “Qualidade do feed” consulta `GET /api/v1/feed-diagnostics` pelo Caddy: seis horas por padrão, janela `from`/`to` de até 24 horas. A API lê `feed_publications` com o papel somente leitura e usa o mesmo limite REST por IP.
 
+Histórico e diagnóstico validam a duração por diferença entre os instantes, inclusive no limite do calendário. Um `to` que não comporta as seis horas padrão retorna 422; a consulta não chega ao banco.
+
 O [guia de exploração](explorar-dados.md) descreve os controles e denominadores. O [ADR 0006](adr/0006-exploracao-e-diagnostico.md) registra as decisões dessa análise. O [registro da revisão](results/exploracao-20261011.md) reúne os comandos e as capturas da interface.
 
 ## Processos

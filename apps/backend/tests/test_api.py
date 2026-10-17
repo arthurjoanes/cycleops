@@ -16,11 +16,12 @@ from typing import Any
 
 import httpx
 import pytest
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.routing import APIRoute
 
 from cycleops import aio
 from cycleops.api import __main__ as api_main
+from cycleops.api import routes
 from cycleops.api.app import Settings, create_app
 from cycleops.api.stream import Latency, message, parse_cursor, report_latency
 from cycleops.api.tailer import MAX_EVENT_BYTES, Frame, Hub, frame
@@ -330,6 +331,30 @@ def test_error_format_and_request_id() -> None:
             assert_error(r, 422, "invalid_request")
             r = await http.get("/api/v1/feed-diagnostics", params={"from": "2026-10-08T10:00"})
             assert_error(r, 422, "invalid_request")
+
+    run(go)
+
+
+@pytest.mark.parametrize("path", ["/api/v1/stations/100/history", "/api/v1/feed-diagnostics"])
+@pytest.mark.parametrize(
+    ("window", "status"),
+    [
+        ({"to": "0001-01-01T00:00:00Z"}, 422),
+        ({"from": "9999-12-31T00:00:00Z", "to": "9999-12-31T01:00:00Z"}, 503),
+    ],
+)
+def test_date_boundaries_do_not_overflow(
+    monkeypatch: pytest.MonkeyPatch, path: str, window: dict[str, str], status: int
+) -> None:
+    def unavailable(request: Request) -> None:
+        raise HTTPException(503, "test database unavailable")
+
+    monkeypatch.setattr(routes, "_engine", unavailable)
+
+    async def go() -> None:
+        async with client(create_app(Settings(DEAD))) as http:
+            response = await http.get(path, params=window)
+            assert_error(response, status, "invalid_request" if status == 422 else "unavailable")
 
     run(go)
 

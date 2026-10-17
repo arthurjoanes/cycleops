@@ -26,6 +26,17 @@ def _json(model: Contract) -> Response:
     return Response(model.model_dump_json(), media_type="application/json")
 
 
+def _window(start: datetime | None, end: datetime | None) -> tuple[datetime, datetime]:
+    end = end or datetime.now(UTC)
+    try:
+        start = start or end - DEFAULT_WINDOW
+    except OverflowError as exc:
+        raise HTTPException(422, "to cannot represent the default 6 h window") from exc
+    if not start < end or end - start > MAX_WINDOW:
+        raise HTTPException(422, "from must be before to, at most 24 h apart")
+    return start, end
+
+
 async def live() -> dict[str, str]:
     return {"status": "ok"}
 
@@ -52,10 +63,7 @@ async def history(
     end: Annotated[AwareDatetime | None, Query(alias="to")] = None,
 ) -> Response:
     """Default: the last 6 h up to now. At most 24 h."""
-    end = end or datetime.now(UTC)
-    start = start or end - DEFAULT_WINDOW
-    if not start < end <= start + MAX_WINDOW:
-        raise HTTPException(422, "from must be before to, at most 24 h apart")
+    start, end = _window(start, end)
     async with _engine(request).connect() as conn:
         stream_id = await queries.active_stream(conn)
         if stream_id is None:
@@ -79,10 +87,7 @@ async def feed_diagnostics(
     start: Annotated[AwareDatetime | None, Query(alias="from")] = None,
     end: Annotated[AwareDatetime | None, Query(alias="to")] = None,
 ) -> Response:
-    end = end or datetime.now(UTC)
-    start = start or end - DEFAULT_WINDOW
-    if not start < end <= start + MAX_WINDOW:
-        raise HTTPException(422, "from must be before to, at most 24 h apart")
+    start, end = _window(start, end)
     async with _engine(request).connect() as conn:
         found = await queries.feed_diagnostics(conn, start, end)
     if found is None:
