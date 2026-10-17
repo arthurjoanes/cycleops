@@ -5,7 +5,7 @@
 Os workflows estão em `.github/workflows/`:
 
 - `ci.yml`: backend (ruff, mypy, `migrate` a partir do zero, pytest com integração num PostgreSQL de service container, `generate-artifacts --check`), web (lint, typecheck, Vitest, build do Pages, `check:bundle`, Playwright sob `/cycleops/`), Compose sintético sem internet (smoke, saída do worker bloqueada e o E2E do Compose), checagem de texto e gitleaks. Roda em PR e em push na `main`.
-- `pages.yml`: build e deploy do Pages. Roda depois de um `ci` verde em push na `main`, ou à mão.
+- `pages.yml`: build e deploy do Pages, somente por execução manual na `main`. Confira o `ci` do commit escolhido antes de publicar.
 - `feed-check.yml`: `inspect-feed` com 5 requisições, só à mão e só em `arthurjoanes/cycleops`.
 
 Nenhum deles precisa de secret.
@@ -64,7 +64,7 @@ Uma gravação futura que substitua a demo precisa passar no aceite e caber no l
   git push -u origin main
   ```
 
-- [x] Ver o `ci` rodar em Actions: backend com integração, web, Compose sem internet, checagem de texto e gitleaks. Com ele verde, o `pages` roda sozinho; o primeiro deploy cria o environment `github-pages`.
+- [x] Ver o `ci` rodar em Actions: backend com integração, web, Compose sem internet, checagem de texto e gitleaks. Depois de conferir o resultado do commit, publique por Actions > pages > Run workflow, na `main`. O primeiro deploy cria o environment `github-pages`.
 - [x] Abrir https://arthurjoanes.github.io/cycleops/ e conferir: o replay carrega (no DevTools, `events.ndjson.gz` chega como `application/gzip`, sem `Content-Encoding`), o mapa aparece com as estações e o console não mostra violação de CSP.
 - [x] Pôr no `README.md` e no `README.en.md` o link da demo e o badge de CI, depois do primeiro CI verde:
 

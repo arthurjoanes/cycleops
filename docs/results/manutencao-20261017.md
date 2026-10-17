@@ -37,3 +37,11 @@ Comandos da raiz; web executada em `apps/web`.
 A leitura manual cobriu limites e allowlist HTTP, prazo e tamanho de resposta, rate limit REST, cursor e filas SSE, papel somente leitura da API, transação de ingestão, validação dos artefatos e CSP. Isso não substitui uma execução do scanner Codex Security. A busca por formatos de chaves privadas e tokens não encontrou correspondências nos fontes pesquisados.
 
 O daemon Linux do Docker estava indisponível (`dockerDesktopLinuxEngine` ausente). As 58 integrações PostgreSQL e o E2E Compose ficaram pendentes. O build manteve o aviso de chunks maiores que 500 kB; o limite separado do bundle inicial passou. A instalação do Chrome completo pelo CDN expirou, mas o Chromium headless já disponível executou os 30 E2E.
+
+## Segunda rodada
+
+Base `702fbdd`. A revisão aprofundou admissão e filas SSE, além da retenção do arquivo bruto e do banco. Uma tentativa de substituir o stream atual podia encerrá-lo antes de descobrir que faltava capacidade para aceitar a nova conexão. O novo teste reproduziu a falha; a admissão agora recusa a tentativa sem interromper o stream atual.
+
+`python -m uv run --project apps/backend pytest apps/backend` terminou com 317 testes passando e 58 integrações ignoradas sem PostgreSQL. Ruff e formato passaram nos 81 arquivos; mypy passou nos 77 fontes. A seleção dos quatro casos de limites e substituição também passou. Retenção continua preservando o arquivo ativo e incidentes abertos; não houve mudança nessa política.
+
+Os três workflows foram lidos e seus YAMLs analisados localmente. O Pages passou a aceitar somente execução manual na `main`; o CI do push não publica o site. A condição de repositório e branch continua no job de build. Nenhuma publicação foi executada nesta rodada.
