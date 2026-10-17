@@ -79,4 +79,6 @@ Capturas: [desktop](../media/uiux-desktop.png), [tablet](../media/uiux-tablet.pn
 
 ## Pendente
 
+Manutenção local: [17/10/2026](manutencao-20261017.md), correção de datas da API, patches de Vite/Vitest e comandos executados sobre `6343194`.
+
 - A coleta de dia e de outras redes está em "Coleta pendente", em `feed-validation.md`. A gravação longa da demo passou no aceite e já tem artefato.
