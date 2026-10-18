@@ -37,15 +37,17 @@ This is a portfolio project using open data. The public demo uses a real recordi
 
 [Open the demo](https://arthurjoanes.github.io/cycleops/) · Recorded replay, no login.
 
-![CycleOps playing a real recording: Oslo map, priority stations and availability indicators](docs/media/uiux-desktop.png)
+![CycleOps playing a real recording: Oslo map, priority stations and availability indicators](docs/media/availability-desktop.png)
 
-Captured on 2026-10-12 with Playwright against the Pages build. The period and timestamps belong to the real recording. [Mobile](docs/media/uiux-mobile.png) · [Tablet](docs/media/uiux-tablet.png) · [Recording and acceptance](docs/results/feed-validation.md).
+Captured on 2026-10-17 in a local browser against the Pages build. The period and timestamps belong to the real recording. [Mobile](docs/media/availability-mobile.png) · [Recording and acceptance](docs/results/feed-validation.md).
 
 Choose a time on the timeline or use “Ir para o incidente”. “Incidentes” opens confirmation and resolution markers. The link icon copies the station and time with playback paused.
 
-The chart button opens “Analisar dados”: observed time without bikes or docks per station, indicator trends and collection quality. On the main page, counts sit alongside the map; session details and legends open on demand.
+In “Analisar dados”, compare observed time without bikes or docks per station across the entire recording, its first 15 or 30 minutes and its final 15 minutes. Indicator trends and collection quality have their own tabs.
 
-![Recording analysis: observed duration, incidents and availability rankings](docs/media/uiux-analysis.png)
+![First 30 minutes: coverage and observed availability per station](docs/media/availability-analysis-desktop.png)
+
+[Mobile analysis](docs/media/availability-analysis-mobile.png) · [Period analysis notes](docs/results/availability-period-20261017.md).
 
 [How to explore the data](docs/explorar-dados.md) · [Interface and navigation](docs/ui-ux.md) · [Interface review](docs/results/uiux-20261012.md).
 

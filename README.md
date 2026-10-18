@@ -37,19 +37,21 @@ O motor confirma a falta ao longo de publicações do feed e acompanha sua resol
 
 [Abrir demo no navegador](https://arthurjoanes.github.io/cycleops/) · Replay gravado, sem login.
 
-![CycleOps no replay gravado: mapa de Oslo, estações prioritárias e indicadores de disponibilidade](docs/media/uiux-desktop.png)
+![CycleOps no replay gravado: mapa de Oslo, estações prioritárias e indicadores de disponibilidade](docs/media/availability-desktop.png)
 
-Captura de 12/10/2026, feita com Playwright no build do Pages. O período e os horários exibidos pertencem à gravação real. [Celular](docs/media/uiux-mobile.png) · [Tablet](docs/media/uiux-tablet.png) · [Gravação e aceite](docs/results/feed-validation.md).
+Captura de 17/10/2026, feita no navegador local sobre o build do Pages. O período e os horários pertencem à gravação real. [Celular](docs/media/availability-mobile.png) · [Gravação e aceite](docs/results/feed-validation.md).
 
 Escolha um horário na linha do tempo ou use “Ir para o incidente”. “Incidentes” abre os marcos de confirmação e resolução. O ícone de link copia a estação e o horário, com o replay pausado.
 
-O botão de gráfico abre “Analisar dados”: tempo observado sem bicicletas ou vagas por estação, evolução dos indicadores e qualidade da coleta. Na tela principal, as contagens acompanham o mapa; detalhes da sessão e legendas ficam em painéis expansíveis.
+Em “Analisar dados”, compare o tempo sem bicicletas ou vagas por estação na gravação inteira, nos primeiros 15 ou 30 minutos e nos 15 minutos finais. A evolução dos indicadores e a qualidade da coleta têm suas próprias abas.
 
-![Análise da gravação: duração observada, incidentes e rankings de disponibilidade](docs/media/uiux-analysis.png)
+![Análise dos primeiros 30 minutos com cobertura e tempo observado por estação](docs/media/availability-analysis-desktop.png)
+
+[Análise no celular](docs/media/availability-analysis-mobile.png) · [Consulta por período](docs/results/availability-period-20261017.md).
 
 [Como explorar os dados](docs/explorar-dados.md) · [Interface e navegação](docs/ui-ux.md) · [Revisão da interface](docs/results/uiux-20261012.md).
 
-Na gravação de 09/10/2026, o motor produziu estes eventos. Os links abrem os instantes registrados, no horário de Oslo:
+Na gravação de 10/10/2026 em Oslo, o motor produziu estes eventos. Os links abrem os instantes registrados nesse fuso:
 
 | Estação e condição | Confirmação | Resolução |
 |---|---|---|

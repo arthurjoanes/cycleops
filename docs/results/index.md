@@ -77,6 +77,10 @@ Capturas: [desktop](../media/uiux-desktop.png), [tablet](../media/uiux-tablet.pn
 
 110 testes unitários web, 28 cenários de navegação e quatro capturas passaram. Bundle inicial: 125.599 bytes gzip no Pages e 125.941 no servidor, com teto de 127.026. Medianas de laboratório: LCP 6.004 ms, CLS 0,000 e INP 152 ms; LCP segue acima da meta nessa rede emulada. [Web Vitals](data/web-vitals-uiux-final-20261012.json) · [Carga](data/frontend-load-uiux-20261012.json) · [Comparação dos contratos](data/contract-validation-parity-20261012.json).
 
+## Disponibilidade por período em 2026-10-17
+
+Consulta de disponibilidade por período: [17/10/2026](availability-period-20261017.md), código `d78400d`, 122 testes unitários web, 31 cenários de navegação e quatro capturas reais. Os comandos e limites estão no relatório.
+
 ## Pendente
 
 Manutenção local: [17/10/2026](manutencao-20261017.md), correção de datas da API, patches de Vite/Vitest e comandos executados sobre `6343194`.

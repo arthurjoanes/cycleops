@@ -30,7 +30,9 @@ As posições seguem o tempo decorrido, inclusive durante falhas da fonte e fech
 
 ## Ler o resumo
 
-Na faixa de indicadores, use o ícone de gráfico, “Analisar dados”, e abra “Resumo da gravação”. O relatório usa a gravação inteira, independentemente do ponto em que o player está pausado. Ele mostra a duração, incidentes confirmados e resolvidos e os períodos com fonte válida, sem dados ou com o serviço fechado.
+Na faixa de indicadores, use o ícone de gráfico, “Analisar dados”, e abra “Resumo da gravação”. Em “Período observado”, escolha a gravação inteira, os primeiros 15 ou 30 minutos ou os 15 minutos finais. Os limites aparecem no fuso selecionado. O recorte atualiza os tempos e rankings sem mover o replay.
+
+A barra de tempo da fonte separa dado válido, lacuna e serviço fechado, com durações textuais ao lado. Os contadores registram confirmações e resoluções dentro do recorte. A lista também inclui incidentes iniciados antes dele; resoluções posteriores aparecem como “Após o recorte”. A duração conhecida continua sendo a diferença entre os eventos do motor. Fechar a análise restaura a gravação inteira na próxima abertura.
 
 O ranking soma o tempo observado com zero bicicletas ou zero vagas físicas por estação. Um intervalo só entra quando a fonte e o registro da estação permitem verificar aquela contagem. Vagas desconhecidas, estações fora do cadastro e períodos sem dados ficam fora do denominador; fechamento é apresentado à parte.
 
