@@ -44,6 +44,37 @@ function timedRecording() {
 }
 
 describe("replay observation report", () => {
+  it("clips an initial interval without counting the state after its end", () => {
+    const report = replayReport(timedRecording(), {from:Date.parse(iso(10)),to:Date.parse(iso(20))});
+    expect(report.durationMs).toBe(10_000);
+    expect([report.sourceValidMs,report.sourceGapMs,report.sourceClosedMs]).toEqual([10_000,0,0]);
+    expect(report.stations.find(row=>row.stationId==='A')).toMatchObject({emptyMs:10_000,validMs:10_000,gapMs:0});
+  });
+  it("clips to final minutes using the state already present before the window", () => {
+    const report = replayReport(timedRecording(), {from:Date.parse(iso(30)),to:Date.parse(iso(60))});
+    expect(report.from).toBe(Date.parse(iso(30)));
+    expect(report.durationMs).toBe(30_000);
+    expect([report.sourceValidMs, report.sourceGapMs, report.sourceClosedMs]).toEqual([20_000, 0, 10_000]);
+    expect(report.stations.find(row => row.stationId === "A")).toMatchObject({catalogMs:30_000,validMs:10_000,gapMs:10_000,closedMs:10_000,emptyMs:0});
+    expect(report.stations.find(row => row.stationId === "B")).toMatchObject({validMs:20_000,fullMs:20_000,closedMs:10_000});
+  });
+
+  it("counts confirmations and resolutions in the window while retaining an earlier open incident", () => {
+    const recording = timedRecording();
+    recording.manifest.incidents = [
+      {incidentId:"earlier",stationId:"A",kind:"pickup_unavailable",confirmedOffsetSeconds:0,confirmedSequence:1,resolvedOffsetSeconds:30,resolvedSequence:4},
+      {incidentId:"closed",stationId:"B",kind:"return_unavailable",confirmedOffsetSeconds:0,confirmedSequence:1,resolvedOffsetSeconds:10,resolvedSequence:2},
+      {incidentId:"open",stationId:"B",kind:"return_unavailable",confirmedOffsetSeconds:40,confirmedSequence:5,resolvedOffsetSeconds:null,resolvedSequence:null},
+    ];
+    const report = replayReport(recording,{from:Date.parse(iso(30)),to:Date.parse(iso(60))});
+    expect([report.confirmed,report.resolved]).toEqual([1,1]);
+    expect(report.incidents.map(row=>row.incidentId)).toEqual(["earlier","open"]);
+    expect(report.incidents[0]?.elapsedMs).toBe(30_000);
+    expect(replayReport(recording,{from:Date.parse(iso(-900)),to:Date.parse(iso(900))}).durationMs).toBe(60_000);
+    expect(()=>replayReport(recording,{from:0,to:0})).toThrow(RangeError);
+    expect(()=>replayReport(recording,{from:NaN,to:Date.parse(iso(60))})).toThrow(RangeError);
+  });
+
   it("cuts source gaps, station gaps and closed time, including the end of the manifest", () => {
     const report = replayReport(timedRecording());
     expect(report.durationMs).toBe(60_000);
@@ -207,7 +238,18 @@ describe("analysis views", () => {
     expect(within(empty).getByText("50,0%")).toBeInTheDocument();
     fireEvent.click(within(empty).getByRole("button", { name: "Station A" }));
     expect(select).toHaveBeenCalledWith("A");
-    expect(screen.getByText(/Os números cobrem todo esse período/)).toBeInTheDocument();
+    expect(screen.getByRole("combobox",{name:"Período observado"})).toHaveValue("all");
+  });
+
+  it("updates the observation window without moving playback or treating closed time as coverage", () => {
+    const recording = timedRecording();
+    recording.manifest.periodEnd = iso(1200);
+    render(<ReplaySummary artifact={recording} zone="oslo" onSelectStation={vi.fn()} />);
+    fireEvent.change(screen.getByRole("combobox",{name:"Período observado"}),{target:{value:"last15"}});
+    const duration = screen.getByText("Duração").parentElement;
+    expect(duration).toHaveTextContent("15 min");
+    expect(screen.getByRole("img",{name:/Tempo da fonte:/})).toHaveAccessibleName(/0 s válido, 0 s sem dado verificável, 15 min fechado/);
+    expect(screen.getByText("Cobertura do período aberto").parentElement).toHaveTextContent("—");
   });
 
   it("provides a table alternative and uses dashes in source gaps", () => {

@@ -69,14 +69,22 @@ export function ReplaySummary(props: {
   onSelectStation: (id: string) => void;
 }) {
   const { artifact, zone, onSelectStation } = props;
-  const report = useMemo(() => replayReport(artifact), [artifact]);
+  const [period, setPeriod] = useState("all");
+  const report = useMemo(() => {
+    const from = Date.parse(artifact.manifest.periodStart);
+    const to = Date.parse(artifact.manifest.periodEnd);
+    const window = period === "all" ? undefined
+      : period === "last15" ? { from: to - 900_000, to }
+      : { from, to: from + Number(period) * 60_000 };
+    return replayReport(artifact, window);
+  }, [artifact, period]);
   const empty = useMemo(() => observationRanking(report.stations, "empty"), [report]);
   const full = useMemo(() => observationRanking(report.stations, "full"), [report]);
   const [allIncidents, setAllIncidents] = useState(false);
   const [allCoverage, setAllCoverage] = useState(false);
   const openStationMs = report.stationValidMs + report.stationGapMs;
   const coverage = percent(report.stationValidMs, openStationMs);
-  const resolved = useMemo(() => report.incidents.filter((incident) => incident.resolvedAt !== null), [report]);
+  const resolved = useMemo(() => report.incidents.filter((incident) => incident.resolvedAt !== null && incident.resolvedAt <= report.to), [report]);
   const incidents = allIncidents ? report.incidents : resolved;
   return (
     <div className={styles.summary}>
@@ -85,16 +93,32 @@ export function ReplaySummary(props: {
         <p className={styles.period}>
           {formatDate(report.from, zone)}, {formatTime(report.from, zone, true)} até {formatDate(report.to, zone)}, {formatTime(report.to, zone, true)}.
         </p>
-        <p>Os números cobrem todo esse período, independente da posição do replay.</p>
+        <label className={styles.periodControl}>Período observado
+          <select value={period} onChange={event => setPeriod(event.target.value)}>
+            <option value="all">{artifact.manifest.mode === "synthetic" ? "Simulação inteira" : "Gravação inteira"}</option>
+            <option value="15">Primeiros 15 minutos</option>
+            <option value="30">Primeiros 30 minutos</option>
+            <option value="last15">15 minutos finais</option>
+          </select>
+        </label>
       </div>
       <dl className={styles.metrics}>
         <div><dt>Duração</dt><dd>{formatObservedDuration(report.durationMs)}</dd></div>
-        <div><dt>Incidentes confirmados</dt><dd>{report.confirmed}</dd></div>
-        <div><dt>Incidentes resolvidos</dt><dd>{report.resolved}</dd></div>
+        <div><dt>{period === "all" ? "Incidentes confirmados" : "Confirmações no recorte"}</dt><dd>{report.confirmed}</dd></div>
+        <div><dt>{period === "all" ? "Incidentes resolvidos" : "Resoluções no recorte"}</dt><dd>{report.resolved}</dd></div>
         <div><dt>Cobertura do período aberto</dt><dd>{coverage}</dd></div>
       </dl>
       <section className={styles.section}>
         <h4>Tempo da fonte</h4>
+        <div key={period} className={styles.sourceBar} role="img" aria-label={`Tempo da fonte: ${formatObservedDuration(report.sourceValidMs)} válido, ${formatObservedDuration(report.sourceGapMs)} sem dado verificável, ${formatObservedDuration(report.sourceClosedMs)} fechado. Valores abaixo.`}>
+          {[
+            { duration: report.sourceValidMs, className: styles.valid },
+            { duration: report.sourceGapMs, className: styles.gap },
+            { duration: report.sourceClosedMs, className: styles.closed },
+          ].map(({ duration, className }) => (
+            <span key={className} className={className} style={{ width: `${report.durationMs ? duration / report.durationMs * 100 : 0}%` }} />
+          ))}
+        </div>
         <dl className={styles.sourceTimes}>
           <div><dt>Com dado válido</dt><dd>{formatObservedDuration(report.sourceValidMs)}</dd></div>
           <div><dt>Sem dado verificável</dt><dd>{formatObservedDuration(report.sourceGapMs)}</dd></div>
@@ -114,6 +138,7 @@ export function ReplaySummary(props: {
             Estações virtuais e capacidade de devolução desconhecida ficam fora do ranking de vagas.
             A fila de prioridades mantém as confirmações e regras do motor.
           </p>
+          <p>O período selecionado não move o replay. Incidentes iniciados antes do recorte permanecem na lista; resoluções posteriores aparecem como “Após o recorte”.</p>
         </div>
       </details>
       <div className={styles.rankings}>
@@ -121,10 +146,10 @@ export function ReplaySummary(props: {
         <Ranking rows={full} kind="full" onSelectStation={onSelectStation} />
       </div>
       <section className={styles.section}>
-        <h4>{allIncidents ? "Incidentes confirmados" : "Incidentes resolvidos"}</h4>
+        <h4>{allIncidents ? "Incidentes no período" : "Incidentes resolvidos"}</h4>
         <p>Tempo entre a confirmação e a resolução registradas pelo motor.</p>
         {incidents.length ? (
-          <div className={styles.tableWrap} role="region" aria-label="Incidentes da gravação" tabIndex={0}>
+          <div className={styles.tableWrap} role="region" aria-label="Incidentes no período" tabIndex={0}>
             <table className={styles.table}>
               <thead><tr>
                 <th scope="col">Estação</th><th scope="col">Tipo</th><th scope="col">Confirmação</th>
@@ -135,8 +160,8 @@ export function ReplaySummary(props: {
                   <th scope="row"><button type="button" className={styles.station} onClick={() => onSelectStation(incident.stationId)}>{incident.name}</button></th>
                   <td>{incident.kind === "pickup_unavailable" ? "Sem bicicletas" : "Sem vagas"}</td>
                   <td>{formatTime(incident.confirmedAt, zone, true)}</td>
-                  <td>{incident.resolvedAt === null ? "Sem resolução registrada" : formatTime(incident.resolvedAt, zone, true)}</td>
-                  <td>{incident.elapsedMs === null ? "—" : formatObservedDuration(incident.elapsedMs)}</td>
+                  <td>{incident.resolvedAt === null ? "Sem resolução registrada" : incident.resolvedAt > report.to ? "Após o recorte" : formatTime(incident.resolvedAt, zone, true)}</td>
+                  <td>{incident.elapsedMs === null || (incident.resolvedAt !== null && incident.resolvedAt > report.to) ? "—" : formatObservedDuration(incident.elapsedMs)}</td>
                 </tr>
               ))}</tbody>
             </table>
@@ -144,7 +169,7 @@ export function ReplaySummary(props: {
         ) : <p>Nenhum incidente teve resolução registrada neste período.</p>}
         {report.incidents.length > resolved.length ? (
           <button type="button" className={styles.expand} aria-expanded={allIncidents} onClick={() => setAllIncidents((value) => !value)}>
-            {allIncidents ? "Mostrar apenas resolvidos" : `Ver todos os confirmados (${report.confirmed})`}
+            {allIncidents ? "Mostrar apenas resolvidos" : `Ver todos no período (${report.incidents.length})`}
           </button>
         ) : null}
       </section>

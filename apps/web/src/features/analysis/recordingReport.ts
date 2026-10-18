@@ -47,9 +47,15 @@ function stationValid(state: StationState | undefined): state is StationState {
 }
 
 /** Integrates the states between commits. Only the event engine defines gaps and closure. */
-export function replayReport(artifact: Artifact): ReplayReport {
-  const from = Date.parse(artifact.manifest.periodStart);
-  const to = Date.parse(artifact.manifest.periodEnd);
+export function replayReport(artifact: Artifact, window?: { from: number; to: number }): ReplayReport {
+  if (window && (!Number.isFinite(window.from) || !Number.isFinite(window.to) || window.from >= window.to)) {
+    throw new RangeError("O recorte precisa ter limites válidos e duração positiva.");
+  }
+  const start = Date.parse(artifact.manifest.periodStart);
+  const end = Date.parse(artifact.manifest.periodEnd);
+  const from = Math.max(start, window?.from ?? start);
+  const to = Math.min(end, window?.to ?? end);
+  if (window && from >= to) throw new RangeError("O recorte precisa intersectar a gravação.");
   const report: ReplayReport = {
     from,
     to,
@@ -60,8 +66,8 @@ export function replayReport(artifact: Artifact): ReplayReport {
     stationValidMs: 0,
     stationGapMs: 0,
     stationClosedMs: 0,
-    confirmed: artifact.manifest.incidents.length,
-    resolved: artifact.manifest.incidents.filter((incident) => incident.resolvedSequence !== null).length,
+    confirmed: 0,
+    resolved: 0,
     stations: [],
     incidents: [],
   };
@@ -136,7 +142,7 @@ export function replayReport(artifact: Artifact): ReplayReport {
   report.stations = [...rows.values()];
   const eventTimes = new Map(artifact.events.map((event) => [event.sequence, Date.parse(event.committedAt)]));
   // Manifest offsets start at the first commit, which can follow the recording start.
-  const incidentOrigin = artifact.events[0] ? Date.parse(artifact.events[0].committedAt) : from;
+  const incidentOrigin = artifact.events[0] ? Date.parse(artifact.events[0].committedAt) : start;
   report.incidents = artifact.manifest.incidents.map((incident: ManifestIncident) => {
     const confirmedAt = eventTimes.get(incident.confirmedSequence) ?? incidentOrigin + incident.confirmedOffsetSeconds * 1000;
     const resolvedAt = incident.resolvedOffsetSeconds === null || incident.resolvedSequence === null
@@ -151,7 +157,9 @@ export function replayReport(artifact: Artifact): ReplayReport {
       resolvedAt,
       elapsedMs: resolvedAt === null ? null : Math.max(0, resolvedAt - confirmedAt),
     };
-  });
+  }).filter(incident => incident.confirmedAt <= to && (incident.resolvedAt === null || incident.resolvedAt >= from));
+  report.confirmed = report.incidents.filter(incident => incident.confirmedAt >= from).length;
+  report.resolved = report.incidents.filter(incident => incident.resolvedAt !== null && incident.resolvedAt <= to).length;
   return report;
 }
 

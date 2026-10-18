@@ -42,6 +42,25 @@ test("quality distinguishes HTTP from accepted publications without contacting t
   expect(api).toEqual([]);
 });
 
+test("final-minute filters recut observations without seeking the replay", async ({page}) => {
+  const dialog=await openAnalysis(page);
+  const position=await page.locator('#replay-time').inputValue();
+  const period=dialog.getByRole('combobox',{name:'Período observado'});
+  await period.selectOption('last15');
+  const metric=(name:string)=>dialog.locator('dl > div').filter({has:page.locator('dt',{hasText:new RegExp(`^${name}$`)})}).locator('dd');
+  await expect(metric('Duração')).toHaveText('15 min');
+  await expect(page.locator('#replay-time')).toHaveValue(position);
+  await expect(dialog.getByRole('img',{name:/Tempo da fonte:/})).toBeVisible();
+  await period.selectOption('15');
+  await expect(metric('Duração')).toHaveText('15 min');
+  await expect(metric('Confirmações no recorte')).not.toHaveText('0');
+  await period.selectOption('30');
+  await expect(metric('Duração')).toHaveText('30 min');
+  await period.selectOption('all');
+  await expect(metric('Incidentes confirmados')).toHaveText('40');
+  await expect(metric('Incidentes resolvidos')).toHaveText('2');
+});
+
 test("city trends have an accessible table and analysis fits at 320 px", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 800 });
   const dialog = await openAnalysis(page);

@@ -45,6 +45,16 @@
   font-variant-numeric: tabular-nums;
 }
 
+.periodControl { display:flex; flex-wrap:wrap; align-items:center; gap:var(--space-3); color:var(--muted); }
+.periodControl select { min-height:44px; max-width:100%; padding:8px 12px; border:1px solid var(--border-control); border-radius:var(--radius); background:var(--surface); color:var(--text); font:inherit; }
+.sourceBar { display:flex; min-height:24px; background:var(--bg); border:1px solid var(--border-control); border-radius:var(--radius); overflow:hidden; }
+.sourceBar span { transform-origin:left; animation:source-enter 220ms ease-out both; }
+.valid { background:var(--brand); }
+.gap { background:var(--warning); }
+.closed { background:var(--stale); }
+@keyframes source-enter { from { transform:scaleX(.96); opacity:.5; } to { transform:scaleX(1); opacity:1; } }
+@media(prefers-reduced-motion:reduce) { .sourceBar span { animation:none; } }
+
 .section {
   padding-top: var(--space-4);
   border-top: 1px solid var(--border);
